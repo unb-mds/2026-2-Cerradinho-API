@@ -16,13 +16,15 @@ Cada entrada deve conter: data, pessoa, ferramenta usada, o que foi pedido, o qu
 
 | Data | Pessoa | Ferramenta | O que foi feito | Aceito/ajustado/rejeitado |
 |---|---|---|---|---|
-| 13/09/2026 | Gabriel | Claude Code | Schema inicial SQLAlchemy (Professor, Sala, Disciplina, Turma, Horario, Cardapio — ajustado pra bater com o contrato de dados real do scraper de RF01 já mergeado), config de banco, migração inicial via Alembic, docker-compose.yml com Postgres, testes unitários dos models, ADR 001 (base técnica do backend), e correção de um bug pré-existente em `backend/pytest.ini` (`pythonpath` apontava pra um caminho que não existia) | Aceito com retrabalho: a primeira versão modelou Disciplina/Turma como uma única tabela; após puxar o `origin/dev` e ler `.claude/skills/db-model` e o schema Pydantic já mergeado do Vitor, foi refeita como Disciplina + Turma separadas, com professores (N:N) e horários (1:N) por turma |
+| 13/09/2026 | Gabriel | Claude Code | Auxícilio no schema inicial SQLAlchemy (Professor, Sala, Disciplina, Turma, Horario, Cardapio, ajustado pra bater com o contrato de dados real do scraper de RF01 já mergeado), e correção de um bug pré-existente em `backend/pytest.ini` (`pythonpath` apontava pra um caminho que não existia) | a primeira versão modelou Disciplina/Turma como uma única tabela; após puxar o `origin/dev` e o schema já mergeado do Vitor, foi refeita como Disciplina + Turma separadas
+
+| 13/09/2026 | Vitor | Claude Code | Camada `app/domain/disciplinas.py` ligando o parser de RF01 (`app/schemas/disciplina.py`) aos models de banco do Gabriel: get-or-create de Disciplina/Sala/Professor, split de "PRÉDIO - SALA" e upsert de Turma+Horario pela chave natural (disciplina, numero, ano_periodo) pra não duplicar linha quando o scraper reagendar. Testes em `tests/domain/test_disciplinas.py` cobrindo criação, atualização sem duplicar, troca de professores/horários sem acumular órfão, e reaproveitamento de Sala/Professor entre turmas. Também corrigido bug pré-existente em `backend/pytest.ini` (chave `pythonpath` duplicada, que quebrava toda a suíte) | Aceito sem ajuste |
 
 ### Release 2
 
 | Data | Pessoa | Ferramenta | O que foi feito | Aceito/ajustado/rejeitado |
-|---|---|---|---|---|
-| | | | | |
+| ---- | ------ | ---------- | --------------- | ------------------------- |
+|      |        |            |                 |                           |
 
 ## Observações gerais
 
