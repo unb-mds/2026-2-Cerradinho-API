@@ -1,6 +1,7 @@
 # Python
 __pycache__/
 *.py[cod]
+*.pyc
 *.egg-info/
 .venv/
 venv/
@@ -20,6 +21,7 @@ node_modules/
 .next/
 
 # OS
+.DS_Store
 .DS_Store
 
 # Editor
