@@ -16,11 +16,7 @@ Cada entrada deve conter: data, pessoa, ferramenta usada, o que foi pedido, o qu
 
 | Data | Pessoa | Ferramenta | O que foi feito | Aceito/ajustado/rejeitado |
 |---|---|---|---|---|
-| | | | | |
-
-<!-- Exemplo de linha preenchida:
-| 10/09/2026 | Gabriel | Claude | Geração inicial do schema SQLAlchemy para Disciplina/Professor/Sala | Aceito com ajuste no tipo do campo horario |
--->
+| 13/09/2026 | Gabriel | Claude Code | Schema inicial SQLAlchemy (Professor, Sala, Disciplina, Turma, Horario, Cardapio — ajustado pra bater com o contrato de dados real do scraper de RF01 já mergeado), config de banco, migração inicial via Alembic, docker-compose.yml com Postgres, testes unitários dos models, ADR 001 (base técnica do backend), e correção de um bug pré-existente em `backend/pytest.ini` (`pythonpath` apontava pra um caminho que não existia) | Aceito com retrabalho: a primeira versão modelou Disciplina/Turma como uma única tabela; após puxar o `origin/dev` e ler `.claude/skills/db-model` e o schema Pydantic já mergeado do Vitor, foi refeita como Disciplina + Turma separadas, com professores (N:N) e horários (1:N) por turma |
 
 ### Release 2
 
