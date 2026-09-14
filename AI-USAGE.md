@@ -21,8 +21,8 @@ Cada entrada deve conter: data, pessoa, ferramenta usada, o que foi pedido, o qu
 ### Release 2
 
 | Data | Pessoa | Ferramenta | O que foi feito | Aceito/ajustado/rejeitado |
-|---|---|---|---|---|
-| | | | | |
+| ---- | ------ | ---------- | --------------- | ------------------------- |
+|      |        |            |                 |                           |
 
 ## Observações gerais
 
