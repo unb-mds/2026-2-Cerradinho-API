@@ -1,10 +1,14 @@
 # Python
 __pycache__/
 *.py[cod]
+*.pyc
 *.egg-info/
 .venv/
 venv/
 .pytest_cache/
+.ruff_cache/
+.coverage
+coverage.xml
 
 # Env
 .env
@@ -16,12 +20,3 @@ node_modules/
 
 # OS
 .DS_Store
-__pycache__/
-*.pyc
-.pytest_cache/
-.ruff_cache/
-.coverage
-coverage.xml
-.venv/
-venv/
-.env
