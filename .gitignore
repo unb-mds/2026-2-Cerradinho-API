@@ -4,7 +4,12 @@ __pycache__/
 *.egg-info/
 .venv/
 venv/
+env/
 .pytest_cache/
+.ruff_cache/
+.coverage
+coverage.xml
+htmlcov/
 
 # Env
 .env
@@ -16,12 +21,7 @@ node_modules/
 
 # OS
 .DS_Store
-__pycache__/
-*.pyc
-.pytest_cache/
-.ruff_cache/
-.coverage
-coverage.xml
-.venv/
-venv/
-.env
+
+# Editor
+.vscode/
+.idea/
