@@ -1,36 +1,36 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Cerradinho — Frontend
 
-## Getting Started
+Interface Next.js para consulta pública dos dados do Cerradinho (disciplinas, cardápio do RU, professores e
+salas) e futura base do portal do desenvolvedor.
 
-First, run the development server:
+## Rodando localmente
 
 ```bash
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Abra [http://localhost:3000](http://localhost:3000).
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Configuração
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Copie `.env.example` para `.env.local` e ajuste a URL da API caso o backend não esteja em
+`http://localhost:8000`:
 
-## Learn More
+```bash
+cp .env.example .env.local
+```
 
-To learn more about Next.js, take a look at the following resources:
+## Estrutura
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+- `app/` — páginas (App Router)
+- `components/` — componentes visuais
+- `hooks/` — chamadas à API do Cerradinho (`/v1`), isoladas dos componentes visuais — ver `docs/ARQUITETURA.md`
+- `lib/` — configuração de infraestrutura compartilhada (cliente Axios)
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Status
 
-## Deploy on Vercel
+Protótipo em desenvolvimento (Sprint 1): telas de consulta com dados de exemplo, que os hooks trocam
+automaticamente pela resposta real assim que os endpoints correspondentes do backend estiverem disponíveis.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Link do protótipo de UI (Figma/mockup): _a definir_.
