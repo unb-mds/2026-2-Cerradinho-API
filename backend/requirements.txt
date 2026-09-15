@@ -1,4 +1,6 @@
 beautifulsoup4==4.12.3
+requests==2.34.2
+pdfplumber==0.11.10
 pydantic==2.9.2
 pydantic-settings==2.5.2
 playwright==1.47.0
