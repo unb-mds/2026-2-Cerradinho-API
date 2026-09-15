@@ -17,7 +17,7 @@ API pública que consolida dados da UnB hoje espalhados em vários sistemas: dis
 | Professores | Mesma página + sti.unb.br/portal-publico-sigaa | Vem junto da turma |
 | Cursos/Estrutura curricular | sigaa.unb.br/sigaa/public/curso | Complementa Disciplinas |
 | Salas/Prédios | Sem fonte própria | Extraído como subproduto do scraper de Disciplinas |
-| Cardápio RU | ru.unb.br/cardapio | Aberto, sem login |
+| Cardápio RU | ru.unb.br/cardapio-refeitorio | PDF semanal por campus; a URL /cardapio está desatualizada (ver relatorio-risco-fontes.md) |
 | Eventos | noticias.unb.br/agenda | Agenda institucional pública |
 | Editais | Portal Público SIGAA (pós-graduação) | Centralizado |
 | Complemento | dadosabertos.unb.br (CKAN) | Bom para seed de Unidades/Cursos; Turmas está desatualizado (2022) |
