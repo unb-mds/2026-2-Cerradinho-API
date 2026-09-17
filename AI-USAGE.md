@@ -25,7 +25,7 @@ Cada entrada deve conter: data, pessoa, ferramenta usada, o que foi pedido, o qu
 
 | Data | Pessoa | Ferramenta | O que foi feito | Aceito/ajustado/rejeitado |
 | ---- | ------ | ---------- | --------------- | ------------------------- |
-|      |        |            |                 |                           |
+| 17/09/2026 | Daniel | Claude Code | Alinhamento dos hooks `useDisciplinas` e `useCardapioSemana` ao contrato real da API (`backend/app/schemas/`): mock reescrito no formato de `Turma`/`ItemCardapio` da API em vez do formato da tela, com função de tradução explícita pra cada um; `useCardapioSemana`/`app/cardapio/page.tsx` redesenhados de 3 campos fixos pra lista dinâmica de categorias, pra refletir a estrutura real do cardápio do RU (café da manhã não tem prato principal/sobremesa); adicionado "Sáb" ao filtro de dias em `app/disciplinas/page.tsx`; removido `app/disciplinas/route.ts` (conflitava com `page.tsx` na mesma rota) | Ajustado — a primeira função `extrairDia` só tratava dias com sufixo "-feira" (quebrava em sábado/domingo); o usuário propôs uma correção própria (`if (!descricao.includes("-feira")) return descricao`) que só mascarava o sintoma sem resolver, então foi revisada pra extrair a primeira palavra da descrição em vez de depender do sufixo |
 
 ## Observações gerais
 
