@@ -66,3 +66,32 @@ Este arquivo será usado para registrar os progressos obtidos nas reuniões do t
 **Pendências / próximos passos:** com a Sprint 1 encerrada, o time entra na Sprint 2, cujo foco é provar que cada fonte de dado funciona ponta a ponta: Vitor valida o scraper de Disciplinas contra o SIGAA real (fora do fixture de teste) e apoia o wiring do pipeline completo (scraper → parser → banco) numa task agendada; Ítalo faz a PoC de scraping do cardápio do RU com BeautifulSoup; Daniel revisa com o time os wireframes das telas de consulta antes de implementar; Arthur monta uma PoC de task Celery agendada simples; Gabriel revisa o schema inicial à luz do que as PoCs encontrarem; e João Paulo deixa o CI rodando de fato (lint + testes) a cada push, com o relatório de risco das fontes atualizado com os achados das PoCs.
 
 ---
+
+### Quinta-Feira, 17/09 
+**Presentes:** Nínguem
+
+**Progresso:** Não conseguimos realizar reunião nesse dia pela demanda dos membros nas suas tarefas universitárias mas o desenvolvimento continua sendo organizado por mensagens e no individual.
+
+---
+
+### Quinta-Feira, 10/09 (Sprint - Planning)
+
+**Presentes:** Gabriel, Daniel, Arthur, Vitor, João
+
+**Progresso:**  
+
+- **Vitor**: vai estabilizar o scraper de Disciplinas, resolvendo os bugs identificados.
+
+- **Arthur**: vai validar a execução automática dos scrapers agendados, sem necessidade de intervenção manual.
+
+- **Gabriel**: vai preparar a release note do Release 1 e o checklist final da documentação OpenAPI.
+
+- **Daniel**: vai fazer os ajustes finais de UX, validando a exibição dos dados reais na interface.
+
+- **João Paulo**: vai concluir os testes de contrato, garantir o CI verde e conferir o checklist board vs. entrega.
+
+- **Ítalo**: vai estabilizar o scraper de RU, resolvendo os bugs identificados.
+
+**Pendências / próximos passos:** A Sprint 2 foi concluída conforme planejado. O scraper de Disciplinas passou a gravar os dados no banco de forma estável, já com a associação entre Disciplina, Professor e Sala funcionando corretamente. Em paralelo, o scraper de RU foi agendado no Celery e o histórico de cardápio começou a ser acumulado. Arthur configurou o agendamento automático dos dois scrapers, com logs de execução, enquanto Gabriel entregou os endpoints REST sob /v1/ para os dois domínios, já com documentação OpenAPI gerada automaticamente. Do lado do frontend, Daniel conectou as telas à API real, e João Paulo implementou os testes de contrato nos endpoints publicados, com o CI já rodando essas validações. Com isso, a equipe encerra a sprint com a base de dados e a API funcionando de ponta a ponta, pronta para os ajustes finos da Sprint 3.
+
+---
