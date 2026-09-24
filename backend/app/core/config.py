@@ -10,6 +10,9 @@ class Settings(BaseSettings):
     postgres_host: str = "localhost"
     postgres_port: int = 5432
 
+    # Origens que o navegador pode usar pra chamar a API (o front Next.js roda em outra porta)
+    cors_origins: list[str] = ["http://localhost:3000", "http://127.0.0.1:3000"]
+
     @property
     def database_url(self) -> str:
         return (
