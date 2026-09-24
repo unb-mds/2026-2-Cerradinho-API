@@ -12,6 +12,9 @@ from __future__ import annotations
 from sqlalchemy.orm import Session
 
 from app.models import Disciplina, Horario, Professor, Sala, Turma
+from app.schemas.disciplina import Horario as HorarioCapturado
+from app.schemas.disciplina import Professor as ProfessorCapturado
+from app.schemas.disciplina import Sala as SalaCapturada
 from app.schemas.disciplina import Turma as TurmaCapturada
 
 
@@ -94,3 +97,29 @@ def persistir_turma(session: Session, turma: TurmaCapturada, unidade: str) -> Tu
 
 def persistir_turmas(session: Session, turmas: list[TurmaCapturada], unidade: str) -> list[Turma]:
     return [persistir_turma(session, turma, unidade) for turma in turmas]
+
+
+def _descricao_sala(sala: Sala | None) -> str:
+    if sala is None:
+        return ""
+    if sala.predio:
+        return f"{sala.predio} - {sala.nome}"
+    return sala.nome
+
+
+def _turma_para_contrato(turma: Turma) -> TurmaCapturada:
+    return TurmaCapturada(
+        disciplina_codigo=turma.disciplina.codigo,
+        disciplina_nome=turma.disciplina.nome,
+        numero=turma.numero,
+        ano_periodo=turma.ano_periodo,
+        professores=[ProfessorCapturado(nome=p.nome) for p in turma.professores],
+        horarios=[HorarioCapturado(codigo=h.codigo, descricao=h.descricao) for h in turma.horarios],
+        sala=SalaCapturada(descricao=_descricao_sala(turma.sala)),
+        vagas_ofertadas=turma.vagas_ofertadas,
+        vagas_ocupadas=turma.vagas_ocupadas,
+    )
+
+
+def listar_turmas(session: Session) -> list[TurmaCapturada]:
+    return [_turma_para_contrato(turma) for turma in session.query(Turma).all()]

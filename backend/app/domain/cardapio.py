@@ -12,7 +12,7 @@ nunca virar uma linha duplicada.
 from __future__ import annotations
 
 from collections import defaultdict
-from datetime import date
+from datetime import date, timedelta
 
 from sqlalchemy.orm import Session
 
@@ -56,3 +56,26 @@ def persistir_cardapio(session: Session, itens: list[ItemCardapio]) -> list[Card
             setattr(cardapio, _COLUNA_POR_REFEICAO[refeicao], _formatar_bloco(itens_da_refeicao))
         cardapios.append(cardapio)
     return cardapios
+
+
+def _desagrupar_bloco(bloco: str | None) -> list[tuple[str, str]]:
+    if not bloco:
+        return []
+    return [tuple(linha.split(": ", 1)) for linha in bloco.split("\n") if linha]
+
+
+def listar_cardapio_semana(session: Session, data_inicio: date) -> list[ItemCardapio]:
+    data_fim = data_inicio + timedelta(days=6)
+    cardapios = (
+        session.query(Cardapio)
+        .filter(Cardapio.data >= data_inicio, Cardapio.data <= data_fim)
+        .order_by(Cardapio.data)
+        .all()
+    )
+
+    itens: list[ItemCardapio] = []
+    for cardapio in cardapios:
+        for refeicao, coluna in _COLUNA_POR_REFEICAO.items():
+            for categoria, item in _desagrupar_bloco(getattr(cardapio, coluna)):
+                itens.append(ItemCardapio(data=cardapio.data, refeicao=refeicao, categoria=categoria, item=item))
+    return itens
