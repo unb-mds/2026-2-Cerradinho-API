@@ -6,6 +6,7 @@ import {
   BookIcon,
   BowlIcon,
   BuildingIcon,
+  CerradinhoFlower,
   ChevronRightIcon,
   UserIcon,
 } from "@/components/Icons";
@@ -21,20 +22,17 @@ export default function Sidebar() {
   const pathname = usePathname();
 
   return (
-    <aside className="flex min-h-screen w-[220px] flex-shrink-0 flex-col bg-sidebar pb-6">
+    <aside className="flex min-h-screen w-55 shrink-0 flex-col bg-sidebar pb-6">
       <Link href="/" className="flex flex-col gap-1 px-6 pb-8 pt-7">
         <span className="flex items-center gap-2.5">
           <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-brand">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#C8D3A8" strokeWidth="2" strokeLinecap="round">
-              <circle cx="12" cy="12" r="3" />
-              <path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83" />
-            </svg>
+            <CerradinhoFlower className="h-9 w-9" />
           </span>
           <span className="font-semibold tracking-tight text-sidebar-foreground-active">
             Cerradinho
           </span>
         </span>
-        <span className="pl-[42px] text-[10px] uppercase tracking-wide text-sidebar-foreground">
+        <span className="pl-10.5 text-[10px] uppercase tracking-wide text-sidebar-foreground">
           UnB · Dados do Campus
         </span>
       </Link>
@@ -52,13 +50,12 @@ export default function Sidebar() {
             <Link
               key={href}
               href={href}
-              className={`flex items-center gap-3 border-l-[3px] px-6 py-2.5 text-sm transition-colors ${
-                active
-                  ? "border-accent bg-sidebar-active font-semibold text-sidebar-foreground-active"
-                  : "border-transparent text-sidebar-foreground hover:text-sidebar-foreground-active"
-              }`}
+              className={`flex items-center gap-3 border-l-[3px] px-6 py-2.5 text-sm transition-colors ${active
+                ? "border-accent bg-sidebar-active font-semibold text-sidebar-foreground-active"
+                : "border-transparent text-sidebar-foreground hover:text-sidebar-foreground-active"
+                }`}
             >
-              <Icon className="h-[18px] w-[18px]" />
+              <Icon className="h-4.5 w-4.5" />
               {label}
               {active && <ChevronRightIcon className="ml-auto h-3.5 w-3.5 opacity-50" />}
             </Link>
