@@ -12,7 +12,7 @@ router = APIRouter(prefix="/cardapio", tags=["cardapio"])
 
 @router.get("/semana", response_model=list[ItemCardapio])
 def listar_cardapio_da_semana(
-    data_inicio: date | None = Query(default=None, description="Primeiro dia da semana (default: hoje)"),
+    data_inicio: date = Query(default_factory=date.today, description="Primeiro dia da semana (default: hoje)"),
     db: Session = Depends(get_db),
 ) -> list[ItemCardapio]:
-    return listar_cardapio_semana(db, data_inicio or date.today())
+    return listar_cardapio_semana(db, data_inicio)
