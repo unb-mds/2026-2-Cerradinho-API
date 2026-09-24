@@ -1,8 +1,7 @@
 name: CI
 
 on:
-  push:
-    branches: [dev, main]
+  push:   # qualquer branch
   pull_request:
     branches: [dev, main]
 
@@ -33,4 +32,7 @@ jobs:
         run: ruff check .
 
       - name: Rodar testes (pytest)
-        run: pytest --cov=app --cov-report=term-missing
+        run: pytest --ignore=tests/contract --cov=app --cov-report=term-missing   # contrato roda no passo abaixo
+
+      - name: Rodar testes de contrato (schemathesis)
+        run: pytest tests/contract -v   # falha se alguma rota fugir do /openapi.json (RNF04)
