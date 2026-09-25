@@ -85,7 +85,7 @@ sequenceDiagram
 | Portal do desenvolvedor | Documentação interativa | Swagger/OpenAPI |
 | SDK/CLI | Facilita integração de squads futuros | Python (Typer) |
 | Observabilidade | Monitoramento de uptime e alertas | UptimeRobot |
-| Análise estática de segurança | SAST — bloqueia lançamento de nota se achado crítico/alto (RNF08) | a definir (ex: Bandit, Semgrep) |
+| Análise estática de segurança | SAST — bloqueia lançamento de nota se achado crítico/alto (RNF08) | Bandit |
 
 ## Estrutura de pastas (monorepo)
 

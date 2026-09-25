@@ -29,6 +29,9 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements-dev.txt   # já inclui requirements.txt
 
+      - name: Rodar SAST (bandit)
+        run: bandit -r app -lll   # falha em achado de severidade alta (RNF08)
+
       - name: Rodar lint (ruff)
         run: ruff check .
 
