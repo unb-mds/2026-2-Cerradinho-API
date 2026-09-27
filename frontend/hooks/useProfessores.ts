@@ -2,21 +2,25 @@
 
 import { useApiResource } from "./useApiResource";
 
-export interface Professor {
-  id: string;
+interface ProfessorAPI {
+  id: number;
   nome: string;
-  titulo: string;
-  departamento: string;
   disciplinas: string[];
 }
 
-const professoresMock: Professor[] = [
-  { id: "1", nome: "Ana Souza", titulo: "Profa. Dra.", departamento: "FGA", disciplinas: ["FGA0071", "FGA0066"] },
-  { id: "2", nome: "Carlos Lima", titulo: "Prof. Dr.", departamento: "CIC", disciplinas: ["CIC0004"] },
-  { id: "3", nome: "Beatriz Alves", titulo: "Profa. Dra.", departamento: "CIC", disciplinas: ["CIC0097"] },
-];
+export interface Professor {
+  id: number;
+  nome: string;
+  unidades: string[];
+  disciplinas: string[];
+}
+
+function mapProfessor(p: ProfessorAPI): Professor {
+  const unidades = [... new Set(p.disciplinas.map((codigo) => codigo.replace(/\d.*$/, "")))];
+  return { ...p, unidades };
+}
 
 export function useProfessores() {
-  const { data, loading, error } = useApiResource<Professor[]>("/professores", professoresMock);
-  return { professores: data, loading, error };
+  const { data, loading, error } = useApiResource<ProfessorAPI[]>("/professores", []);
+  return { professores: data.map(mapProfessor), loading, error };
 }
