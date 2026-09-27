@@ -7,12 +7,16 @@ import { useSalas } from "@/hooks/useSalas";
 import StatCard from "@/components/StatCard";
 import Badge from "@/components/Badge";
 import SeatBar from "@/components/SeatBar";
+import ApiStatus from "@/components/ApiStatus";
 import { BookIcon, BowlIcon, BuildingIcon, ChevronRightIcon, UserIcon } from "@/components/Icons";
 
 export default function Home() {
-  const { disciplinas } = useDisciplinas();
-  const { professores } = useProfessores();
-  const { salas } = useSalas();
+  const { disciplinas, loading: carregandoDisciplinas, error: erroDisciplinas } = useDisciplinas();
+  const { professores, loading: carregandoProfessores, error: erroProfessores } = useProfessores();
+  const { salas, loading: carregandoSalas, error: erroSalas } = useSalas();
+  const loading = carregandoDisciplinas || carregandoProfessores || carregandoSalas;
+  const error = erroDisciplinas ?? erroProfessores ?? erroSalas;
+  const numero = (n: number) => (loading || error ? "-" : String(n));
 
   return (
     <main className="flex flex-1 flex-col gap-7 px-10 py-9">
@@ -20,12 +24,12 @@ export default function Home() {
         <h1 className="text-2xl font-bold tracking-tight text-foreground">Visão Geral</h1>
         <p className="mt-1.5 text-sm text-muted">Universidade de Brasília — UnB</p>
       </div>
-
+      <ApiStatus loading={loading} error={error} />
       <div className="flex flex-wrap gap-3.5">
         <StatCard
           icon={<BookIcon className="h-[18px] w-[18px]" />}
           label="Disciplinas"
-          stat={String(disciplinas.length)}
+          stat={numero(disciplinas.length)}
           sub="turmas ofertadas"
           href="/disciplinas"
           active
@@ -40,14 +44,14 @@ export default function Home() {
         <StatCard
           icon={<UserIcon className="h-[18px] w-[18px]" />}
           label="Professores"
-          stat={String(professores.length)}
+          stat={numero(professores.length)}
           sub="docentes ativos"
           href="/professores"
         />
         <StatCard
           icon={<BuildingIcon className="h-[18px] w-[18px]" />}
           label="Salas"
-          stat={String(salas.length)}
+          stat={numero(salas.length)}
           sub="espaços cadastrados"
           href="/salas"
         />
