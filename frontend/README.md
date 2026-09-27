@@ -30,7 +30,7 @@ cp .env.example .env.local
 
 ## Status
 
-Protótipo em desenvolvimento (Sprint 1): telas de consulta com dados de exemplo, que os hooks trocam
-automaticamente pela resposta real assim que os endpoints correspondentes do backend estiverem disponíveis.
+As telas de consulta (Visão Geral, Disciplinas, Cardápio, Professores e Salas) consomem a API real em `/v1`,
+sem dados de exemplo. Enquanto a API carrega, as telas mostram "Carregando...". Se a API não responder, aparece um aviso de erro.
 
-Link do protótipo de UI (Figma/mockup): _a definir_.
+Link do protótipo de UI (Figma/mockup): [Cerradinho no Figma](https://www.figma.com/make/0xz0SuyDpsy3e05VknPfkc/Cerradinho?t=YZTahmjwBzk1zsxR-1)
