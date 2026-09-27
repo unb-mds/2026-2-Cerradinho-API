@@ -8,12 +8,12 @@ import { FilterBar, FilterPills, FilterSelect, SearchInput } from "@/components/
 import Badge from "@/components/Badge";
 import SeatBar from "@/components/SeatBar";
 
-const DEPARTAMENTOS = ["Todos", "CIC", "FGA"];
 const DIAS = ["Todos", "Seg", "Ter", "Qua", "Qui", "Sex", "Sáb"];
-const HORARIOS = ["Todos", "08:00", "10:00", "14:00"];
+const HORARIOS = ["Todos", "08:00", "10:00", "12:00", "14:00", "16:00", "18:00", "20:00"];
 
 export default function DisciplinasPage() {
   const { disciplinas, loading, error } = useDisciplinas();
+  const departamentos = ["Todos", ...[...new Set(disciplinas.map((d) => d.departamento))].sort()];
   const [departamento, setDepartamento] = useState("Todos");
   const [dia, setDia] = useState("Todos");
   const [horario, setHorario] = useState("Todos");
@@ -50,7 +50,7 @@ export default function DisciplinasPage() {
 
       <FilterBar hasFilters={hasFilters} onClear={limparFiltros}>
         <SearchInput value={busca} onChange={setBusca} placeholder="Buscar por nome, código ou professor..." />
-        <FilterSelect label="Unidade" value={departamento} onChange={setDepartamento} options={DEPARTAMENTOS} />
+        <FilterSelect label="Unidade" value={departamento} onChange={setDepartamento} options={departamentos} />
         <FilterPills label="Dia" value={dia} onChange={setDia} options={DIAS} />
         <FilterSelect label="Horário" value={horario} onChange={setHorario} options={HORARIOS} />
       </FilterBar>

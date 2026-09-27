@@ -69,40 +69,19 @@ export function mapItensToCardapio(itens: ItemCardapioAPI[]): CardapioRefeicao[]
     .map((g) => ({ data: g.data, dia: nomeDoDia(g.data), refeicao: REFEICAO_LABEL[g.refeicao], itens: g.itens }));
 }
 
-// Mock no formato REAL da API (lista achatada de ItemCardapio), com as categorias que
-// o RU sempre publica em cada refeição (café não tem prato principal/sobremesa; o
-// jantar troca guarnição/acompanhamentos/sobremesa/bebida do almoço por sopa e torrada).
-const itensMock: ItemCardapioAPI[] = [
-  { data: "2026-09-14", refeicao: "cafe_da_manha", categoria: "Bebidas", item: "Café, leite, suco de caju" },
-  { data: "2026-09-14", refeicao: "cafe_da_manha", categoria: "Panificação", item: "Pão francês, pão de queijo" },
-  { data: "2026-09-14", refeicao: "cafe_da_manha", categoria: "Gordura", item: "Margarina" },
-  { data: "2026-09-14", refeicao: "cafe_da_manha", categoria: "Complemento Padrão", item: "Presunto e queijo" },
-  { data: "2026-09-14", refeicao: "cafe_da_manha", categoria: "Complemento Ovolactovegetariano", item: "Ovo mexido" },
-  { data: "2026-09-14", refeicao: "cafe_da_manha", categoria: "Complemento Vegetariano Estrito", item: "Pasta de grão-de-bico" },
-  { data: "2026-09-14", refeicao: "cafe_da_manha", categoria: "Fruta", item: "Banana" },
 
-  { data: "2026-09-14", refeicao: "almoco", categoria: "Salada 1", item: "Alface e tomate" },
-  { data: "2026-09-14", refeicao: "almoco", categoria: "Salada 2", item: "Beterraba ralada" },
-  { data: "2026-09-14", refeicao: "almoco", categoria: "Molho para Salada", item: "Vinagrete" },
-  { data: "2026-09-14", refeicao: "almoco", categoria: "Prato Principal Padrão", item: "Frango grelhado" },
-  { data: "2026-09-14", refeicao: "almoco", categoria: "Prato Principal Ovolactovegetariano", item: "Omelete de legumes" },
-  { data: "2026-09-14", refeicao: "almoco", categoria: "Prato Principal Vegetariano Estrito", item: "Grão-de-bico ao curry" },
-  { data: "2026-09-14", refeicao: "almoco", categoria: "Guarnição", item: "Arroz e feijão" },
-  { data: "2026-09-14", refeicao: "almoco", categoria: "Acompanhamentos", item: "Farofa" },
-  { data: "2026-09-14", refeicao: "almoco", categoria: "Sobremesa", item: "Gelatina" },
-  { data: "2026-09-14", refeicao: "almoco", categoria: "Bebida", item: "Refresco de maracujá" },
-
-  { data: "2026-09-14", refeicao: "jantar", categoria: "Salada 1", item: "Repolho roxo" },
-  { data: "2026-09-14", refeicao: "jantar", categoria: "Salada 2", item: "Cenoura ralada" },
-  { data: "2026-09-14", refeicao: "jantar", categoria: "Molho para Salada", item: "Vinagrete" },
-  { data: "2026-09-14", refeicao: "jantar", categoria: "Prato Principal Padrão", item: "Carne de panela" },
-  { data: "2026-09-14", refeicao: "jantar", categoria: "Prato Principal Ovolactovegetariano", item: "Ovo à parmegiana" },
-  { data: "2026-09-14", refeicao: "jantar", categoria: "Prato Principal Vegetariano Estrito", item: "Tofu ao molho" },
-  { data: "2026-09-14", refeicao: "jantar", categoria: "Sopa", item: "Sopa de legumes" },
-  { data: "2026-09-14", refeicao: "jantar", categoria: "Torrada", item: "Torrada" },
-];
+function segundaDaSemana(hoje = new Date()): string {
+  const segunda = new Date(hoje);
+  segunda.setDate(hoje.getDate() - ((hoje.getDay() + 6) % 7));
+  const mes = String(segunda.getMonth() + 1).padStart(2, "0");
+  const dia = String(segunda.getDate()).padStart(2, "0");
+  return `${segunda.getFullYear()}-${mes}-${dia}`;
+}
 
 export function useCardapioSemana() {
-  const { data, loading, error } = useApiResource<ItemCardapioAPI[]>("/cardapio/semana", itensMock);
+  const { data, loading, error } = useApiResource<ItemCardapioAPI[]>(
+    `/cardapio/semana?data_inicio=${segundaDaSemana()}`,
+    [],
+  );
   return { cardapio: mapItensToCardapio(data), loading, error };
 }

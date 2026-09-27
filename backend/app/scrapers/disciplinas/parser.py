@@ -52,10 +52,23 @@ def parse_turmas(html: str) -> list[Turma]:
             if not textos:
                 continue
             popup = cel.find("div", class_="popUp")
+            # O SIGAA junta o(s) código(s) de horário com o intervalo de
+            # datas da turma no mesmo texto, ex: "6T2345 (10/08/2026 -
+            # 14/12/2026)". Só o código antes do "(" cabe em Horario.codigo
+            # (String(20)) — guardar a string inteira estoura a coluna e
+            # derruba a gravação com StringDataRightTruncation.
+            codigo = textos[0].split(" (", 1)[0].strip()
             horarios.append(Horario(
-                codigo=textos[0],
+                codigo=codigo,
                 descricao=popup.get_text(" ", strip=True) if popup else "",
             ))
+
+        # Turma com docente "A DEFINIR" vem com vagas ofertadas em branco
+        # (vagas ocupadas continua "0" normalmente) — o SIGAA ainda não
+        # definiu quantas vagas serão abertas, então não há dado real
+        # nenhum sendo perdido ao tratar como 0.
+        vagas_ofertadas = celulas[5].get_text(strip=True) or "0"
+        vagas_ocupadas = celulas[6].get_text(strip=True) or "0"
 
         turmas.append(Turma(
             disciplina_codigo=disciplina_codigo,
@@ -65,8 +78,8 @@ def parse_turmas(html: str) -> list[Turma]:
             professores=professores,
             horarios=horarios,
             sala=Sala(descricao=celulas[7].get_text(strip=True)),
-            vagas_ofertadas=celulas[5].get_text(strip=True),
-            vagas_ocupadas=celulas[6].get_text(strip=True),
+            vagas_ofertadas=vagas_ofertadas,
+            vagas_ocupadas=vagas_ocupadas,
         ))
 
     return turmas

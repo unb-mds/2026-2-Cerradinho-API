@@ -27,9 +27,14 @@ async def raspar_disciplinas_varias_unidades(
     ano: str,
     periodo: str,
     unidades: list[str] | None = None,
-) -> list[Turma]:
+) -> dict[str, list[Turma]]:
     """Mesma coisa, para várias unidades de uma vez. Se `unidades` for
-    None, varre todas as unidades listadas no formulário do SIGAA."""
+    None, varre todas as unidades listadas no formulário do SIGAA.
+
+    Devolve {codigo_unidade: turmas} em vez de uma lista só — Turma.unidade
+    é obrigatório no banco (app/models/turma.py), e o código da unidade não
+    vem em nenhum campo do HTML da própria turma, só na página de busca. Uma
+    lista achatada perderia essa informação sem volta."""
     scraper = DisciplinaScraper()
 
     if unidades is None:
@@ -38,7 +43,7 @@ async def raspar_disciplinas_varias_unidades(
 
     html_por_unidade = await scraper.buscar_html_varias_unidades(nivel, ano, periodo, unidades)
 
-    turmas: list[Turma] = []
-    for html in html_por_unidade.values():
-        turmas.extend(parse_turmas(html))
-    return turmas
+    return {
+        codigo_unidade: parse_turmas(html)
+        for codigo_unidade, html in html_por_unidade.items()
+    }
