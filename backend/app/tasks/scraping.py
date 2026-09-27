@@ -6,6 +6,10 @@ from app.core.database import SessionLocal
 from app.domain.disciplinas import persistir_turmas
 from app.scrapers.disciplinas import raspar_disciplinas_varias_unidades
 
+NIVEL = "G"
+UNIDADE_FCTE = "673"
+ANO = "2026"
+PERIODO = "2"
 
 @shared_task
 def scrape_disciplinas_task(
@@ -21,7 +25,7 @@ def scrape_disciplinas_task(
     de turmas persistidas, pra aparecer no log de sucesso (RF16).
     """
     turmas_por_unidade = asyncio.run(raspar_disciplinas_varias_unidades(nivel, ano, periodo, unidades))
-
+ 
     db = SessionLocal()
     try:
         total = 0
