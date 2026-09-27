@@ -11,11 +11,15 @@ celery_app = Celery(
     backend="redis://redis:6379/1",
 )
 
-# RF15 — roda o scraper de Disciplinas todo dia às 3h da manhã
+# RF15 — roda o scraper de Disciplinas (todas as unidades) todo domingo às 5h
 celery_app.conf.beat_schedule = {
     "scrape-disciplinas-semanal": {
         "task": "app.tasks.scraping.scrape_disciplinas_task",
         "schedule": crontab(hour=5, minute=0, day_of_week=0),
+        # O SIGAA público não expõe o período letivo corrente em lugar
+        # nenhum pra descobrir isso sozinho — ano/periodo precisam ser
+        # atualizados aqui manualmente a cada novo semestre.
+        "kwargs": {"nivel": "G", "ano": "2026", "periodo": "2"},
     },
 }
  
