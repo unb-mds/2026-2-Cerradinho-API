@@ -42,9 +42,9 @@ const DIA_ABREV: Record<string, string> = {
 
 // horarios[].descricao chega como "Sexta-feira 14:00 às 17:50" ou "Sábado 08:00 às 12:00"
 // (sábado/domingo não têm o sufixo "-feira") — extrai só o dia abreviado nos dois formatos.
-function extrairDia(descricao: string): string {
-  const primeiraPalavra = descricao.split(" ")[0].replace("-feira", "").toLowerCase();
-  return DIA_ABREV[primeiraPalavra] ?? descricao;
+function extrairDias(descricao: string): string[] {
+  const encontrados = descricao.match(/segunda|terça|quarta|quinta|sexta|sábado|domingo/gi) ?? [];
+  return encontrados.map((d) => DIA_ABREV[d.toLocaleLowerCase()]);
 }
 
 function extrairHorario(descricao: string): string {
@@ -59,7 +59,7 @@ function extrairDepartamento(disciplinaCodigo: string): string {
 
 // Traduz o contrato do backend (Turma) pro formato que esta tela usa (Disciplina).
 export function mapTurmaToDisciplina(turma: TurmaAPI): Disciplina {
-  const dias = [...new Set(turma.horarios.map((h) => extrairDia(h.descricao)))].join("/");
+  const dias = [...new Set(turma.horarios.flatMap((h) => extrairDias(h.descricao)))].join("/");
 
   return {
     codigo: turma.disciplina_codigo,
@@ -75,52 +75,7 @@ export function mapTurmaToDisciplina(turma: TurmaAPI): Disciplina {
   };
 }
 
-// Mock no formato REAL da API (TurmaAPI), não no formato da tela — assim a tradução
-// acima é exercitada mesmo antes do endpoint /disciplinas existir de verdade.
-const turmasMock: TurmaAPI[] = [
-  {
-    disciplina_codigo: "CIC0004",
-    disciplina_nome: "Algoritmos e Programação",
-    numero: "A",
-    ano_periodo: "2026.2",
-    professores: [{ nome: "Carlos Lima" }],
-    horarios: [
-      { codigo: "2M1234", descricao: "Segunda-feira 14:00 às 16:00" },
-      { codigo: "4M1234", descricao: "Quarta-feira 14:00 às 16:00" },
-      { codigo: "6M1234", descricao: "Sábado 8:00 às 12:00" },
-    ],
-    sala: { descricao: "LINF-02" },
-    vagas_ofertadas: 40,
-    vagas_ocupadas: 38,
-  },
-  {
-    disciplina_codigo: "CIC0097",
-    disciplina_nome: "Organização de Computadores",
-    numero: "B",
-    ano_periodo: "2026.2",
-    professores: [{ nome: "Beatriz Alves" }],
-    horarios: [
-      { codigo: "3M1234", descricao: "Terça-feira 10:00 às 12:00" },
-      { codigo: "5M1234", descricao: "Quinta-feira 10:00 às 12:00" },
-    ],
-    sala: { descricao: "LINF-04" },
-    vagas_ofertadas: 35,
-    vagas_ocupadas: 30,
-  },
-  {
-    disciplina_codigo: "FGA0071",
-    disciplina_nome: "Prática de Eletrônica Digital 1",
-    numero: "A",
-    ano_periodo: "2026.2",
-    professores: [{ nome: "Ana Souza" }],
-    horarios: [{ codigo: "2M1234", descricao: "Segunda-feira 08:00 às 10:00" }],
-    sala: { descricao: "FGA-A1" },
-    vagas_ofertadas: 20,
-    vagas_ocupadas: 20,
-  },
-];
-
 export function useDisciplinas() {
-  const { data, loading, error } = useApiResource<TurmaAPI[]>("/disciplinas", turmasMock);
+  const { data, loading, error } = useApiResource<TurmaAPI[]>("/disciplinas", []);
   return { disciplinas: data.map(mapTurmaToDisciplina), loading, error };
 }
