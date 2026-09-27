@@ -52,7 +52,7 @@ export default function SalasPage() {
               {filtradas.length === 0 ? (
                 <tr>
                   <td colSpan={2} className="px-6 py-12 text-center text-sm text-muted">
-                    Nenhuma sala encontrada.
+                    {loading || error ? "" : "Nenhuma sala encontrada."}
                   </td>
                 </tr>
               ) : (

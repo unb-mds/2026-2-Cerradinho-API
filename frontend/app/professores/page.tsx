@@ -62,7 +62,7 @@ export default function ProfessoresPage() {
               {filtrados.length === 0 ? (
                 <tr>
                   <td colSpan={3} className="px-6 py-12 text-center text-sm text-muted">
-                    Nenhum professor encontrado.
+                    {loading || error ? "" : "Nenhum professor encontrado."}
                   </td>
                 </tr>
               ) : (
