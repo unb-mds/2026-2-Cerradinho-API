@@ -2,10 +2,10 @@ import asyncio
 
 from celery import shared_task
 
-from app.scrapers.disciplinas.scraper import DisciplinaScraper
-from app.scrapers.disciplinas.parser import parse_turmas
 from app.core.database import SessionLocal
-from app.domain.disciplinas import persistir_turma, persistir_turmas
+from app.domain.disciplinas import persistir_turmas
+from app.scrapers.disciplinas.parser import parse_turmas
+from app.scrapers.disciplinas.scraper import DisciplinaScraper
 
 NIVEL = "G"
 UNIDADE_FCTE = "673"

@@ -1,7 +1,7 @@
 from celery import Celery
 from celery.schedules import crontab
 
-from app.tasks import logging_signals  # importa os signals de log (RF16) para registrar no Celery
+from app.tasks import logging_signals  # noqa: F401 (importa os signals de log (RF16) para registrar no Celery)
 
 # "redis" (não "localhost") porque, dentro da rede do docker compose,
 # o nome do serviço funciona como hostname
