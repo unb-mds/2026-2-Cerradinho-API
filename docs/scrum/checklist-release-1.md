@@ -106,3 +106,42 @@ Ajustes a fazer no GitHub para o board refletir a entrega:
 - #73 e #115: SAST roda, mas não bloqueia o merge. Reabrir ou desmarcar o critério até alguém com admin configurar o check obrigatório em `dev` e `main`.
 - #105: comentar com a evidência de uma execução real do worker (log de sucesso e de falha) ou reabrir.
 - #62: comentar a evidência da revisão do protótipo com o time ou desmarcar o critério.
+
+## Pendências da R1
+
+O que a R1 não entregou e passa para a Sprint 4 (R2). Serve de base para a release note (#106) e para a planning da Sprint 4.
+
+| # | Pendência | Responsável | Issue | Impacto |
+|---|---|---|---|---|
+| 1 | Parser do RU quebra com os layouts de PDF das semanas de 21/9 e 28/9 ("Não foi possível identificar as colunas de dias no cabeçalho"). Falta ajustar a leitura do cabeçalho e adicionar os dois PDFs como fixtures | Ítalo | [#103](https://github.com/unb-mds/2026-2-Cerradinho-API/issues/103) | Nenhum cardápio entra no banco: a task agendada do RU falha e o histórico não acumula (#40, #41, #45, #98) |
+| 2 | Itens que valem para a semana toda (ex.: bebidas do café) ficam só na segunda-feira | Ítalo | [#103](https://github.com/unb-mds/2026-2-Cerradinho-API/issues/103) | Melhoria, não bloqueia |
+| 3 | Busca de docente por nome normalizado (sem acento), critério do RF04 | Vitor | [#38](https://github.com/unb-mds/2026-2-Cerradinho-API/issues/38) | `/v1/professores` só lista; não busca |
+| 4 | Professores e salas duplicados nas respostas da API | Vitor | Sem issue (tarefa da Sprint 4 no [planejamento](sprint-planning.md)) | Listas de docentes e espaços com repetição |
+| 5 | Log de execução consultável (hoje é só `print` no worker) | Arthur | Sem issue (tarefa da Sprint 4); RF16 em [#46](https://github.com/unb-mds/2026-2-Cerradinho-API/issues/46) | Não dá para consultar o histórico de execuções sem acessar o terminal do worker |
+| 6 | Registro de uma execução real do worker agendado, com log de sucesso e de falha | Arthur | [#105](https://github.com/unb-mds/2026-2-Cerradinho-API/issues/105) | Hoje só o registro e os argumentos do agendamento são verificados (testes do #127) |
+| 7 | Comentário do agendamento diz "domingo às 5h", mas o `crontab` está em `hour=3` (`app/celery_app.py`) | Arthur | [#45](https://github.com/unb-mds/2026-2-Cerradinho-API/issues/45) | Documentação do horário inconsistente |
+| 8 | Log de falha dos scrapers sem contexto de fonte ou unidade | João Paulo | [#70](https://github.com/unb-mds/2026-2-Cerradinho-API/issues/70) | Diagnóstico de falha depende de rodar de novo o scraper |
+| 9 | Check obrigatório do CI nas branches `dev` e `main` (proteção de branch), para o SAST bloquear o merge | Gabriel (admin do repositório) | [#73](https://github.com/unb-mds/2026-2-Cerradinho-API/issues/73), [#115](https://github.com/unb-mds/2026-2-Cerradinho-API/issues/115) | Um PR com CI vermelho ainda pode ser mergeado |
+| 10 | Release note da R1 e merge da `dev` na `main` | Gabriel | [#106](https://github.com/unb-mds/2026-2-Cerradinho-API/issues/106) | A `main` não tem nada da R1 e não há release publicada |
+| 11 | Atualizar os critérios de RF02 e RF03, que ainda falam em `professor_id`/`sala_id` na tabela Disciplina | Vitor, com o PO | [#36](https://github.com/unb-mds/2026-2-Cerradinho-API/issues/36), [#37](https://github.com/unb-mds/2026-2-Cerradinho-API/issues/37) | Issues entregues continuam abertas |
+| 12 | Definir com o PO se o RNF07 (doc viva) pode ser fechado com o contrato e a OpenAPI completa, já que o critério 1 é um processo contínuo | João Paulo, com o PO | [#72](https://github.com/unb-mds/2026-2-Cerradinho-API/issues/72) | — |
+| 13 | Evidência da revisão do protótipo das telas com o time | Daniel | [#62](https://github.com/unb-mds/2026-2-Cerradinho-API/issues/62) | Critério sem evidência em issue fechada |
+
+### Problemas levantados na revisão da equipe (27/09)
+
+Situação, na `dev` conferida, da lista de problemas levantada pelo Daniel no fechamento da Sprint 3:
+
+| Problema | Responsável | Situação |
+|---|---|---|
+| Parser do RU quebra com os PDFs de 21/9 e 28/9 | Ítalo | ❌ Pendente (item 1) |
+| Código de horário com intervalo de datas estoura o `String(20)` | Vitor | ✅ Corrigido no #118; regressão coberta pelo teste com Postgres (#124) |
+| `scraping.py` importava uma função inexistente | Arthur | ✅ Corrigido no #118 e no #121 |
+| Task de Disciplinas não gravava no banco | Arthur | ✅ Corrigido no #118 |
+| `autodiscover_tasks` não registrava a task | Arthur | ✅ Corrigido no #121 (`include=[...]`); coberto pelos testes do #127 |
+| `celery_worker` sem `env_file`, `POSTGRES_HOST` e dependência do banco | Arthur | ✅ Corrigido no #119 |
+| Imagem sem o Chromium do Playwright | Arthur | ✅ Corrigido no #121 (`slim-bookworm` + `playwright install`) |
+| Sem task agendada para o cardápio | Arthur | ✅ Adicionada no #121 (diária, às 5h) |
+| Comentário do horário diferente do `crontab` | Arthur | ❌ Pendente (item 7) |
+| Não existem `/v1/professores` e `/v1/salas` | Gabriel | ✅ Criados no #119 |
+| Testes que pegariam esses erros: import das tasks, registro no Celery, pipeline com Postgres | João Paulo | ✅ #118 (import), #127 (registro e agendamento), #124 (Postgres) |
+| Testes do parser do RU com os PDFs novos | Ítalo, com João Paulo | ❌ Pendente (item 1) |
