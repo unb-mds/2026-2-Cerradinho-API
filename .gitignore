@@ -26,3 +26,5 @@ node_modules/
 # Editor
 .vscode/
 .idea/
+
+celerybeat-schedule*

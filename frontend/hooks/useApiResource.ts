@@ -12,8 +12,8 @@ interface ResourceState<T> {
 /**
  * Internal helper shared by the domain hooks below — components should
  * never call this directly, only useDisciplinas/useCardapioSemana/etc.
- * Starts from `mock` so screens render immediately, then swaps in the
- * real API response once it arrives (or reports an error and keeps the mock).
+ * Starts from `initial` (a mock or an empty list) so screens render immediately, then swaps in the
+ * real API response once it arrives.
  */
 export function useApiResource<T>(path: string, mock: T): ResourceState<T> {
   const [data, setData] = useState<T>(mock);
@@ -30,7 +30,7 @@ export function useApiResource<T>(path: string, mock: T): ResourceState<T> {
       })
       .catch(() => {
         if (active) {
-          setError("Não foi possível conectar à API. Exibindo dados de exemplo.");
+          setError("Não foi possível conectar à API.");
         }
       })
       .finally(() => {

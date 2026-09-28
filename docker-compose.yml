@@ -48,8 +48,15 @@ services:
   celery_worker:
     build: ./backend
     command: celery -A app.celery_app worker --loglevel=info
+    env_file:
+      - ./backend/.env
+    environment:
+      POSTGRES_HOST: db
     depends_on:
-      - redis
+      redis:
+        condition: service_started
+      migrate:
+        condition: service_completed_successfully
     volumes:
       - ./backend:/app
 
