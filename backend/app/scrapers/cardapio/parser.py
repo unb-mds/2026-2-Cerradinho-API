@@ -24,7 +24,7 @@ Descobertas da análise do PDF real (Darcy Ribeiro, semana de 14 a
   páginas (feriado sem jantar) ou em ordem diferente.
 - Os ícones de alérgeno (leite, soja, glúten etc.) são imagens embutidas no
   PDF, não texto, e não são capturados por extract_tables() (ver
-  docs/estudos/fonte-ru-cardapio.md).
+  docs/fontes/ru-cardapio.md).
 """
 
 from __future__ import annotations
@@ -107,7 +107,7 @@ def encontrar_pdf_da_semana(links_cardapio: list[dict], referencia: date | None 
     """Retorna a URL do PDF cujo intervalo de datas contém `referencia`
     (por padrão, hoje). Retorna None se nenhum PDF corresponder — quem
     chama isso não deve persistir um cardápio de uma semana antiga (ver
-    risco A2 em docs/estudos/fonte-ru-cardapio.md)."""
+    risco A2 em docs/fontes/ru-cardapio.md)."""
     referencia = referencia or date.today()
 
     for item in links_cardapio:

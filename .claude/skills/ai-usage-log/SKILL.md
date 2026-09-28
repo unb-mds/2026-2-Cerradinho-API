@@ -10,7 +10,7 @@ nothing matches; this policy (MDS/UnB course requirement to log every AI-assiste
 contribution with acceptance outcome) is specific enough to this class that no generic
 public skill covers it, so this one is custom-written rather than adapted.
 
-Per the course's AI policy (referenced in `AI-USAGE.md` and `docs/PROCESSO.md` §8), AI
+Per the course's AI policy (referenced in `AI-USAGE.md` and `docs/PROCESSO.md` §9), AI
 use is **expected, not merely tolerated** — provided it's logged. Every AI-assisted
 contribution to implementation, tests, documentation, library exploration, or
 refactoring must get a row in `AI-USAGE.md`.

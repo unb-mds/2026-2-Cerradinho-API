@@ -2,7 +2,7 @@
 listagem e download do PDF selecionado por parser.py.
 
 A URL certa é `cardapio-refeitorio`, não `cardapio/` (ver risco A2 em
-docs/estudos/fonte-ru-cardapio.md): essa segunda página existe, responde
+docs/fontes/ru-cardapio.md): essa segunda página existe, responde
 200 e tem HTML válido, mas ficou congelada numa semana antiga depois que o
 RU migrou a publicação para a página agregadora — nenhum monitor de
 disponibilidade detectaria essa falha.

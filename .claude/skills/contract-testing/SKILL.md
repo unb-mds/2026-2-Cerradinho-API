@@ -27,7 +27,7 @@ Backend tests live in `backend/tests/`, run with `pytest` from the project venv
 - **Assert on actual extracted values**, not just "no exception was raised." Per
   `AI-USAGE.md`'s own review note: an AI-generated test that only checks "didn't throw"
   must be rejected/rewritten before merge, whether AI-authored or not.
-- Coverage target for the domain module is ≥70% (RNF09) — when adding domain logic
+- Coverage target for the backend is ≥90% (RNF09) — when adding domain logic
   (salas vazias, professor-name normalization, etc.), add the test in the same PR, not
   as follow-up debt.
 

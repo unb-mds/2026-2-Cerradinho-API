@@ -24,7 +24,7 @@ def raspar_cardapio(referencia: date | None = None) -> list[ItemCardapio]:
 
     Levanta RuntimeError se nenhum PDF for encontrado para a semana — nunca
     deve devolver silenciosamente o cardápio de uma semana antiga (risco A2
-    em docs/estudos/fonte-ru-cardapio.md).
+    em docs/fontes/ru-cardapio.md).
     """
     html = baixar_html()
     links = extrair_links_cardapio(html)
