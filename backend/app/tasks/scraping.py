@@ -4,7 +4,7 @@ from celery import shared_task
 
 from app.core.database import SessionLocal
 from app.domain.disciplinas import persistir_turmas
-from app.scrapers.disciplinas.scraper import raspar_disciplinas_varias_unidades
+from app.scrapers.disciplinas import raspar_disciplinas_varias_unidades
 
 NIVEL = "G"
 UNIDADE_FCTE = "673"
@@ -19,7 +19,7 @@ def scrape_disciplinas_task(
     unidades: list[str] | None = None,
 ) -> int:
     """Roda o scraper de Disciplinas (RF01) e persiste o resultado (RF15).
-    
+
     unidades=None varre todas as unidades listadas no formulário do SIGAA
     (é o modo usado pelo agendamento — ver celery_app.py). Devolve o total
     de turmas persistidas, pra aparecer no log de sucesso (RF16).
