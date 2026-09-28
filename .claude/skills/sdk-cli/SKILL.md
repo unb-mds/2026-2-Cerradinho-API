@@ -14,7 +14,7 @@ schema/language/package options) for the SDK's client layer, and
 
 `sdk/` is an installable Python package that lets other squads/consumers integrate with
 Cerradinho's API without hand-rolling HTTP calls (RF13, Release 2, owned by Vitor per
-`docs/REQUISITOS.md` §6–7).
+the traceability table in `docs/REQUISITOS.md` §6).
 
 ## Rules
 

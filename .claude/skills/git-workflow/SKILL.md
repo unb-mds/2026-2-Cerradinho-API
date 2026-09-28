@@ -1,6 +1,6 @@
 ---
 name: git-workflow
-description: Create a commit, branch, issue, or pull request in this repo. Use for any git/GitHub action to follow Cerradinho's branching model, commit convention, and PR/issue policy from docs/PROCESSO.md.
+description: Create a commit, branch, issue, or pull request in this repo. Use for any git/GitHub action to follow Cerradinho's branching model, commit convention, and PR/issue policy from CONTRIBUTING.md.
 ---
 
 # Git & GitHub workflow
@@ -11,10 +11,10 @@ description: Create a commit, branch, issue, or pull request in this repo. Use f
 diff analysis... auto-detects commit type and scope from actual code changes") for the
 commit step, and
 [`gentleman-programming/gentleman-skills/github-pr`](https://skills.sh/gentleman-programming/gentleman-skills/github-pr)
-for the PR step, both scoped to this repo's actual policy in `docs/PROCESSO.md`.
+for the PR step, both scoped to this repo's actual policy in `CONTRIBUTING.md`.
 
 Repo: `github.com/unb-mds/2026-2-Cerradinho-API`, monorepo with `/frontend` and `/backend`
-(`docs/PROCESSO.md` §1).
+(`CONTRIBUTING.md` §1).
 
 ## Branching
 
@@ -27,7 +27,7 @@ feature branch, unless the user says otherwise.
 Conventional Commits (`feat:`, `fix:`, `docs:`, `chore:`, `refactor:`, `test:`, `build:`,
 `ci:`, `revert:`) — auto-detect the type and scope from the actual diff being committed
 rather than defaulting to `feat`/`fix` out of habit, per the `git-commit` skill's
-approach. See `docs/padrao_commits.md` for the team's full convention. Match the
+approach. Match the
 existing commit history's style (Portuguese commit subjects, e.g. `docs: adição de
 estudo de HTML`, `fix: ajusta nome do arquivo de template da issue`). Flag breaking
 changes explicitly (`!` after the type, or a `BREAKING CHANGE:` footer) rather than
@@ -45,10 +45,10 @@ burying them in the description.
 - Use `.github/PULL_REQUEST_TEMPLATE.md`.
 - **Every PR needs a formal, recorded review** — a comment or approval on the PR itself.
   A review that happened in chat/verbally does *not* count as evidence per
-  `docs/PROCESSO.md` §2 — never treat an out-of-band "looks good" as sufficient to merge
+  `CONTRIBUTING.md` §3 — never treat an out-of-band "looks good" as sufficient to merge
   without also getting it recorded on the PR.
 - Link the PR to its issue/Story Map fields (`Journey`, `Step`) where applicable — see
-  `docs/PROCESSO.md` §4 for the Story Map field convention if creating new issues that
+  `docs/PROCESSO.md` §5 for the Story Map field convention if creating new issues that
   should appear on the board.
 
 ## AI-assisted contributions

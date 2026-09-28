@@ -1,31 +1,22 @@
-# Dailies — Projeto Cerradinho
+# Atas de reunião — Cerradinho
 
-Este arquivo será usado para registrar os progressos obtidos nas reuniões do time do projeto Cerradinho (disciplina MDS). Os progressos individuais por membro serão representados separadamente posteriormente seguindo o fluxo do projeto.
-
-**Horários das reuniões:**
-
-- **Segunda-feira:** após a aula
-- **Quinta-feira:** às 19h
-- **Reuniões emergenciais:** quando necessário, para resolver urgências e conflitos
-- **Resoluções pontuais:** também podem ocorrer por mensagem (fora das reuniões fixas)
-
----
+Registro das reuniões do time: presença, o que foi feito e o que ficou combinado. Os horários e o papel de cada reunião estão no [PROCESSO.md](../PROCESSO.md#2-sprints-e-ritos); o calendário das sprints, no [planejamento](sprint-planning.md).
 
 ## Registros
 
-### Segunda-feira, 07/09 (Sprint - planning)
+### Segunda-feira, 07/09 — Planning da Sprint 1
 
-**Presentes:** Gabriel, Daniel, Arthur, Ítalo, Vitor, João
+**Presentes:** Gabriel, Daniel, Arthur, Ítalo, Vitor, João Paulo
 
-**Progresso:** O time no geral finalizou o planejamento para seguir o que havia sido planejado conforme a sprint 1 começando a partir de hoje, além de estudos em suas futuras áreas de trabalho. Além disso foi clareado algumas regras de trabalho no git/github.
+**Progresso:** O time no geral finalizou o planejamento para seguir o que havia sido planejado conforme a sprint 1 começando a partir de hoje, além de estudos em suas futuras áreas de trabalho. Além disso, foram esclarecidas algumas regras de trabalho no Git/GitHub.
 
 **Pendências / próximos passos:** Finalizar estudos sobre ferramentas a serem utilizadas por cada membro (individual) e finalizar até a próxima segunda-feira o que estava planejado para cada membro para a sprint 1 (coletivo).
 
 ---
 
-### Quinta-Feira, 10/09 (Sprint - review)
+### Quinta-feira, 10/09 — Acompanhamento da Sprint 1
 
-**Presentes:** Gabriel, Daniel, Arthur, Vitor, João
+**Presentes:** Gabriel, Daniel, Arthur, Vitor, João Paulo
 
 **Progresso:**
 
@@ -37,7 +28,7 @@ Este arquivo será usado para registrar os progressos obtidos nas reuniões do t
 
 - **Daniel:** Realizou estudos sobre HTML e JS, além de começar os estudos no NEXT.JS, após finalização desse estudo já implementará o protótipo para as telas/endpoints do sistema.
 
-- **Jõao:** Realizou estudos sobre Pytest , Mocking, Schemathesis, Postman e API, tudo já documentado, além disso já implementou Pytest e Ruff no projeto, para finalizar sprint falta integrar um teste de segurança até segunda-feira (14/09).
+- **João Paulo:** Realizou estudos sobre Pytest , Mocking, Schemathesis, Postman e API, tudo já documentado, além disso já implementou Pytest e Ruff no projeto, para finalizar sprint falta integrar um teste de segurança até segunda-feira (14/09).
 
 - **Ítalo:** Já havia realizado e documentado estudos sobre BeautifulSoup e SQLAlchemy, falta implementação do scraper do cardápio do RU até segunda-feira (14/09) no /backend.
 
@@ -45,21 +36,21 @@ Este arquivo será usado para registrar os progressos obtidos nas reuniões do t
 
 ---
 
-### Segunda-Feira, 14/09 (Sprint - Review)
+### Segunda-feira, 14/09 — Review da Sprint 1 e planning da Sprint 2
 
-**Presentes:** Gabriel, Daniel, Arthur, Vitor, João
+**Presentes:** Gabriel, Daniel, Arthur, Vitor, João Paulo
 
 **Progresso:** A Sprint 1 do Cerradinho foi concluída com sucesso por todo o time, com cada integrante entregando exatamente o que estava planejado. No back-end, Vitor criou as Claude Skills do projeto, implementou o scraper de turmas do SIGAA via Playwright (com throttling) e o parser de disciplina/turma/professor/sala/horário/vagas, além de já adiantar da Sprint 3 a persistência que conecta esse parser aos models do banco (get-or-create e upsert sem duplicação), cobrindo tudo com 8 testes e fechando a issue #60. Gabriel estruturou a base do projeto — templates e issues de todos os requisitos, milestone e labels da sprint, o board organizado por journey/step — e entregou os models SQLAlchemy ajustados ao contrato de dados, a migration inicial via Alembic e o docker-compose do Postgres com as 7 tabelas validadas. Arthur aprofundou estudos em Redis, FastAPI/infra de jobs e rate limit com slowapi, e junto com Gabriel colocou o docker-compose com Celery e Redis rodando localmente. No front-end, Daniel estudou React, configurou o Next.js e já iniciou os protótipos de telas e endpoints. João estruturou o pipeline de CI (lint e testes automáticos a cada push) e validou a estabilidade das fontes de dados do SIGAA e do RU, fechando os dois critérios de aceitação de sua issue. Por fim, Ítalo estudou scraping de PDFs e concluiu a extração do cardápio do RU já integrada ao banco de dados do Gabriel. No geral, a sprint fechou com todas as frentes — scraping, persistência, infraestrutura, CI e frontend — avançando de forma coordenada e nos prazos previstos.
 
 - **Vitor:** criou as Claude Skills usadas pelo projeto; implementou o scraper de turmas de Disciplinas do SIGAA via Playwright com throttling (RF01) e o parser que extrai disciplina/turma/professor/sala/horário/vagas do HTML capturado, além de adiantar da Sprint 3 a camada de persistência que liga esse parser aos models de banco do Gabriel (get-or-create de Disciplina/Sala/Professor e upsert de Turma+Horário, sem duplicar turma em reagendamentos), com 8 testes cobrindo a persistência e correções de manutenção pelo caminho (imports pro ruff, bug no pytest.ini, limpeza do .gitignore), fechando o PR feature/conexao-banco-parser-disciplinas (issue #60), finalizou o que devia na semana.
 
-- **Arthur:** realizou mais três estudos sobre: cache redis, fastapi mais infra de jobs, e de rate limit slowapi. Implementou o docker-compose.yml jutamente do Gabriel, com Celery e Redis rodando localmente, finalizando o que era previsto na sua sprint 1 semanal.
+- **Arthur:** realizou mais três estudos sobre: cache redis, fastapi mais infra de jobs, e de rate limit slowapi. Implementou o docker-compose.yml junto com o Gabriel, com Celery e Redis rodando localmente, finalizando o que era previsto na sua sprint 1 semanal.
 
 - **Gabriel:** realizou os templates de issues, criou as issues para todos os requisitos e as issues semanais da sprint 1 (milestone + label), projects do github organizado (campos journey/step). Models SQLalchemy ajustados ao contrato de dados do Vitor. Migration inicial via alembic. Docker-compose.yml com postgres, sobe e aplica schema automaticamente. Testes unitários dos models validado localmente, as 7 tabelas sobem corretamente. Concluiu a sprint 1 prevista para hoje.
 
 - **Daniel:** realizou estudos de react, fez a configuração do Next.JS e já começou os protótipos de telas e endpoints do sistema, dessa maneira finalizando o que havia sido previsto para conclusão da sprint 1.
 
-- **Jõao:** Configurei o pipeline de integração contínua do projeto Cerradinho, de forma que lint e testes passassem a rodar automaticamente a cada push no repositório, reforçando a qualidade do código antes da integração nas branches principais. Além disso, validei a disponibilidade e a estabilidade das fontes de dado utilizadas pelos scrapers do sistema — SIGAA e RU —, confirmando que ambas estavam aptas a serem consumidas de forma confiável pelo restante do time. Com isso, os dois critérios de aceitação da issue foram atendidos.
+- **João Paulo:** Configurou o pipeline de integração contínua do projeto, de forma que lint e testes passassem a rodar automaticamente a cada push no repositório, reforçando a qualidade do código antes da integração nas branches principais. Além disso, validou a disponibilidade e a estabilidade das fontes de dado utilizadas pelos scrapers do sistema — SIGAA e RU —, confirmando que ambas estavam aptas a serem consumidas de forma confiável pelo restante do time. Com isso, os dois critérios de aceitação da issue foram atendidos.
 
 - **Ítalo:** Realizou estudos sobre scraping em cima de documentos PDF, e concluiu o scraping do cardápio do RU integrando com o banco de dados do Gabriel conforme era previsto para sua sprint 1 que finaliza na reunião de hoje.
 
@@ -67,18 +58,18 @@ Este arquivo será usado para registrar os progressos obtidos nas reuniões do t
 
 ---
 
-### Quinta-Feira, 17/09 
-**Presentes:** Nínguem
+### Quinta-feira, 17/09 — Acompanhamento da Sprint 2 (não realizada)
+**Presentes:** ninguém
 
 **Progresso:** Não conseguimos realizar reunião nesse dia pela demanda dos membros nas suas tarefas universitárias mas o desenvolvimento continua sendo organizado por mensagens e no individual.
 
 ---
 
-### Quinta-Feira, 10/09 (Sprint - Planning)
+### Segunda-feira, 21/09 — Review da Sprint 2 e planning da Sprint 3
 
-**Presentes:** Gabriel, Daniel, Arthur, Vitor, João
+**Presentes:** Gabriel, Daniel, Arthur, Vitor, João Paulo
 
-**Progresso:**  
+**Planejado para a Sprint 3:**
 
 - **Vitor**: vai estabilizar o scraper de Disciplinas, resolvendo os bugs identificados.
 
@@ -92,6 +83,6 @@ Este arquivo será usado para registrar os progressos obtidos nas reuniões do t
 
 - **Ítalo**: vai estabilizar o scraper de RU, resolvendo os bugs identificados.
 
-**Pendências / próximos passos:** A Sprint 2 foi concluída conforme planejado. O scraper de Disciplinas passou a gravar os dados no banco de forma estável, já com a associação entre Disciplina, Professor e Sala funcionando corretamente. Em paralelo, o scraper de RU foi agendado no Celery e o histórico de cardápio começou a ser acumulado. Arthur configurou o agendamento automático dos dois scrapers, com logs de execução, enquanto Gabriel entregou os endpoints REST sob /v1/ para os dois domínios, já com documentação OpenAPI gerada automaticamente. Do lado do frontend, Daniel conectou as telas à API real, e João Paulo implementou os testes de contrato nos endpoints publicados, com o CI já rodando essas validações. Com isso, a equipe encerra a sprint com a base de dados e a API funcionando de ponta a ponta, pronta para os ajustes finos da Sprint 3.
+**Review da Sprint 2:** A Sprint 2 foi concluída conforme planejado. O scraper de Disciplinas passou a gravar os dados no banco de forma estável, já com a associação entre Disciplina, Professor e Sala funcionando corretamente. Em paralelo, o scraper de RU foi agendado no Celery e o histórico de cardápio começou a ser acumulado. Arthur configurou o agendamento automático dos dois scrapers, com logs de execução, enquanto Gabriel entregou os endpoints REST sob /v1/ para os dois domínios, já com documentação OpenAPI gerada automaticamente. Do lado do frontend, Daniel conectou as telas à API real, e João Paulo implementou os testes de contrato nos endpoints publicados, com o CI já rodando essas validações. Com isso, a equipe encerra a sprint com a base de dados e a API funcionando de ponta a ponta, pronta para os ajustes finos da Sprint 3.
 
 ---

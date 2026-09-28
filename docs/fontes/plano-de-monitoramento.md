@@ -1,6 +1,6 @@
 # Plano de monitoramento das fontes de dado
 
-> Deriva do [`relatorio-risco-fontes.md`](relatorio-risco-fontes.md).
+> Deriva do [`relatorio-de-risco.md`](relatorio-de-risco.md).
 > Atende RNF03 (observabilidade) e apoia RNF05 (resiliência).
 > Responsável: João Paulo (QA/Integração).
 
