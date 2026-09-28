@@ -12,7 +12,7 @@ Sprints de 1 semana. As tarefas de cada sprint ficam na milestone correspondente
 | 1 | 07/09 a 13/09 | R1 | Primeiros scrapers, schema, compose, CI |
 | 2 | 14/09 a 20/09 | R1 | Persistência, agendamento, API `/v1`, telas com dado real |
 | 3 | 21/09 a 27/09 | R1 | Estabilização e fechamento da R1 |
-| 4 | 28/09 a 04/10 | R2 | Pendências da R1 e release note |
+| 4 | 28/09 a 04/10 | R2 | Pendências da R1 |
 | 5 | 05/10 a 11/10 | R2 | Eventos, salas vazias, desenho do cache, deploy de teste |
 | 6 | 12/10 a 18/10 | R2 | Editais, agenda do professor, cache, versão candidata |
 | 7 | 19/10 a 25/10 | R2 | Rate limit, observabilidade, telas das features derivadas |
@@ -76,10 +76,9 @@ A R1 terminou na Sprint 3 com itens em aberto, que abrem a R2.
 | Arthur | Tornar o log de execução consultável (RF16) |
 | Vitor | Tratar professores e salas duplicados nas respostas da API |
 | Daniel | Ajustes finais de UX com o dado do cardápio |
-| Gabriel | Publicar a release note da R1 (#106) |
 | João Paulo | Checklist do board contra a entrega e fechamento das issues da R1 (#128) |
 
-**Marco:** release note da R1 publicada.
+**Marco:** pendências da R1 resolvidas.
 
 ### Sprints 5 a 12
 

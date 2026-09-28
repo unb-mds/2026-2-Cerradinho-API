@@ -6,7 +6,7 @@ Como o time se organiza: papéis, ritos do Scrum, critérios de pronto e registr
 
 | Pessoa | Papel | Área | Tecnologias |
 |---|---|---|---|
-| Gabriel | Product Owner | Banco, Docker, deploy, release notes; prioriza o backlog e define critérios de aceitação | PostgreSQL, SQLAlchemy, Alembic, Docker, Railway |
+| Gabriel | Product Owner | Banco, Docker e deploy; prioriza o backlog e define critérios de aceitação | PostgreSQL, SQLAlchemy, Alembic, Docker, Railway |
 | Vitor | Scrum Master | Scraping de Disciplinas/Professores/Salas e endpoints; facilita os ritos e o board | Playwright, FastAPI, SQLAlchemy |
 | Ítalo | Desenvolvedor | Scraping de RU, Eventos e Editais e endpoints | BeautifulSoup, pdfplumber, FastAPI |
 | Daniel | Desenvolvedor | Frontend e portal do desenvolvedor | Next.js, Axios, Swagger UI |
@@ -54,7 +54,6 @@ Uma tarefa de código está pronta quando:
 ## 6. Releases
 
 - **Release 1:** Sprints 0 a 3. **Release 2:** Sprints 4 a 12, com entrega em 25/11.
-- Cada release fechada tem uma release note publicada na aba Releases do GitHub, descrevendo o que foi entregue.
 - A Release 2 precisa estar implantada e acessível publicamente (RNF06).
 
 ## 7. Protótipos
