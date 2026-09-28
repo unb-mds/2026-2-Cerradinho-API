@@ -8,29 +8,35 @@ camada de domínio (app/domain/), não deste contrato — evita duplicar essa
 lógica entre o scraper e os endpoints, como o ARQUITETURA.md pede.
 """
 
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 
 class Professor(BaseModel):
-    nome: str
+    nome: str = Field(description="Nome do docente como aparece no SIGAA.", examples=["Ana Souza"])
 
 
 class Sala(BaseModel):
-    descricao: str  # ex: "FCTE - I9/I10" (parsing em prédio/sala: ver app/domain/)
+    # parsing em prédio/sala: ver app/domain/
+    descricao: str = Field(
+        description='Sala como o SIGAA publica, no formato "PRÉDIO - SALA". Vazio quando a turma não tem sala.',
+        examples=["FCTE - I9/I10"],
+    )
 
 
 class Horario(BaseModel):
-    codigo: str  # ex: "6T2345"
-    descricao: str  # ex: "Sexta-feira 14:00 às 17:50"
+    codigo: str = Field(description="Código de horário do SIGAA: dia, turno e aulas.", examples=["6T2345"])
+    descricao: str = Field(description="Horário por extenso.", examples=["Sexta-feira 14:00 às 17:50"])
 
 
 class Turma(BaseModel):
-    disciplina_codigo: str
-    disciplina_nome: str
-    numero: str
-    ano_periodo: str
-    professores: list[Professor]
-    horarios: list[Horario]
-    sala: Sala
-    vagas_ofertadas: int
-    vagas_ocupadas: int
+    disciplina_codigo: str = Field(description="Código da disciplina.", examples=["FGA0242"])
+    disciplina_nome: str = Field(
+        description="Nome da disciplina.", examples=["Métodos de Desenvolvimento de Software"]
+    )
+    numero: str = Field(description="Número da turma dentro da disciplina.", examples=["01"])
+    ano_periodo: str = Field(description="Ano e período letivo.", examples=["2026.2"])
+    professores: list[Professor] = Field(description="Docentes da turma.")
+    horarios: list[Horario] = Field(description="Horários de aula da turma.")
+    sala: Sala = Field(description="Sala onde a turma tem aula.")
+    vagas_ofertadas: int = Field(description="Total de vagas da turma.", examples=[40])
+    vagas_ocupadas: int = Field(description="Vagas já preenchidas.", examples=[38])
