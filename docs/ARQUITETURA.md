@@ -90,7 +90,7 @@ sequenceDiagram
 ## Estrutura de pastas (monorepo)
 
 ```
-G3-2026-2/
+2026-2-Cerradinho-API/
 ├── backend/
 │   ├── app/
 │   │   ├── scrapers/        # um módulo por domínio

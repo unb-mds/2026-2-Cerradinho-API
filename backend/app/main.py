@@ -15,7 +15,7 @@ as respostas não dependem de a fonte estar no ar na hora da requisição.
 Todas as rotas ficam sob `/v1/`. Mudanças incompatíveis no formato das respostas vão
 para uma nova versão, sem quebrar quem já usa esta.
 
-Código e documentação: https://github.com/unb-mds/G3-2026-2
+Código e documentação: https://github.com/unb-mds/2026-2-Cerradinho-API
 """
 
 TAGS = [

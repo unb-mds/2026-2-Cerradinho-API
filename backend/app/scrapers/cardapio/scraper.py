@@ -16,7 +16,7 @@ import requests
 logger = logging.getLogger(__name__)
 
 URL_CARDAPIO = "https://ru.unb.br/cardapio-refeitorio/"
-HEADERS = {"User-Agent": "CerradinhoBot/1.0 (+https://github.com/unb-mds/G3-2026-2)"}
+HEADERS = {"User-Agent": "CerradinhoBot/1.0 (+https://github.com/unb-mds/2026-2-Cerradinho-API)"}
 TENTATIVAS_DOWNLOAD = 3
 ESPERA_ENTRE_TENTATIVAS = 2  # segundos; dobra a cada nova tentativa
 

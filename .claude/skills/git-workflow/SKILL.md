@@ -13,7 +13,7 @@ commit step, and
 [`gentleman-programming/gentleman-skills/github-pr`](https://skills.sh/gentleman-programming/gentleman-skills/github-pr)
 for the PR step, both scoped to this repo's actual policy in `docs/PROCESSO.md`.
 
-Repo: `github.com/unb-mds/G3-2026-2`, monorepo with `/frontend` and `/backend`
+Repo: `github.com/unb-mds/2026-2-Cerradinho-API`, monorepo with `/frontend` and `/backend`
 (`docs/PROCESSO.md` §1).
 
 ## Branching

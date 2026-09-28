@@ -4,7 +4,7 @@ Como o time trabalha: fluxo de Git, padrões de qualidade e governança do repos
 
 ## 1. Repositório e fluxo de Git
 
-Repositório: [github.com/unb-mds/G3-2026-2](https://github.com/unb-mds/G3-2026-2)
+Repositório: [github.com/unb-mds/2026-2-Cerradinho-API](https://github.com/unb-mds/2026-2-Cerradinho-API)
 
 - Monorepo — um único repositório com pastas `/frontend` e `/backend`
 - Branches: `main` (estável) → `dev` (integração) → `feature/nome-da-tarefa`
