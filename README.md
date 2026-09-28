@@ -64,7 +64,7 @@ docs/       documentação do projeto
 | [Uso de IA](AI-USAGE.md) | Registro de uso de IA no projeto |
 | [Índice completo](docs/README.md) | Todos os documentos, incluindo fontes de dado e estudos |
 
-Quadro do time no Figma: [CERRADINHO](https://www.figma.com/board/5rJtm9JjYyqqEBMOvzG3Z0/CERRADINHO?node-id=0-1&p=f&t=OicOccXWe0GMmKtB-0).
+Quadro do time no Figma: [CERRADINHO](https://www.figma.com/board/Xn4RLNLqWrNfUc7Zqxmmyq/Cerradinho---Story-Map?node-id=0-1&t=PSvWZ4M5sZV4Ru8U-1).
 
 ## Time
 
