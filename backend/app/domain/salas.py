@@ -7,9 +7,9 @@ Não existe fonte própria de salas: a tabela é preenchida por
 from sqlalchemy.orm import Session
 
 from app.models import Sala
-from app.schemas.api.sala import Sala as SalaResposta
+from app.schemas.api.sala import Espaco
 
 
-def listar_salas(session: Session) -> list[SalaResposta]:
+def listar_salas(session: Session) -> list[Espaco]:
     salas = session.query(Sala).order_by(Sala.predio, Sala.nome).all()
-    return [SalaResposta(id=sala.id, nome=sala.nome, predio=sala.predio) for sala in salas]
+    return [Espaco(id=sala.id, nome=sala.nome, predio=sala.predio) for sala in salas]
