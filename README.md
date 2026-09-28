@@ -9,19 +9,6 @@ Projeto da disciplina de Métodos de Desenvolvimento de Software (MDS), UnB FCTE
 - **Estudantes**, que consultam turmas, salas e cardápio pelo site, sem abrir o SIGAA e o site do RU.
 - **Devs de outras squads**, que usam os dados nos próprios projetos pela API, sem refazer scraping.
 
-## O que já funciona
-
-| Domínio | Rota | Fonte | Atualização |
-|---|---|---|---|
-| Disciplinas e turmas | `GET /v1/disciplinas` | SIGAA público | Semanal |
-| Professores | `GET /v1/professores` | Derivado das turmas | Semanal |
-| Salas e prédios | `GET /v1/salas` | Derivado das turmas | Semanal |
-| Cardápio do RU | `GET /v1/cardapio/semana` | PDF semanal do RU | Diária |
-
-A documentação interativa da API fica em `http://localhost:8000/docs` com o projeto rodando. O frontend tem uma tela para cada domínio.
-
-Na Release 2 entram eventos, editais, salas vazias, agenda do professor, cache, rate limit, SDK/CLI em Python, portal do desenvolvedor e a API em produção. O plano está no [planejamento de sprints](docs/scrum/sprint-planning.md).
-
 ## Stack
 
 | Parte | Tecnologias |
