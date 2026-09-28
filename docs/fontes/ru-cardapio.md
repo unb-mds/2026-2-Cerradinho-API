@@ -1,7 +1,7 @@
 # Ficha da fonte: RU — cardápio semanal
 
 > Ficha técnica de fonte de dado. Contexto e matriz de risco em
-> [`relatorio-risco-fontes.md`](relatorio-risco-fontes.md).
+> [`relatorio-de-risco.md`](relatorio-de-risco.md).
 > Verificada em 13/09/2026.
 
 ## 1. Identificação

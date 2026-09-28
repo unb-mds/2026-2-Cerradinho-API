@@ -1,8 +1,8 @@
 # Relatório de risco das fontes de dado
 
 > Entrega da Sprint 1 (issue #65, segundo critério de aceitação). Responsável: João Paulo (QA/Integração).
-> Fichas detalhadas por fonte: [`fonte-sigaa-disciplinas.md`](fonte-sigaa-disciplinas.md) e [`fonte-ru-cardapio.md`](fonte-ru-cardapio.md).
-> Plano de monitoramento: [`plano-monitoramento-fontes.md`](plano-monitoramento-fontes.md).
+> Fichas detalhadas por fonte: [`sigaa-disciplinas.md`](sigaa-disciplinas.md) e [`ru-cardapio.md`](ru-cardapio.md).
+> Plano de monitoramento: [`plano-de-monitoramento.md`](plano-de-monitoramento.md).
 
 ---
 
@@ -173,7 +173,7 @@ retornou 200.
 Itens levantados mas não concluídos nesta sprint:
 
 - [ ] Medir latência e variabilidade de resposta das duas fontes ao longo de uma
-      semana (ver `plano-monitoramento-fontes.md`, seção de coleta manual)
+      semana (ver `plano-de-monitoramento.md`, seção de coleta manual)
 - [ ] Verificar `robots.txt` de `ru.unb.br` e `sigaa.unb.br`
 - [ ] Confirmar se `sig.unb.br` e `sigaa.unb.br` são instâncias distintas
 - [ ] Verificar se o padrão de nome dos PDFs do RU é estável o bastante para

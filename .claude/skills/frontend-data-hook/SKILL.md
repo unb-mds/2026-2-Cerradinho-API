@@ -15,7 +15,7 @@ until then, hooks can wrap plain `fetch`/`axios` as long as the isolation rule b
 holds.
 
 The Next.js frontend consumes the `/v1/` API for query screens and the developer portal
-(Daniel's area, `docs/REQUISITOS.md` §6). Structure per `docs/ARQUITETURA.md`:
+(Daniel's area, `docs/PROCESSO.md` §1). Structure per `docs/ARQUITETURA.md`:
 
 ```
 frontend/
@@ -32,7 +32,7 @@ frontend/
   rule in "Separação de responsabilidades" in `docs/ARQUITETURA.md`.
 - Name hooks after the domain/query they perform (`useSalasVazias`, not
   `useApi`/`useFetch` as a generic catch-all) — same "Nomenclatura" rule as the backend.
-- **Prototype before implementing a new screen.** Per `docs/PROCESSO.md` §5, low/high-fi
+- **Prototype before implementing a new screen.** Per `docs/PROCESSO.md` §7, low/high-fi
   mockups must be produced and reviewed with the team *before* the frontend builds a new
   screen, not after. If no prototype/link exists for the screen you're about to build,
   flag it rather than building ahead of the review.

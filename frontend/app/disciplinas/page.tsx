@@ -74,7 +74,7 @@ export default function DisciplinasPage() {
               {filtradas.length === 0 ? (
                 <tr>
                   <td colSpan={8} className="px-6 py-12 text-center text-sm text-muted">
-                    Nenhuma disciplina encontrada.
+                    {loading || error ? "" : "Nenhuma disciplina encontrada."}
                   </td>
                 </tr>
               ) : (

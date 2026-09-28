@@ -2,7 +2,7 @@
 listagem e download do PDF selecionado por parser.py.
 
 A URL certa é `cardapio-refeitorio`, não `cardapio/` (ver risco A2 em
-docs/estudos/fonte-ru-cardapio.md): essa segunda página existe, responde
+docs/fontes/ru-cardapio.md): essa segunda página existe, responde
 200 e tem HTML válido, mas ficou congelada numa semana antiga depois que o
 RU migrou a publicação para a página agregadora — nenhum monitor de
 disponibilidade detectaria essa falha.
@@ -16,7 +16,7 @@ import requests
 logger = logging.getLogger(__name__)
 
 URL_CARDAPIO = "https://ru.unb.br/cardapio-refeitorio/"
-HEADERS = {"User-Agent": "CerradinhoBot/1.0 (+https://github.com/unb-mds/G3-2026-2)"}
+HEADERS = {"User-Agent": "CerradinhoBot/1.0 (+https://github.com/unb-mds/2026-2-Cerradinho-API)"}
 TENTATIVAS_DOWNLOAD = 3
 ESPERA_ENTRE_TENTATIVAS = 2  # segundos; dobra a cada nova tentativa
 

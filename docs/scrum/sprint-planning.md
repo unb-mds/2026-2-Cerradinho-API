@@ -1,240 +1,112 @@
-# Sprint Planning — Cerradinho (API Aberta da UnB)
-**Disciplina:** MDS — UnB FCTE
-**Scrum Master:** Vitor | **Product Owner:** Gabriel
+# Planejamento de sprints — Cerradinho
 
----
+Calendário e entregas de cada sprint. Papéis, ritos e Definition of Done estão no [PROCESSO.md](../PROCESSO.md); o registro das reuniões, nas [atas](atas.md).
 
-## 1. Premissas do planejamento
+Sprints de 1 semana. As tarefas de cada sprint ficam na milestone correspondente no GitHub.
 
-- Cadência de sprint: **1 semana**.
-- Cerimônias fixas do time: **segunda-feira** (após a aula) e **quinta-feira, 19h**, além de reuniões emergenciais e resoluções pontuais por mensagem quando necessário.
-  - Toda **segunda-feira**: Daily de alinhamento. No início de cada sprint, também serve de **Sprint Planning** do ciclo; no fim de cada sprint, também serve de **Sprint Review** (demo rápida do incremento) + **Retrospectiva** curta.
-  - Toda **quinta-feira (19h)**: Daily técnica — bloqueios e dependências entre backend, infra, banco e QA.
-- Release 1 = **Sprints 1 a 6** (6 semanas). Release 2 = **Sprints 7 a 12** (6 semanas). Total: 12 semanas.
-- Definition of Done (DoD) do time, válida para toda tarefa de código:
-  1. Código revisado (PR aprovado por pelo menos 1 outro membro)
-  2. Testes unitários (e de integração quando aplicável) passando
-  3. Lint sem erros (CI verde)
-  4. Documentação/OpenAPI atualizada quando a tarefa expõe/altera endpoint
-  5. Sem lógica de negócio duplicada entre scraper/router (ver `ARQUITETURA.md`)
+## Calendário
 
----
+| Sprint | Período | Release | Foco |
+|---|---|---|---|
+| 0 | até 06/09 | R1 | Documentação base e estudos |
+| 1 | 07/09 a 13/09 | R1 | Primeiros scrapers, schema, compose, CI |
+| 2 | 14/09 a 20/09 | R1 | Persistência, agendamento, API `/v1`, telas com dado real |
+| 3 | 21/09 a 27/09 | R1 | Estabilização e fechamento da R1 |
+| 4 | 28/09 a 04/10 | R2 | Pendências da R1 e release note |
+| 5 | 05/10 a 11/10 | R2 | Eventos, salas vazias, desenho do cache, deploy de teste |
+| 6 | 12/10 a 18/10 | R2 | Editais, agenda do professor, cache, versão candidata |
+| 7 | 19/10 a 25/10 | R2 | Rate limit, observabilidade, telas das features derivadas |
+| 8 | 26/10 a 01/11 | R2 | SDK, CLI, portal do desenvolvedor, deploy definitivo |
+| 9 | 02/11 a 08/11 | R2 | SDK, CLI e portal fechados; qualidade de testes |
+| 10 | 09/11 a 15/11 | R2 | Revisão final |
+| 11 | 16/11 a 22/11 | R2 | Correções finais e release note da R2 |
+| 12 | 23/11 a 25/11 | R2 | Entrega da R2 (25/11) |
 
-## 2. Visão macro: Release 1 x Release 2
+## Release 1 — Sprints 0 a 3
 
-| | Release 1 (Sprints 1-6) | Release 2 (Sprints 7-12) |
+**Objetivo:** dois domínios de dados com scraping agendado e OpenAPI documentada.
+
+### Sprint 0 — Base do projeto
+- Documentação inicial: requisitos, arquitetura, processo e templates de issue e PR (Gabriel).
+- Estudos de Git/GitHub, web scraping, HTML e Postman (Vitor, Daniel, João Paulo).
+
+### Sprint 1 — Primeiros scrapers e infraestrutura
+| Pessoa | Entrega | Issue |
 |---|---|---|
-| **Escopo de dados** | Disciplinas + RU (2 domínios) | + Professores, Salas, Eventos, Editais (5 domínios completos) |
-| **Infra** | Celery+Redis, scheduling, logs (RF15-16), Docker Compose, CI (RNF08) | Cache (RNF02), Rate limit (RNF01), deploy produção (RNF06) |
-| **API** | `/v1/`, OpenAPI automática (RF11-12) | Portal do dev (RF14), SDK Python + CLI (RF13) |
-| **Features derivadas** | — | Salas vazias (RF17), Agenda do professor (RF18), Cardápio semanal (RF19) |
-| **Qualidade** | CI configurado, 1ºs testes de contrato | Contrato completo (RNF04), observabilidade (RNF03), cobertura 90% (RNF09) |
-| **Entrega** | Release note R1 | Release note R2, checklist board vs. entrega |
+| Vitor | Scraper de turmas do SIGAA com Playwright, com dado real | #60 |
+| Ítalo | Scraper do cardápio do RU | #61 |
+| Daniel | Setup do Next.js e protótipo das telas de consulta | #62 |
+| Arthur | `docker-compose.yml` com Celery e Redis | #63 |
+| Gabriel | Schema inicial em SQLAlchemy, migration e Postgres no compose | #64 |
+| João Paulo | Pipeline de CI e validação das fontes; relatório de risco | #65, #84, #87 |
 
----
+Estudos: BeautifulSoup e SQLAlchemy (Ítalo), FastAPI e Playwright (Vitor), Pytest e mocking (João Paulo).
 
-## 3. RELEASE 1 (Sprints 1–6)
-
-### Sprint 1 — Investigação e estrutura base
-
-**Objetivo:** repositório e ambiente organizados, fontes de dado mapeadas, primeiro rascunho de schema.
-
-| Pessoa | Tarefas |
-|---|---|
-| **Vitor** | Investigar estrutura do SIGAA público (`sigaa.unb.br/sigaa/public/turmas`) — mapear ViewState/postback do JSF; rascunho do contrato de dados de Disciplina/Professor/Sala |
-| **Ítalo** | Investigar `ru.unb.br/cardapio` (estrutura HTML, frequência de atualização) |
-| **Daniel** | Setup do projeto Next.js (estrutura de pastas, roteamento, Axios configurado) |
-| **Arthur** | Setup Celery + Redis localmente via docker; validar comunicação básica entre eles |
-| **Gabriel** | Diagrama ER inicial (Disciplina, Professor, Sala, Cardápio); `docker-compose.yml` inicial (Postgres); estrutura do monorepo conforme `ARQUITETURA.md` |
-| **João Paulo** | Levantamento de risco das fontes (mudanças possíveis, rate limit, robots.txt); esqueleto do pipeline de CI (lint + testes) no repositório |
-
-**Dependência-chave:** Gabriel entrega a estrutura do monorepo cedo para os demais já codarem no padrão certo.
-
----
-
-### Sprint 2 — Provas de conceito
-
-**Objetivo:** primeira prova de que dá pra extrair dado real de cada fonte, ambiente de infra rodando.
-
-| Pessoa | Tarefas |
-|---|---|
-| **Vitor** | PoC de scraping com Playwright para 1 unidade do SIGAA (navegação + extração básica) |
-| **Ítalo** | PoC de scraping com BeautifulSoup para 1 dia de cardápio do RU |
-| **Daniel** | Wireframes/protótipos das telas de consulta, revisados com o time antes de implementar |
-| **Arthur** | PoC de uma task Celery agendada simples (sem lógica de scraping real ainda) |
-| **Gabriel** | Revisar schema inicial com Vitor e Ítalo à luz do que as PoCs encontraram |
-| **João Paulo** | CI rodando de fato (lint + testes) a cada push; relatório de risco atualizado com achados das PoCs |
-
----
-
-### Sprint 3 — Scraper de Disciplinas e de RU (dado real)
-
-**Objetivo:** scraping real dos dois primeiros domínios, gravando no banco.
-
-| Pessoa | Tarefas |
-|---|---|
-| **Vitor** | Scraper de Disciplinas com Playwright para todas as unidades (RF01), com throttling; persistência via SQLAlchemy |
-| **Ítalo** | Scraper de Cardápio do RU completo (RF06); persistência via SQLAlchemy |
-| **Daniel** | Isolar chamadas de API em hooks/serviços (`services/`), preparando consumo real |
-| **Arthur** | Estrutura de log de execução (sucesso/falha) — base do RF16 |
-| **Gabriel** | Migrations com Alembic para as tabelas de Disciplina/Professor/Sala/Cardápio |
-| **João Paulo** | Primeiros testes de contrato (schemathesis) sobre o schema Pydantic dos dois domínios |
-
-**Dependência-chave:** Vitor e Ítalo dependem do schema/migrations do Gabriel.
-
----
-
-### Sprint 4 — Associações e agendamento
-
-**Objetivo:** dados relacionados corretamente, scraping passa a rodar agendado (não manual).
-
-| Pessoa | Tarefas |
-|---|---|
-| **Vitor** | Associar disciplina a professor (RF02) e a sala/prédio (RF03), extraídos no mesmo scraper |
-| **Ítalo** | Modelagem e gravação de histórico de cardápio (RF07) |
-| **Daniel** | Primeira tela de consulta (lista de disciplinas) consumindo endpoint local |
-| **Arthur** | Task Celery real disparando o scraper de Disciplinas e o de RU em agendamento configurável (RF15) |
-| **Gabriel** | Ajustes de schema conforme dado real capturado pelos scrapers |
-| **João Paulo** | Expandir testes de contrato; validar que o agendamento do Arthur não quebra o schema esperado |
-
----
-
-### Sprint 5 — API pública dos dois domínios
-
-**Objetivo:** endpoints REST sob `/v1/` documentados via OpenAPI.
-
-| Pessoa | Tarefas |
-|---|---|
-| **Vitor** | Endpoints REST de Disciplinas/Professores/Salas sob `/v1/` |
-| **Ítalo** | Endpoint de Cardápio (`/v1/cardapio`) |
-| **Daniel** | Telas de consulta consumindo os endpoints reais (Disciplinas + Cardápio) |
-| **Arthur** | Log de sucesso/falha completo e consultável (RF16) |
-| **Gabriel** | Garantir que todas as rotas nascem sob `/v1/` (RF12); habilitar geração automática de OpenAPI/Swagger (RF11) |
-| **João Paulo** | Testes de contrato cobrindo os novos endpoints; checar viabilidade de observabilidade básica (UptimeRobot) |
-
----
-
-### Sprint 6 — Fechamento da Release 1
-
-**Objetivo:** consolidar, testar e publicar a primeira entrega.
-
-| Pessoa | Tarefas |
-|---|---|
-| **Vitor** | Ajustes finos de associação Disciplina↔Professor↔Sala; revisão de código dos endpoints |
-| **Ítalo** | Revisão final do domínio de Cardápio (RF06-07) |
-| **Daniel** | Ajustes de UX pós-feedback do time nas telas de consulta |
-| **Arthur** | Garantir que agendamento e logs rodam de forma estável (sem falhas silenciosas) |
-| **Gabriel** | Escrever e publicar a **release note da R1** |
-| **João Paulo** | Checklist de saída da R1; testes de contrato consolidados; observabilidade básica ligada |
-
-**Marco:** ✅ Release 1 entregue — 2 domínios (Disciplinas, RU) com scraping agendado e OpenAPI documentada.
-
----
-
-## 4. RELEASE 2 (Sprints 7–12)
-
-### Sprint 7 — Início dos domínios restantes
-
-**Objetivo:** começar Eventos/Editais e refinar Professores/Salas; planejar features derivadas.
-
-| Pessoa | Tarefas |
-|---|---|
-| **Vitor** | Refino de RF04 (cadastro robusto de docentes) e RF05 (localização/identificação completa de salas/prédios) |
-| **Ítalo** | Scraper de Eventos institucionais (RF08) |
-| **Daniel** | Wireframe do portal do desenvolvedor (RF14) |
-| **Arthur** | Design da camada de cache Redis (RNF02) — quais endpoints cachear e por quanto tempo |
-| **Gabriel** | Preparar variáveis e secrets do ambiente de produção (Railway) |
-| **João Paulo** | Expandir testes de contrato para os domínios que estão entrando; medir cobertura atual do backend |
-
----
-
-### Sprint 8 — Editais e primeira feature derivada
-
-**Objetivo:** scraper de Editais no ar; iniciar lógica de salas vazias e cache real.
-
-| Pessoa | Tarefas |
-|---|---|
-| **Vitor** | Iniciar lógica de RF17 (salas vazias) na camada de domínio/serviço |
-| **Ítalo** | Scraper de Editais (RF09) |
-| **Daniel** | Integrar Swagger UI ao início do portal do desenvolvedor |
-| **Arthur** | Implementação real do cache Redis (RNF02) para os endpoints mais consultados |
-| **Gabriel** | Validar ambiente de produção com deploy de teste |
-| **João Paulo** | Testes de contrato dos novos domínios (Eventos/Editais) |
-
----
-
-### Sprint 9 — Features derivadas e início de SDK/CLI
-
-**Objetivo:** salas vazias e agenda do professor prontos; SDK e CLI iniciados.
-
-| Pessoa | Tarefas |
-|---|---|
-| **Vitor** | Finalizar RF17 (`GET /v1/salas/vazias`); finalizar RF18 (`GET /v1/professores/{nome}/agenda`) |
-| **Ítalo** | Iniciar RF19 (`GET /v1/cardapio/semana`) |
-| **Daniel** | Telas para as primeiras features derivadas (salas vazias, agenda do professor) |
-| **Arthur** | Iniciar rate limit com slowapi (RNF01) |
-| **Gabriel** | Deploy de uma versão candidata em produção |
-| **João Paulo** | Observabilidade (RNF03) — configurar UptimeRobot em produção |
-
----
-
-### Sprint 10 — SDK, CLI e cardápio semanal
-
-**Objetivo:** RF19 pronto; SDK e CLI em estado utilizável; rate limit e cache finalizados.
-
-| Pessoa | Tarefas |
-|---|---|
-| **Vitor** | Iniciar SDK Python (RF13) cobrindo Disciplinas/Professores/Salas |
-| **Ítalo** | Finalizar RF19 (cardápio semanal); iniciar CLI (RF13, via Typer) |
-| **Daniel** | Telas para cardápio semanal; continuar portal do desenvolvedor |
-| **Arthur** | Finalizar rate limit (RNF01) e cache (RNF02) para os domínios completos |
-| **Gabriel** | Ajustar variáveis de ambiente de produção conforme testes do Arthur/Gabriel |
-| **João Paulo** | Cobertura de testes avançando em direção aos 90% (RNF09) |
-
-**Dependência-chave:** rate limit/cache do Arthur não deve quebrar os testes de contrato do João Paulo — alinhar antes de mergear.
-
----
-
-### Sprint 11 — Consolidação de SDK/CLI e portal do dev
-
-**Objetivo:** SDK e CLI quase prontos, portal do desenvolvedor completo, testes sob carga.
-
-| Pessoa | Tarefas |
-|---|---|
-| **Vitor** | Fechar e documentar o SDK Python (RF13) |
-| **Ítalo** | Fechar a CLI (RF13) |
-| **Daniel** | Finalizar o portal do desenvolvedor (RF14) |
-| **Arthur** | Validação de rate limit e cache sob carga (teste simples de stress) |
-| **Gabriel** | Ajustes finais antes do deploy definitivo |
-| **João Paulo** | Testes de contrato quase completos (RNF04); cobertura próxima de 90% |
-
----
-
-### Sprint 12 — Fechamento da Release 2
-
-**Objetivo:** tudo em produção, documentação e qualidade fechadas.
-
-| Pessoa | Tarefas |
-|---|---|
-| **Vitor** | Revisão final de RF01-05, RF17, RF18 |
-| **Ítalo** | Revisão final de RF06-09, RF19 |
-| **Daniel** | Polimento visual final das telas e do portal do desenvolvedor |
-| **Arthur** | Confirmar estabilidade de cache e rate limit em produção |
-| **Gabriel** | Deploy final em produção (RNF06); escrever e publicar a **release note da R2** |
-| **João Paulo** | Testes de contrato completos (RNF04); confirmar cobertura mínima de 90% (RNF09); checklist final board vs. entrega |
-
-**Marco:** ✅ Release 2 entregue — 5 domínios completos, features derivadas, versionamento, cache, rate limit, SDK/CLI, portal do desenvolvedor, produção estável.
-
----
-
-## 5. Riscos a monitorar sprint a sprint
-
-| Risco | Sprints mais críticos | Mitigação |
+### Sprint 2 — Dado de ponta a ponta
+| Pessoa | Entrega | Issue |
 |---|---|---|
-| SIGAA em JSF (ViewState/postback) pode mudar sem aviso | Sprints 1-3 | PoC cedo (Sprint 2) antes de comprometer prazo; scraper deve falhar de forma graciosa (RNF05) |
-| Ausência de fonte própria para Salas | Sprint 3-4 | Já mitigado por design: dado derivado do scraper de Disciplinas |
-| Acúmulo de dívida técnica em cobertura de teste | Sprints 7-12 | João Paulo mede cobertura desde o Sprint 7, não só no fechamento |
-| Cache/rate limit introduzindo regressão na API | Sprints 8-10 | Rodar suíte de contrato do João Paulo antes de mergear mudanças do Arthur |
+| Vitor | Persistência das turmas com associação a professor e sala | #97 |
+| Ítalo | Scraper do RU agendado, com histórico acumulando | #98 (passou para a Sprint 4) |
+| Daniel | Telas de consulta conectadas à API | #99 |
+| Arthur | Agendamento automático com log de execução | #95 |
+| Gabriel | Endpoints `/v1/disciplinas` e `/v1/cardapio/semana` com OpenAPI | #100 |
+| João Paulo | Testes de contrato com schemathesis no CI; SAST com bandit | #101, #111, #113, #115 |
 
----
+### Sprint 3 — Estabilização
+| Pessoa | Entrega | Issue |
+|---|---|---|
+| Vitor | Estabilização do scraper de disciplinas (horário, vagas em branco, task) | #102 |
+| Ítalo | Estabilização do scraper do RU | #103 (passou para a Sprint 4) |
+| Daniel | Telas com dado real, estados de carregamento e erro | #104 |
+| Arthur | Execução automática validada; task do cardápio; Chromium na imagem | #105 |
+| Gabriel | Endpoints `/v1/professores` e `/v1/salas` (antecipados da R2); documentação OpenAPI completa | #106 |
+| João Paulo | Teste de integração com Postgres; testes das tasks do Celery | #107, #123, #126 |
 
+## Release 2 — Sprints 4 a 12
+
+**Objetivo:** cinco domínios, features derivadas, cache, rate limit, SDK/CLI, portal do desenvolvedor e API em produção.
+
+### Sprint 4 — Pendências da R1
+
+A R1 terminou na Sprint 3 com itens em aberto, que abrem a R2.
+
+| Pessoa | Tarefa |
+|---|---|
+| Ítalo | Corrigir o parser do RU para os novos layouts de PDF e adicionar os PDFs como fixtures (#103, #98) |
+| Arthur | Tornar o log de execução consultável (RF16) |
+| Vitor | Tratar professores e salas duplicados nas respostas da API |
+| Daniel | Ajustes finais de UX com o dado do cardápio |
+| Gabriel | Publicar a release note da R1 (#106) |
+| João Paulo | Checklist do board contra a entrega e fechamento das issues da R1 (#128) |
+
+**Marco:** release note da R1 publicada.
+
+### Sprints 5 a 12
+
+Plano proposto, revisado na planning de cada sprint.
+
+| Sprint | Vitor | Ítalo | Daniel | Arthur | Gabriel | João Paulo |
+|---|---|---|---|---|---|---|
+| 5 | Início de salas vazias (RF17) | Scraper de eventos (RF08) | Wireframe do portal do dev (RF14) | Desenho do cache: quais rotas e por quanto tempo (RNF02) | Variáveis de produção no Railway e deploy de teste | Contrato dos novos domínios; medir cobertura |
+| 6 | Salas vazias pronta; início da agenda do professor (RF18) | Scraper de editais (RF09) | Swagger UI no portal do dev; tela de salas vazias | Cache Redis nas rotas mais consultadas | Deploy de versão candidata | Contrato de eventos e editais |
+| 7 | Agenda do professor pronta | Estabilização de eventos e editais | Telas da agenda, de eventos e de editais | Rate limit com slowapi (RNF01) | Ajuste das variáveis de produção | Observabilidade com UptimeRobot (RNF03) |
+| 8 | SDK Python (RF13) | CLI com Typer (RF13) | Portal do dev | Rate limit e cache finalizados; teste simples de carga | Deploy definitivo (RNF06) | Cobertura rumo a 90% (RNF09) |
+| 9 | SDK fechado e documentado | CLI fechada | Portal do dev finalizado | Estabilidade em produção | Ajustes pós-deploy | Mutação e sabotagem (RNF09); contratos completos (RNF04) |
+| 10 | Revisão de RF01-05, RF17, RF18 | Revisão de RF06-09, RF19 | Polimento visual | Revisão de cache e rate limit | Revisão da documentação | Cobertura final (RNF09) |
+| 11 | Correções finais | Correções finais | Correções finais | Correções finais | Release note da R2 | Checklist final do board contra a entrega |
+| 12 | Entrega | Entrega | Entrega | Entrega | Entrega | Entrega |
+
+**Marco:** Release 2 entregue em **25/11**, em produção e com release note publicada. A Sprint 12 tem só 3 dias e fica como folga para imprevistos.
+
+**Dependência-chave:** as mudanças de cache e rate limit não podem quebrar os testes de contrato. Rodar a suíte de contrato antes de cada merge dessas mudanças.
+
+## Riscos
+
+| Risco | Quando pesa mais | Mitigação |
+|---|---|---|
+| O SIGAA (JSF) muda o formulário ou a sessão | Toda a coleta de disciplinas | Scraper falha de forma isolada por unidade (RNF05); [plano de monitoramento](../fontes/plano-de-monitoramento.md) |
+| O RU muda o layout do PDF | Toda semana; já aconteceu em 21/09 e 28/09 | PDFs reais como fixtures de teste; falha sem apagar o histórico |
+| Período letivo fixo no código | Virada de semestre | Atualizar `ano`/`periodo` em `celery_app.py` antes do semestre começar |
+| Dívida de cobertura de testes | Sprints 7 a 10 | Medir a cobertura desde a Sprint 5, não só no fechamento |
+| Cache ou rate limit causando regressão na API | Sprints 6 a 8 | Suíte de contrato antes de cada merge |
+| Limites do plano gratuito do Railway | Sprints 5 a 12 | Deploy de teste cedo (Sprint 5) para descobrir limites antes do fechamento |

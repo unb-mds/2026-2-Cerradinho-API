@@ -10,7 +10,16 @@ from app.schemas.cardapio import ItemCardapio
 router = APIRouter(prefix="/cardapio", tags=["cardapio"])
 
 
-@router.get("/semana", response_model=list[ItemCardapio])
+@router.get(
+    "/semana",
+    response_model=list[ItemCardapio],
+    summary="Cardápio da semana",
+    description=(
+        "Devolve os itens do cardápio do RU (campus Darcy Ribeiro) de sete dias a partir "
+        "de `data_inicio`, separados por refeição e categoria. O cardápio é atualizado "
+        "diariamente a partir do PDF semanal publicado pelo RU."
+    ),
+)
 def listar_cardapio_da_semana(
     data_inicio: date = Query(default_factory=date.today, description="Primeiro dia da semana (default: hoje)"),
     db: Session = Depends(get_db),

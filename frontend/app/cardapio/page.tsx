@@ -27,6 +27,11 @@ export default function CardapioPage() {
       </FilterBar>
 
       <div className="flex flex-col gap-4 px-10 pt-5">
+        {!loading && !error && filtrado.length === 0 && (
+          <p className="rounded-xl border border-border bg-surface px-6 py-12 text-center text-sm text-muted">
+            Nenhum cardápio publicado para essa semana.
+          </p>
+        )}
         {filtrado.map((c) => (
           <div key={`${c.data}-${c.refeicao}`} className="overflow-hidden rounded-xl border border-border bg-surface">
             <div className="flex items-center justify-between bg-background px-6 py-4">

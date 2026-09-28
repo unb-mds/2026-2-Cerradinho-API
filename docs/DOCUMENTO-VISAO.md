@@ -4,7 +4,7 @@
 
 Este documento define a visão do produto Cerradinho: por que ele será construído, para quem, e o que ele entrega em alto nível. Ele serve como referência compartilhada para o time antes de qualquer detalhamento técnico, e deve permanecer estável mesmo quando requisitos específicos mudarem ao longo do projeto. Requisitos funcionais e não-funcionais detalhados estão em [`REQUISITOS.md`](REQUISITOS.md), e as decisões técnicas de como construir o sistema estão em [`ARQUITETURA.md`](ARQUITETURA.md) e nos ADRs em [`adr/`](adr/).
 
-**Escopo**: cobre as duas releases do projeto, distribuídas em 12 semanas (Release 1: semanas 1 a 6, Release 2: semanas 7 a 12), desenvolvido como parte da disciplina de Métodos de Desenvolvimento de Software (MDS) da FCTE/UnB.
+**Escopo**: cobre as duas releases do projeto, em sprints semanais (Release 1: Sprints 0 a 3, até 27/09; Release 2: Sprints 4 a 12, com entrega em 25/11), desenvolvido como parte da disciplina de Métodos de Desenvolvimento de Software (MDS) da FCTE/UnB.
 
 ## 2. Posicionamento
 
@@ -33,13 +33,12 @@ Para **estudantes da UnB e desenvolvedores de squads terceiras** que **precisam 
 | Desenvolvedores de outras squads/projetos de extensão | Consumidores técnicos, via SDK/CLI, que integram o Cerradinho em seus próprios sistemas |
 | UnB (SIGAA, RU, portal de notícias, CKAN) | Fonte dos dados públicos, não participa ativamente do projeto mas define os limites técnicos de coleta (throttling, robots.txt) |
 
-### 3.2 Resumo dos usuários
+### 3.2 Resumo dos usuários (personas)
 
 | Usuário | Descrição | Responsabilidades/uso esperado |
 |---|---|---|
 | Aluno de graduação | Consulta a API via frontend web, quer respostas rápidas para decisões do dia a dia | Consultar disciplinas, salas vazias, cardápio, agenda de professor |
 | Desenvolvedor de squad terceira | Consome a API programaticamente, prefere não lidar com scraping | Integrar via SDK Python ou CLI, consumir endpoints REST diretamente |
-| Integrante do próprio time (QA/backend) | Usa a documentação OpenAPI para validar contrato e testar endpoints | Testes de contrato, validação de schema, debugging |
 
 ### 3.3 Ambiente do usuário
 
@@ -84,7 +83,7 @@ O Cerradinho é um sistema novo, autocontido (monorepo), que não substitui nenh
 
 ## 5. Restrições
 
-- **Prazo fixo**: 12 semanas, dividido em 2 releases de 6 semanas, sem possibilidade de extensão (calendário acadêmico da disciplina).
+- **Prazo fixo**: entrega final em 25/11, sem possibilidade de extensão (calendário acadêmico da disciplina). O calendário das sprints está no [planejamento](scrum/sprint-planning.md).
 - **Equipe fixa de 6 pessoas**, com dedicação parcial (paralela a outras disciplinas do curso).
 - **Fontes de dado fora do controle do time**: qualquer mudança de layout no SIGAA, RU ou portal de notícias exige manutenção reativa, não planejada.
 - **Sem orçamento** para ferramentas pagas de infraestrutura, observabilidade ou segurança além de planos gratuitos/educacionais (ex: Railway free tier, UptimeRobot free).
@@ -95,11 +94,11 @@ O Cerradinho é um sistema novo, autocontido (monorepo), que não substitui nenh
 
 | Atributo | Faixa esperada | Requisito relacionado |
 |---|---|---|
-| Disponibilidade | Software implantado e acessível publicamente ao fim de cada release (gate obrigatório, não é meta de uptime contínuo) | RNF06 |
+| Disponibilidade | Software implantado e acessível publicamente ao fim da Release 2 (gate obrigatório, não é meta de uptime contínuo) | RNF06 |
 | Desempenho | Respostas de leitura da API servidas via cache quando o dado não muda a cada requisição | RNF02 |
 | Segurança | Nenhum achado crítico ou alto em análise estática (SAST) bloqueando o release | RNF08 |
 | Confiabilidade dos dados | Scrapers falham de forma isolada (uma unidade/fonte com erro não derruba as demais) | RNF05 |
-| Qualidade de teste | Cobertura de linha ≥70% no módulo de domínio, escore de mutação ≥50% nos módulos críticos | RNF09 |
+| Qualidade de teste | Cobertura de linha ≥90% no backend, escore de mutação ≥50% nos módulos críticos | RNF09 |
 | Documentação | OpenAPI sempre reflete o estado real da API implantada, sem exemplos desatualizados | RNF07 |
 | Capacidade de integração | Terceiros conseguem consumir a API sem depender de suporte manual do time (SDK, CLI, docs autoexplicativas) | RF13, RF14 |
 
@@ -115,9 +114,10 @@ O Cerradinho é um sistema novo, autocontido (monorepo), que não substitui nenh
 
 ## 8. Documentação de apoio
 
-- Requisitos detalhados: [`REQUISITOS.md`](REQUISITOS.md)
-- Arquitetura e padrões de código: [`ARQUITETURA.md`](ARQUITETURA.md)
+- Requisitos e rastreabilidade: [`REQUISITOS.md`](REQUISITOS.md)
+- Arquitetura: [`ARQUITETURA.md`](ARQUITETURA.md)
 - Decisões técnicas registradas: [`adr/`](adr/)
-- Processo de time, Git, ADR e story map: [`PROCESSO.md`](PROCESSO.md)
-- Estudos de viabilidade técnica: [`estudos/`](estudos/)
-- Planejamento de sprints e Definition of Done: [`scrum/sprint-planning.md`](scrum/sprint-planning.md)
+- Papéis, ritos e Definition of Done: [`PROCESSO.md`](PROCESSO.md)
+- Planejamento de sprints: [`scrum/sprint-planning.md`](scrum/sprint-planning.md)
+- Fontes de dado e riscos: [`fontes/`](fontes/)
+- Índice completo: [`README.md`](README.md)

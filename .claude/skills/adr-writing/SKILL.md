@@ -11,10 +11,10 @@ description: Write an Architecture Decision Record. Use whenever a non-trivial a
 consequences" — that skill offers five template formats: standard MADR, lightweight,
 Y-statement, deprecation, and RFC-style, plus lifecycle states proposed/accepted/
 deprecated/superseded). Cerradinho standardizes on one lightweight-MADR-style template
-already fixed by `docs/PROCESSO.md` §7 (below) instead of picking a format per decision —
+already fixed by `docs/adr/template.md` instead of picking a format per decision —
 consistency across `docs/adr/` matters more than per-ADR flexibility for a small team.
 
-Per `docs/PROCESSO.md` §7, relevant architecture decisions get their own file under
+Per `docs/PROCESSO.md` §8, relevant architecture decisions get their own file under
 `docs/adr/`, one file per decision.
 
 ## When an ADR is warranted
