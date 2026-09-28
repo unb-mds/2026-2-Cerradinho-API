@@ -86,3 +86,23 @@ Registro das reuniões do time: presença, o que foi feito e o que ficou combina
 **Review da Sprint 2:** A Sprint 2 foi concluída conforme planejado. O scraper de Disciplinas passou a gravar os dados no banco de forma estável, já com a associação entre Disciplina, Professor e Sala funcionando corretamente. Em paralelo, o scraper de RU foi agendado no Celery e o histórico de cardápio começou a ser acumulado. Arthur configurou o agendamento automático dos dois scrapers, com logs de execução, enquanto Gabriel entregou os endpoints REST sob /v1/ para os dois domínios, já com documentação OpenAPI gerada automaticamente. Do lado do frontend, Daniel conectou as telas à API real, e João Paulo implementou os testes de contrato nos endpoints publicados, com o CI já rodando essas validações. Com isso, a equipe encerra a sprint com a base de dados e a API funcionando de ponta a ponta, pronta para os ajustes finos da Sprint 3.
 
 ---
+
+### Domingo, 27/09 — Acompanhamento da Sprint 3
+
+**Presentes:** Vitor, Arthur, João Paulo, Gabriel, Daniel
+
+**Progresso:**
+
+- **Vitor**: estabilizou o scraper de Disciplinas (RF01/RF15): corrigiu um bug crítico na task do Celery, que importava uma função inexistente e por isso nunca rodava de verdade nem persistia nada no banco; fez o scraper varrer todas as unidades preservando de qual unidade cada turma veio, informação que antes se perdia; e corrigiu dois bugs de parsing encontrados testando contra o SIGAA real — código de horário vindo com a data grudada e estourando a coluna do banco, e turma com docente "a definir" vindo com vagas em branco e quebrando o parser no meio da unidade. Tudo isso ficou coberto por teste de regressão, validado ao vivo contra o SIGAA antes do commit.
+
+- **Arthur**: estabilizou a execução automática dos scrapers agendados: corrigiu o import quebrado, o discovery de tasks e o timezone do agendamento de Disciplinas (RF15), agendou o scraper de Cardápio do RU no Celery (RF16/RF07), limitou a concorrência do worker a 1, corrigiu um typo no nome da classe do scraper de Disciplinas, e ajustou a imagem base do container e a instalação do navegador do Playwright pra rodar em produção.
+
+- **Gabriel**: entregou os endpoints `/v1/professores` e `/v1/salas`, configurou o acesso do worker do Celery ao banco no docker-compose, completou a documentação OpenAPI das rotas `/v1`, definiu as personas no Documento de Visão, e reestruturou a documentação do projeto (reorganização de `docs/estudos`, `docs/fontes` e renomeação de `dailies.md` pra `atas.md`).
+
+- **Daniel**: conectou as telas de Disciplinas, Cardápio, Professores e Salas aos dados reais da API, tratou os estados de carregamento e erro na Visão Geral e nas mensagens de lista vazia (incluindo escondê-la durante carregamento/erro), e atualizou o README do frontend com o status e link do protótipo.
+
+- **João Paulo**: adicionou análise estática de segurança com bandit no CI, criou teste de integração do pipeline de Disciplinas contra Postgres real (rodando no pipeline via serviço postgres), e adicionou testes de registro/agendamento das tasks do Celery.
+
+- **Ítalo**: tem que estabilizar o scraper do cardápio do RU e corrigir os bugs essenciais pré Release 1.
+
+---
