@@ -47,6 +47,19 @@ pytest tests/contract
 
 Os testes de contrato também rodam junto com o `pytest` geral. Se um deles falhar, a rota mudou o que retorna ou aceita sem atualizar o contrato — corrija a rota ou, se a mudança for intencional, discuta o versionamento da API (RF12) antes de alterar.
 
+## Rodar os testes de integração (Postgres)
+
+Os testes em `tests/integration/` rodam o pipeline de Disciplinas de ponta a ponta — HTML de fixture do SIGAA → `parse_turmas` → `persistir_turmas` → Postgres de verdade, com o schema criado pelas migrations do Alembic. Eles existem porque o SQLite dos outros testes não valida o tamanho de colunas `String(n)`: um valor grande demais só estoura no Postgres.
+
+Com o banco do docker compose rodando (seção "Subir o banco"):
+
+```bash
+cd backend
+pytest tests/integration -v
+```
+
+Os testes aplicam as migrations pendentes (`alembic upgrade head`) e gravam tudo dentro de uma transação desfeita no fim, então nenhum dado de teste fica no banco. Sem Postgres acessível, esses testes são pulados (`skipped`) localmente; no CI o Postgres sobe como serviço e eles são obrigatórios.
+
 ## Adicionando novos models
 
 Depois de criar/alterar um model em `app/models/`, gere uma nova migration:

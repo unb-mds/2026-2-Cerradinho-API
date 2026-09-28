@@ -8,6 +8,22 @@ on:
 jobs:
   backend:
     runs-on: ubuntu-latest
+
+    services:
+      postgres:   # banco real pros testes de integração - o sqlite não valida String(n)
+        image: postgres:16-alpine   # mesma imagem do docker-compose
+        env:
+          POSTGRES_USER: cerradinho
+          POSTGRES_PASSWORD: cerradinho
+          POSTGRES_DB: cerradinho
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 5
+
     defaults:
       run:
         working-directory: backend   # onde ficam requirements, pytest.ini e o pacote app/
@@ -35,7 +51,13 @@ jobs:
         run: ruff check .
 
       - name: Rodar testes (pytest)
-        run: pytest --ignore=tests/contract --cov=app --cov-report=term-missing   # contrato roda no passo abaixo
+        run: pytest --ignore=tests/contract --ignore=tests/integration --cov=app --cov-report=term-missing   # contrato e integração rodam nos passos abaixo
 
       - name: Rodar testes de contrato (schemathesis)
         run: pytest tests/contract -v   # falha se alguma rota fugir do /openapi.json (RNF04)
+
+      - name: Rodar testes de integração (Postgres)
+        run: pytest tests/integration -v   # scraper -> domínio -> postgres real, com o schema das migrations
+        env:
+          POSTGRES_HOST: localhost
+          POSTGRES_PORT: 5432
