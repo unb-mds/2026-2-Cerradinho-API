@@ -2,7 +2,7 @@ import asyncio
 
 from celery import shared_task
 
-from app.scrapers.disciplinas.scraper import DisciplinasScraper
+from app.scrapers.disciplinas.scraper import DisciplinaScraper
 from app.scrapers.disciplinas.parser import parse_turmas
 from app.core.database import SessionLocal
 from app.domain.disciplinas import persistir_turma, persistir_turmas
@@ -14,7 +14,7 @@ PERIODO = "2"
 
 @shared_task
 def scrape_disciplinas_task(unidade: str = "673"):
-    scraper = DisciplinasScraper()
+    scraper = DisciplinaScraper()
     html = asyncio.run(scraper.buscar_html(NIVEL, unidade, ANO, PERIODO))
     turmas = parse_turmas(html)
 
