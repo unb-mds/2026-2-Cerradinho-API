@@ -33,13 +33,12 @@ Para **estudantes da UnB e desenvolvedores de squads terceiras** que **precisam 
 | Desenvolvedores de outras squads/projetos de extensão | Consumidores técnicos, via SDK/CLI, que integram o Cerradinho em seus próprios sistemas |
 | UnB (SIGAA, RU, portal de notícias, CKAN) | Fonte dos dados públicos, não participa ativamente do projeto mas define os limites técnicos de coleta (throttling, robots.txt) |
 
-### 3.2 Resumo dos usuários
+### 3.2 Resumo dos usuários (personas)
 
 | Usuário | Descrição | Responsabilidades/uso esperado |
 |---|---|---|
 | Aluno de graduação | Consulta a API via frontend web, quer respostas rápidas para decisões do dia a dia | Consultar disciplinas, salas vazias, cardápio, agenda de professor |
 | Desenvolvedor de squad terceira | Consome a API programaticamente, prefere não lidar com scraping | Integrar via SDK Python ou CLI, consumir endpoints REST diretamente |
-| Integrante do próprio time (QA/backend) | Usa a documentação OpenAPI para validar contrato e testar endpoints | Testes de contrato, validação de schema, debugging |
 
 ### 3.3 Ambiente do usuário
 
