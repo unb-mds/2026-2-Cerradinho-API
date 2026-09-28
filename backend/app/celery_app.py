@@ -22,6 +22,7 @@ celery_app.conf.beat_schedule = {
     "scrape-disciplinas-semanal": {
         "task": "app.tasks.scraping.scrape_disciplinas_task",
         "schedule": crontab(hour=3, minute=0, day_of_week=0),
+        "kwargs": {"nivel": "G", "ano": "2026", "periodo": "2"},
     },
     "scrape-cardapio-diario": {
         "task": "app.tasks.cardapio.scrape_cardapio_task",
