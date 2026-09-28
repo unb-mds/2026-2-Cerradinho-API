@@ -1,71 +1,70 @@
 # Processo — Cerradinho
 
-Como o time trabalha: fluxo de Git, padrões de qualidade e governança do repositório. Requisitos do sistema estão em [`REQUISITOS.md`](REQUISITOS.md).
+Como o time se organiza: papéis, ritos do Scrum, critérios de pronto e registro do trabalho. As regras de git, pull request e código estão no [CONTRIBUTING.md](../CONTRIBUTING.md).
 
-## 1. Repositório e fluxo de Git
+## 1. Papéis
 
-Repositório: [github.com/unb-mds/G3-2026-2](https://github.com/unb-mds/G3-2026-2)
+| Pessoa | Papel | Área | Tecnologias |
+|---|---|---|---|
+| Gabriel | Product Owner | Banco, Docker, deploy, release notes; prioriza o backlog e define critérios de aceitação | PostgreSQL, SQLAlchemy, Alembic, Docker, Railway |
+| Vitor | Scrum Master | Scraping de Disciplinas/Professores/Salas e endpoints; facilita os ritos e o board | Playwright, FastAPI, SQLAlchemy |
+| Ítalo | Desenvolvedor | Scraping de RU, Eventos e Editais e endpoints | BeautifulSoup, pdfplumber, FastAPI |
+| Daniel | Desenvolvedor | Frontend e portal do desenvolvedor | Next.js, Axios, Swagger UI |
+| Arthur | Desenvolvedor | Agendamento, cache e rate limit | Celery, Redis, slowapi |
+| João Paulo | QA/Integração | Fontes de dado, testes de contrato, CI, observabilidade | pytest, schemathesis, UptimeRobot |
 
-- Monorepo — um único repositório com pastas `/frontend` e `/backend`
-- Branches: `main` (estável) → `dev` (integração) → `feature/nome-da-tarefa`
-- Commits em Conventional Commits (`feat:`, `fix:`, `docs:`, etc.), com padrão documentado em `docs/padrao_commits.md`
-- Organização de tarefas via Issues + board (Projects) do GitHub
+Quem responde por cada requisito está na [rastreabilidade do REQUISITOS.md](REQUISITOS.md#6-rastreabilidade).
 
-## 2. Padrão de Issues e Pull Requests
+## 2. Sprints e ritos
 
-- Toda issue deve ter critério de aceitação, label de tamanho (S/M/L/XL) e label de tipo (feature, fix, docs, devops)
-- Templates em `.github/ISSUE_TEMPLATE/` e `.github/PULL_REQUEST_TEMPLATE.md`
-- Todo PR precisa de revisão **formal e registrada** — comentário ou aprovação no próprio PR. Combinar revisão fora do GitHub (chat, verbal) não conta como evidência.
+Sprints de **1 semana**, de segunda a segunda. O calendário e o que entra em cada sprint estão no [planejamento de sprints](scrum/sprint-planning.md).
 
-## 3. Ritmo individual esperado
+| Reunião | Quando | Para quê |
+|---|---|---|
+| Principal | Segunda-feira, após a aula | Review da sprint que terminou, retrospectiva curta e planning da próxima |
+| Acompanhamento | Quinta-feira, 19h | Andamento das tarefas, bloqueios e dependências entre as áreas |
+| Emergencial | Sob demanda | Bug crítico ou decisão que não pode esperar a próxima reunião |
 
-- Atividade constante ao longo do projeto — recomendado pelo menos 3 commits/semana por pessoa — em vez de concentrar contribuição só no fim de cada release
-- Presença em planning e retrospectiva de cada sprint, registrada com lista de presença
-- Planning e retro devem ser documentados sprint a sprint, sem exceção — inclusive nas últimas sprints do projeto, quando o time costuma relaxar essa prática
+Dúvidas rápidas e alinhamentos simples ficam no grupo de mensagens do time, sem reunião.
 
-## 4. Story Map
+Toda reunião é registrada nas [atas](scrum/atas.md), com lista de presença. Planning, review e retrospectiva são registrados em todas as sprints, inclusive nas últimas.
 
-Montado diretamente no GitHub Projects, sem ferramenta externa:
+## 3. Definition of Done
 
-1. Criar campos single select `Journey` (jornada do usuário: ex. Consultar Disciplinas, Consultar Cardápio, Consultar Eventos/Editais, Integrar via SDK) e `Step` (etapas dentro de cada jornada)
-2. Preencher esses campos em cada issue
-3. Usar Milestones como as releases (linhas do mapa)
-4. Criar uma view em Board, com Column field = `Step` e Group by = `Milestone` — isso gera a grade do story map a partir das issues já existentes
+Uma tarefa de código está pronta quando:
 
-## 5. Protótipos
+1. o PR foi aprovado por pelo menos um outro membro, com a revisão registrada no próprio PR;
+2. os testes unitários (e de integração, quando aplicável) passam;
+3. o CI está verde (lint, SAST e testes);
+4. a documentação e a OpenAPI foram atualizadas, se a tarefa cria ou altera endpoint;
+5. não há lógica de negócio duplicada entre scraper e router ([camadas do backend](ARQUITETURA.md#camadas-do-backend));
+6. o uso de IA, se houve, está registrado no [AI-USAGE.md](../AI-USAGE.md).
 
-Telas de baixa e alta fidelidade (Figma ou similar) devem ser produzidas e revisadas com o time **antes** de o frontend implementar cada tela, não depois. Link do protótipo registrado no README.
+## 4. Ritmo individual
 
-## 6. Padrões de projeto open source
+- Atividade constante ao longo do projeto, com pelo menos 3 commits por semana por pessoa, em vez de concentrar o trabalho no fim de cada release.
+- Presença na planning e na retrospectiva de cada sprint.
 
-- `LICENSE`, `CONTRIBUTING.md`, `CODE_OF_CONDUCT.md`, `SECURITY.md`, `SUPPORT.md` na raiz do repositório
-- Cada Release fechada (Release 1, Release 2) deve ter uma Release Note publicada na aba Releases do GitHub, descrevendo o que foi entregue
+## 5. Issues, board e story map
 
-## 7. ADR (Architecture Decision Record)
+- Toda issue tem critério de aceitação, label de tamanho (S/M/L/XL) e label de tipo (feature, fix, docs, devops). Os templates ficam em `.github/ISSUE_TEMPLATE/`.
+- Cada requisito tem uma issue na milestone da sua release; as tarefas de cada semana ficam na milestone da sprint.
+- O story map fica no GitHub Projects: os campos `Journey` (jornada do usuário) e `Step` (etapa da jornada) são preenchidos em cada issue, e uma view de Board com coluna = `Step` e agrupamento = `Milestone` gera a grade do mapa.
 
-Decisões de arquitetura relevantes ficam registradas individualmente em `docs/adr/`, um arquivo por decisão, formato:
+## 6. Releases
 
-```markdown
-# ADR 00X — [título da decisão]
+- **Release 1:** Sprints 0 a 3. **Release 2:** Sprints 4 a 12, com entrega em 25/11.
+- Cada release fechada tem uma release note publicada na aba Releases do GitHub, descrevendo o que foi entregue.
+- A Release 2 precisa estar implantada e acessível publicamente (RNF06).
 
-## Status
-Aceito / Proposto / Substituído
+## 7. Protótipos
 
-## Contexto
-[Por que essa decisão precisou ser tomada]
+Telas de baixa e alta fidelidade são revisadas com o time **antes** de o frontend implementar cada tela. O link do protótipo fica no [README do frontend](../frontend/README.md).
 
-## Decisão
-[O que foi decidido]
+## 8. Decisões de arquitetura (ADR)
 
-## Alternativas descartadas
-[O que também foi considerado e por que não foi escolhido]
+Toda decisão técnica relevante (nova biblioteca, padrão estrutural, troca de tecnologia) ganha um ADR em [`docs/adr/`](adr/), a partir do [template](adr/template.md). Decisões de implementação rotineiras não precisam de ADR.
 
-## Consequências
-[O que essa decisão implica, custos e trade-offs assumidos]
-```
+## 9. Uso de IA
 
-Exemplos de decisões que merecem ADR: escolha de Playwright para scraping de Disciplinas, estrutura de monorepo, escolha de Celery/Redis para agendamento.
-
-## 8. Registro de uso de IA
-
-Uso de IA no projeto é documentado em [`AI-USAGE.md`](../AI-USAGE.md), na raiz do repositório. Toda contribuição de IA em implementação, testes, documentação ou refatoração deve ser registrada ali. IA não pode ser usada em avaliações individuais (arguições, ensaio de reflexão crítica).
+O uso de IA é esperado e precisa ser registrado no [AI-USAGE.md](../AI-USAGE.md), na mesma entrega em que o trabalho entra: data, pessoa, ferramenta, o que foi feito e o que foi aceito, ajustado ou rejeitado. IA não pode ser usada em avaliações individuais (arguições, quizzes, avaliação por pares, ensaio de reflexão crítica).
