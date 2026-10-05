@@ -1,0 +1,100 @@
+site_name: Cerradinho
+site_description: API aberta da UnB — documentação do projeto
+site_url: https://unb-mds.github.io/2026-2-Cerradinho-API/
+repo_name: unb-mds/2026-2-Cerradinho-API
+repo_url: https://github.com/unb-mds/2026-2-Cerradinho-API
+edit_uri: edit/dev/docs/
+
+docs_dir: docs
+
+theme:
+  name: material
+  language: pt-BR
+  icon:
+    repo: fontawesome/brands/github
+  palette:
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      primary: green
+      accent: green
+      toggle:
+        icon: material/weather-night
+        name: Mudar para modo escuro
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      primary: green
+      accent: green
+      toggle:
+        icon: material/weather-sunny
+        name: Mudar para modo claro
+  features:
+    - navigation.tabs
+    - navigation.tabs.sticky
+    - navigation.sections
+    - navigation.top
+    - navigation.indexes
+    - navigation.footer
+    - toc.follow
+    - search.suggest
+    - search.highlight
+    - search.share
+    - content.code.copy
+    - content.action.edit
+
+markdown_extensions:
+  - tables
+  - admonition
+  - attr_list
+  - footnotes
+  - toc:
+      permalink: true
+  - pymdownx.details
+  - pymdownx.highlight
+  - pymdownx.superfences
+  - pymdownx.tabbed:
+      alternate_style: true
+
+nav:
+  - Início:
+      - index.md
+      - Índice completo: indice-completo.md
+  - Produto:
+      - Documento de Visão: DOCUMENTO-VISAO.md
+      - Requisitos: REQUISITOS.md
+  - Arquitetura:
+      - Arquitetura: ARQUITETURA.md
+      - Decisões de arquitetura (ADR):
+          - 0001 — Base técnica do backend: adr/0001-base-tecnica-backend.md
+          - 0002 — Ferramentas de scraping por fonte: adr/0002-ferramentas-de-scraping.md
+          - 0003 — Celery e Redis para o agendamento: adr/0003-celery-e-redis-para-agendamento.md
+          - 0004 — Coleta desacoplada da API: adr/0004-coleta-desacoplada-da-api.md
+          - 0005 — API versionada desde o início: adr/0005-api-versionada-desde-o-inicio.md
+          - 0006 — Salas derivadas das turmas: adr/0006-salas-derivadas-das-turmas.md
+          - 0007 — Cache e rate limit na API: adr/0007-cache-e-rate-limit-na-api.md
+          - 0008 — Bandit como SAST: adr/0008-bandit-como-sast.md
+          - 0009 — Railway para hospedagem: adr/0009-railway-para-deploy.md
+          - Template de ADR: adr/template.md
+      - Fontes de dado:
+          - SIGAA — Disciplinas: fontes/sigaa-disciplinas.md
+          - RU — Cardápio: fontes/ru-cardapio.md
+          - Relatório de risco: fontes/relatorio-de-risco.md
+          - Plano de monitoramento: fontes/plano-de-monitoramento.md
+  - Processo:
+      - Processo: PROCESSO.md
+  - Gestão:
+      - Planejamento de sprints: scrum/sprint-planning.md
+      - Atas de reunião: scrum/atas.md
+      - Checklist Release 1: scrum/checklist-release-1.md
+  - Estudos:
+      - Git e GitHub: estudos/estudo-git-github.md
+      - Web scraping: estudos/estudo-web-scraping.md
+      - Playwright: estudos/estudo-playwright.md
+      - FastAPI: estudos/estudo-fastapi.md
+      - BeautifulSoup: estudos/estudo-beautifulsoup.md
+      - SQLAlchemy: estudos/estudo-sqlalchemy.md
+      - HTML: estudos/estudo-html.md
+      - JavaScript: estudos/estudo-javascript.md
+      - Celery e Redis: estudos/estudo-celery-e-redis.md
+      - Pytest e mocking: estudos/estudo-pytest-mocking.md
+      - Schemathesis: estudos/estudo-schemathesis.md
+      - Postman e testes de API: estudos/estudo-postman-api.md

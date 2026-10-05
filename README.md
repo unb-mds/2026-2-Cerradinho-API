@@ -62,7 +62,7 @@ docs/       documentação do projeto
 | [Atas](docs/scrum/atas.md) | Registro das reuniões |
 | [Como contribuir](CONTRIBUTING.md) | Branches, commits, PRs e padrões de código |
 | [Uso de IA](AI-USAGE.md) | Registro de uso de IA no projeto |
-| [Índice completo](docs/README.md) | Todos os documentos, incluindo fontes de dado e estudos |
+| [Índice completo](docs/indice-completo.md) | Todos os documentos, incluindo fontes de dado e estudos |
 
 Quadro do time no Figma: [CERRADINHO](https://www.figma.com/board/Xn4RLNLqWrNfUc7Zqxmmyq/Cerradinho---Story-Map?node-id=0-1&t=PSvWZ4M5sZV4Ru8U-1).
 

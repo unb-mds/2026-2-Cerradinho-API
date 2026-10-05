@@ -23,10 +23,10 @@
 | Documento | Conteúdo |
 |---|---|
 | [PROCESSO.md](PROCESSO.md) | Papéis, sprints e ritos, Definition of Done, board e releases |
-| [../CONTRIBUTING.md](../CONTRIBUTING.md) | Branches, commits, pull requests e padrões de código |
+| [CONTRIBUTING.md](https://github.com/unb-mds/2026-2-Cerradinho-API/blob/dev/CONTRIBUTING.md) | Branches, commits, pull requests e padrões de código |
 | [scrum/sprint-planning.md](scrum/sprint-planning.md) | Calendário e entregas de cada sprint |
 | [scrum/atas.md](scrum/atas.md) | Registro das reuniões, com presença |
-| [../AI-USAGE.md](../AI-USAGE.md) | Registro de uso de IA |
+| [AI-USAGE.md](https://github.com/unb-mds/2026-2-Cerradinho-API/blob/dev/AI-USAGE.md) | Registro de uso de IA |
 
 ## Estudos
 
