@@ -155,7 +155,7 @@ erDiagram
 │   ├── hooks/             # chamadas à API, isoladas das telas
 │   └── lib/               # cliente Axios
 ├── sdk/                   # SDK/CLI Python (Release 2)
-├── docs/                  # documentação (índice em docs/README.md)
+├── docs/                  # documentação (índice em docs/indice-completo.md)
 ├── .github/               # CI, templates de issue e PR
 └── docker-compose.yml     # db, migrate, api, redis, celery_worker, celery_beat
 ```
@@ -176,4 +176,4 @@ Cada decisão relevante tem um ADR em [`docs/adr/`](adr/):
 | [0008](adr/0008-bandit-como-sast.md) | Bandit como análise estática de segurança |
 | [0009](adr/0009-railway-para-deploy.md) | Railway para hospedagem |
 
-Os padrões de código (separação de camadas, nomenclatura, tratamento de erro) estão no [CONTRIBUTING.md](../CONTRIBUTING.md).
+Os padrões de código (separação de camadas, nomenclatura, tratamento de erro) estão no [CONTRIBUTING.md](https://github.com/unb-mds/2026-2-Cerradinho-API/blob/dev/CONTRIBUTING.md).

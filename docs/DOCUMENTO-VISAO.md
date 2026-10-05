@@ -120,4 +120,4 @@ O Cerradinho é um sistema novo, autocontido (monorepo), que não substitui nenh
 - Papéis, ritos e Definition of Done: [`PROCESSO.md`](PROCESSO.md)
 - Planejamento de sprints: [`scrum/sprint-planning.md`](scrum/sprint-planning.md)
 - Fontes de dado e riscos: [`fontes/`](fontes/)
-- Índice completo: [`README.md`](README.md)
+- Índice completo: [`indice-completo.md`](indice-completo.md)
