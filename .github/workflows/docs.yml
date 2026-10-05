@@ -7,6 +7,11 @@ on:
       - "docs/**"
       - "mkdocs.yml"
       - ".github/workflows/docs.yml"
+  # O botão "Run workflow" na aba Actions só aparece pra workflows que já
+  # existem na branch padrão do repo (main) — enquanto esse arquivo só
+  # estiver na dev, o disparo manual abaixo fica configurado mas invisível
+  # na UI. Até lá, um push em docs/**, mkdocs.yml ou neste arquivo já
+  # dispara o deploy de novo.
   workflow_dispatch:   # permite rodar manualmente pela aba Actions
 
 permissions:
