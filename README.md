@@ -1,6 +1,78 @@
 # Cerradinho — API aberta da UnB
 
+API pública que reúne, num só lugar, dados institucionais da UnB hoje espalhados em vários sistemas: disciplinas, professores, salas e cardápio do RU, com eventos e editais a caminho. Os dados vêm só de fontes públicas e são coletados automaticamente por scrapers agendados.
+
+Projeto da disciplina de Métodos de Desenvolvimento de Software (MDS), UnB FCTE, 2026/2.
+
+## Para quem é
+
+- **Estudantes**, que consultam turmas, salas e cardápio pelo site, sem abrir o SIGAA e o site do RU.
+- **Devs de outras squads**, que usam os dados nos próprios projetos pela API, sem refazer scraping.
+
+## Stack
+
+| Parte | Tecnologias |
+|---|---|
+| Coleta | Playwright, requests, BeautifulSoup, pdfplumber |
+| Agendamento | Celery, Redis |
+| Banco | PostgreSQL 16, SQLAlchemy 2, Alembic |
+| API | FastAPI, Pydantic |
+| Frontend | Next.js, Axios, Tailwind |
+| Qualidade | pytest, schemathesis, ruff, bandit, GitHub Actions |
+
+## Como rodar
+
+Pré-requisitos: Docker com Docker Compose, e Node.js para o frontend.
+
+```bash
+cp backend/.env.example backend/.env
+docker compose up
+```
+
+Isso sobe o PostgreSQL, aplica as migrations, e sobe a API em `http://localhost:8000`, o Redis, o worker e o agendador do Celery. Para o frontend:
+
+```bash
+cd frontend
+cp .env.example .env.local
+npm install
+npm run dev
+```
+
+O site abre em `http://localhost:3000`. Detalhes de cada parte, testes e variáveis de ambiente estão no [README do backend](backend/README.md) e no [README do frontend](frontend/README.md).
+
+## Estrutura
+
+```
+backend/    API FastAPI, scrapers, tasks Celery, migrations e testes
+frontend/   telas de consulta em Next.js
+sdk/        SDK/CLI em Python (Release 2)
+docs/       documentação do projeto
+```
+
 ## Documentação
 
-- [Arquitetura do sistema](docs/ARQUITETURA.md)
-- [Requisitos do sistema](docs/REQUISITOS.md)
+| Documento | Conteúdo |
+|---|---|
+| [Documento de Visão](docs/DOCUMENTO-VISAO.md) | Problema, personas, escopo e prioridades |
+| [Requisitos](docs/REQUISITOS.md) | Fontes de dado, requisitos funcionais e não funcionais, rastreabilidade |
+| [Arquitetura](docs/ARQUITETURA.md) | Componentes, fluxo de coleta, camadas, modelo de dados |
+| [Decisões (ADRs)](docs/adr/) | O que foi decidido e por quê |
+| [Processo](docs/PROCESSO.md) | Papéis, sprints, ritos e Definition of Done |
+| [Planejamento de sprints](docs/scrum/sprint-planning.md) | Calendário e entregas por sprint |
+| [Atas](docs/scrum/atas.md) | Registro das reuniões |
+| [Como contribuir](CONTRIBUTING.md) | Branches, commits, PRs e padrões de código |
+| [Uso de IA](AI-USAGE.md) | Registro de uso de IA no projeto |
+| [Índice completo](docs/README.md) | Todos os documentos, incluindo fontes de dado e estudos |
+
+Quadro do time no Figma: [CERRADINHO](https://www.figma.com/board/Xn4RLNLqWrNfUc7Zqxmmyq/Cerradinho---Story-Map?node-id=0-1&t=PSvWZ4M5sZV4Ru8U-1).
+
+## Time
+
+| Pessoa | Papel |
+|---|---|
+| Gabriel | Product Owner; banco, Docker e deploy |
+| Vitor | Scrum Master; scraping de disciplinas |
+| Ítalo | Scraping do RU, eventos e editais |
+| Daniel | Frontend e portal do desenvolvedor |
+| Arthur | Agendamento, cache e rate limit |
+| João Paulo | QA, testes de contrato e CI |

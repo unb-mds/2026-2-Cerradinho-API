@@ -1,0 +1,30 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyc
+*.egg-info/
+.venv/
+venv/
+env/
+.pytest_cache/
+.ruff_cache/
+.coverage
+coverage.xml
+htmlcov/
+
+# Env
+.env
+!.env.example
+
+# Node
+node_modules/
+.next/
+
+# OS
+.DS_Store
+
+# Editor
+.vscode/
+.idea/
+
+celerybeat-schedule*
