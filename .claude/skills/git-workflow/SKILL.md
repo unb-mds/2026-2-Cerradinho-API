@@ -18,9 +18,14 @@ Repo: `github.com/unb-mds/2026-2-Cerradinho-API`, monorepo with `/frontend` and 
 
 ## Branching
 
-`main` (stable) → `dev` (integration) → `feature/nome-da-tarefa`. Branch off `dev`, not
-`main`, for feature work; PRs into `main` should come through `dev`, not directly from a
-feature branch, unless the user says otherwise.
+`main` (stable) → `dev` (integration) → `R2-nome` (one long-lived branch per person for
+Release 2, e.g. `R2-gabriel`: first name, lowercase, no accents). Don't create
+per-task `feature/...`, `fix/...` or `docs/...` branches anymore; commit on the user's
+own `R2-nome` branch (create it off an up-to-date `dev` if it doesn't exist yet). Each
+deliverable is a PR from `R2-nome` into `dev`, and the branch stays open after the merge.
+Before starting a task and before opening a PR, bring `dev` into the branch
+(`git pull origin dev`) and resolve conflicts there. Never commit directly to `dev` or
+`main`; PRs into `main` come only from `dev`, unless the user says otherwise.
 
 ## Commits
 
