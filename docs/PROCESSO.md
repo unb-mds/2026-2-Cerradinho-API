@@ -1,6 +1,6 @@
 # Processo — Cerradinho
 
-Como o time se organiza: papéis, ritos do Scrum, critérios de pronto e registro do trabalho. As regras de git, pull request e código estão no [CONTRIBUTING.md](../CONTRIBUTING.md).
+Como o time se organiza: papéis, ritos do Scrum, critérios de pronto e registro do trabalho. As regras de git, pull request e código estão no [CONTRIBUTING.md](https://github.com/unb-mds/2026-2-Cerradinho-API/blob/dev/CONTRIBUTING.md).
 
 ## 1. Papéis
 
@@ -38,7 +38,7 @@ Uma tarefa de código está pronta quando:
 3. o CI está verde (lint, SAST e testes);
 4. a documentação e a OpenAPI foram atualizadas, se a tarefa cria ou altera endpoint;
 5. não há lógica de negócio duplicada entre scraper e router ([camadas do backend](ARQUITETURA.md#camadas-do-backend));
-6. o uso de IA, se houve, está registrado no [AI-USAGE.md](../AI-USAGE.md).
+6. o uso de IA, se houve, está registrado no [AI-USAGE.md](https://github.com/unb-mds/2026-2-Cerradinho-API/blob/dev/AI-USAGE.md).
 
 ## 4. Ritmo individual
 
@@ -59,7 +59,7 @@ Uma tarefa de código está pronta quando:
 
 ## 7. Protótipos
 
-Telas de baixa e alta fidelidade são revisadas com o time **antes** de o frontend implementar cada tela. O link do protótipo fica no [README do frontend](../frontend/README.md).
+Telas de baixa e alta fidelidade são revisadas com o time **antes** de o frontend implementar cada tela. O link do protótipo fica no [README do frontend](https://github.com/unb-mds/2026-2-Cerradinho-API/blob/dev/frontend/README.md).
 
 ## 8. Decisões de arquitetura (ADR)
 
@@ -67,4 +67,4 @@ Toda decisão técnica relevante (nova biblioteca, padrão estrutural, troca de 
 
 ## 9. Uso de IA
 
-O uso de IA é esperado e precisa ser registrado no [AI-USAGE.md](../AI-USAGE.md), na mesma entrega em que o trabalho entra: data, pessoa, ferramenta, o que foi feito e o que foi aceito, ajustado ou rejeitado. IA não pode ser usada em avaliações individuais (arguições, quizzes, avaliação por pares, ensaio de reflexão crítica).
+O uso de IA é esperado e precisa ser registrado no [AI-USAGE.md](https://github.com/unb-mds/2026-2-Cerradinho-API/blob/dev/AI-USAGE.md), na mesma entrega em que o trabalho entra: data, pessoa, ferramenta, o que foi feito e o que foi aceito, ajustado ou rejeitado. IA não pode ser usada em avaliações individuais (arguições, quizzes, avaliação por pares, ensaio de reflexão crítica).
