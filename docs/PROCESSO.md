@@ -37,7 +37,7 @@ Uma tarefa de código está pronta quando:
 2. os testes unitários (e de integração, quando aplicável) passam;
 3. o CI está verde (lint, SAST e testes);
 4. a documentação e a OpenAPI foram atualizadas, se a tarefa cria ou altera endpoint;
-5. não há lógica de negócio duplicada entre scraper e router ([camadas do backend](ARQUITETURA.md#camadas-do-backend));
+5. não há lógica de negócio duplicada entre scraper e router ([componentes do backend](ARQUITETURA.md#nivel-3-componente));
 6. o uso de IA, se houve, está registrado no [AI-USAGE.md](https://github.com/unb-mds/2026-2-Cerradinho-API/blob/dev/AI-USAGE.md).
 
 ## 4. Ritmo individual

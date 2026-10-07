@@ -49,7 +49,7 @@ Mudança que quebra compatibilidade leva `!` depois do tipo (`feat!: ...`) e é 
 
 ### Separação de responsabilidades
 
-- **Scrapers** só acessam a fonte; **parsers** só transformam o conteúdo no contrato Pydantic; **routers** só recebem a requisição e chamam o domínio. A tabela completa está nas [camadas do backend](docs/ARQUITETURA.md#camadas-do-backend).
+- **Scrapers** só acessam a fonte; **parsers** só transformam o conteúdo no contrato Pydantic; **routers** só recebem a requisição e chamam o domínio. A tabela completa está nos [componentes do backend](docs/ARQUITETURA.md#nivel-3-componente).
 - Regra de negócio (normalizar nome de professor, calcular salas vazias) fica em `app/domain/`, em um único lugar.
 - Consulta ao banco passa pelo domínio e pelos models SQLAlchemy, nunca direto no router.
 - No frontend, chamada à API fica nos hooks de `frontend/hooks/`, fora dos componentes visuais.
