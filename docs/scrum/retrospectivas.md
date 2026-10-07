@@ -2,8 +2,6 @@
 
 Fechamento de cada sprint: objetivo, o que foi entregue, métricas e retrospectiva. O planejamento (calendário e tarefas previstas) está no [planejamento de sprints](sprint-planning.md); o registro reunião a reunião está nas [atas](atas.md). Esse arquivo é escrito no fechamento de cada sprint, uma seção por sprint — sprints em andamento ainda não entram aqui.
 
-## Release 1
-
 ### Sprint 0 — Base do projeto (até 06/09)
 
 **Objetivo:** alinhar documentação base e estudos antes de começar a implementação.
@@ -43,8 +41,6 @@ Fechamento de cada sprint: objetivo, o que foi entregue, métricas e retrospecti
 **Métricas:** sem cobertura/mutação formalmente medida ainda nesta sprint (RNF09 é meta da Release 2) — o foco foi corrigir bugs encontrados testando contra as fontes reais, não medir qualidade de teste.
 
 **Retrospectiva:** a Release 1 fechou com a base de dados e a API funcionando de ponta a ponta para disciplinas e cardápio, mas o scraper do RU não terminou de ser estabilizado dentro da sprint — ficou como pendência explícita pra Sprint 4, junto com duplicidade de professor/sala e log de execução não consultável pela API (esses dois últimos nem chegaram a entrar no escopo da Sprint 3).
-
-## Release 2
 
 ### Sprint 4 — Pendências da R1 e release note (28/09 a 04/10)
 
