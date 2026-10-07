@@ -106,3 +106,17 @@ Registro das reuniões do time: presença, o que foi feito e o que ficou combina
 - **Ítalo**: tem que estabilizar o scraper do cardápio do RU e corrigir os bugs essenciais pré Release 1.
 
 ---
+
+### Segunda-feira, 05/10 — Acompanhamento da Sprint 3
+
+**Presentes:** Vitor, João Paulo, Daniel, Gabriel
+
+**Progresso:**
+
+- **Vitor**: configurou o site de documentação do projeto no GitHub Pages, usando MkDocs com o tema Material (abas de navegação, busca, modo escuro), no mesmo estilo de outros projetos da disciplina — a home foi reescrita como página de entrada de verdade em vez de só uma tabela de links, e o workflow de deploy builda com `--strict` (falha se algum link do menu estiver quebrado) a cada push na `dev`. Também reestruturou `docs/REQUISITOS.md` por completo: todo requisito funcional e não funcional passou a ter título no formato verbo + objeto, com seções próprias de Critérios de aceitação e Regra de negócio — pedido da professora pra padronizar a forma dos requisitos. Abriu a issue #136 e a branch `docs/reestrutura-requisitos` com o PR pendente de revisão pra `dev`.
+
+- **Gabriel e Daniel**: escreveram e publicaram a Release Note da Release 1 no GitHub (tag `Release_1`), cobrindo as Sprints 0 a 3: as duas fontes entregues (disciplinas do SIGAA e cardápio do RU), coletadas por scrapers agendados via Celery/Redis e expostas pela API `/v1` documentada em OpenAPI/Swagger; o frontend em Next.js com as telas de disciplinas, cardápio, professores e salas; os bugs críticos corrigidos ao longo da release (import quebrado que impedia a gravação de disciplinas, código de horário estourando a coluna, dado de docente malformado quebrando o parser, Chromium faltando na imagem Docker); e as limitações conhecidas registradas pra próxima iteração (parser do cardápio falhando em alguns layouts de PDF, duplicidade de professor/sala, busca de professor sem normalização, logs de execução não consultáveis pela API).
+
+- **João Paulo**: organizou o repositório e limpou as branches remotas — removeu dezenas de branches já mergeadas ou obsoletas (features antigas, estudos, fixes e PRs já fechados), deixando só as branches realmente ativas no remoto.
+
+---
