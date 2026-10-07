@@ -1,6 +1,6 @@
 # Planejamento de sprints — Cerradinho
 
-Calendário e entregas de cada sprint. Papéis, ritos e Definition of Done estão no [PROCESSO.md](../PROCESSO.md); o registro das reuniões, nas [atas](atas.md).
+Calendário e entregas de cada sprint. Papéis, ritos e Definition of Done estão no [PROCESSO.md](../PROCESSO.md); o registro das reuniões, nas [atas](atas.md); o fechamento de cada sprint (objetivo, entregue, métricas, retrospectiva), nas [retrospectivas](retrospectivas.md).
 
 Sprints de 1 semana. As tarefas de cada sprint ficam na milestone correspondente no GitHub.
 

@@ -1,6 +1,6 @@
 # Atas de reunião — Cerradinho
 
-Registro das reuniões do time: presença, o que foi feito e o que ficou combinado. Os horários e o papel de cada reunião estão no [PROCESSO.md](../PROCESSO.md#2-sprints-e-ritos); o calendário das sprints, no [planejamento](sprint-planning.md).
+Registro das reuniões do time: presença, o que foi feito e o que ficou combinado. Os horários e o papel de cada reunião estão no [PROCESSO.md](../PROCESSO.md#2-sprints-e-ritos); o calendário das sprints, no [planejamento](sprint-planning.md); o fechamento de cada sprint, nas [retrospectivas](retrospectivas.md).
 
 ## Registros
 
