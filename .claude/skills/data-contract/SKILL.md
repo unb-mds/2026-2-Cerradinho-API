@@ -41,7 +41,7 @@ the top of `backend/app/schemas/disciplina.py` for the canonical explanation of 
 
 ## When adding a new domain
 
-1. Check `docs/REQUISITOS.md` §2–3 for the fields required by that domain's RF.
+1. Check the domain's RF in `specs/` (and its source in `docs/REQUISITOS.md` §2) for the required fields.
 2. Model only what the scraper reliably provides; leave derived/cross-domain fields (RF17
    salas vazias, RF18 agenda do professor, RF19 cardápio semanal) out of the schema — those
    are computed in `app/domain/`, not stored as schema fields.

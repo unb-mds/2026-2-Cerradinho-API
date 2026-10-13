@@ -39,7 +39,7 @@ Endpoints live in `backend/app/routers/`, one module per domain, mounted under `
   hints, docstrings, and `response_model`; don't suppress it or leave a route
   undocumented with `include_in_schema=False` unless there's a real reason.
 - Derived-feature endpoints (RF17 salas vazias, RF18 agenda do professor, RF19 cardápio
-  semanal — see `docs/REQUISITOS.md` §4) delegate the actual computation to
+  semanal — see `specs/RF17-*.md` to `specs/RF19-*.md`) delegate the actual computation to
   `app/domain/`; the router just parses query params and calls the domain function.
 - Contract tests (RNF04, `schemathesis`) run against whatever the router exposes — see
   the `contract-testing` skill. A route change that isn't backward compatible needs a

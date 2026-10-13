@@ -1,0 +1,51 @@
+# Changelog
+
+Mudanças relevantes do Cerradinho, por release. O formato segue o [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/). A descrição completa de cada release fica na [aba Releases do GitHub](https://github.com/unb-mds/2026-2-Cerradinho-API/releases).
+
+## [Não lançado]
+
+### Adicionado
+
+- Diagramas de arquitetura no modelo C4 (contexto, container e componente) em `docs/ARQUITETURA.md`.
+- Retrospectivas das Sprints 0 a 4 em `docs/scrum/retrospectivas.md`.
+- Licença MIT, Código de Conduta e este changelog.
+
+### Alterado
+
+- Uma branch `R2-nome` por pessoa na Release 2, no lugar de uma branch por tarefa (`CONTRIBUTING.md`).
+
+## [Release_1] - 2026-10-06
+
+Sprints 0 a 3, encerradas em 27/09/2026.
+
+### Adicionado
+
+- API versionada com `GET /v1/disciplinas`, `GET /v1/professores`, `GET /v1/salas` e `GET /v1/cardapio/semana`, com OpenAPI e Swagger UI em `/docs`.
+- Scraper de turmas do SIGAA com Playwright, varrendo todas as unidades com intervalo entre requisições.
+- Scraper do cardápio do RU a partir do PDF semanal, separando café, almoço e jantar.
+- Agendamento com Celery e Redis, com disciplinas toda semana e cardápio todo dia, e log de sucesso e falha.
+- Banco PostgreSQL 16 com SQLAlchemy 2 e migrations Alembic.
+- `docker-compose.yml` com Postgres, migrations, API, Redis, worker e agendador.
+- Frontend em Next.js com telas de Disciplinas, Professores, Salas e Cardápio usando dado real.
+- CI com ruff, Bandit, testes unitários, testes de contrato com schemathesis e testes de integração com Postgres.
+- Site de documentação com MkDocs no GitHub Pages.
+
+### Corrigido
+
+- Task de Disciplinas que importava uma função inexistente e não gravava no banco (#118).
+- Código de horário com intervalo de datas estourando a coluna `String(20)` (#118).
+- Turma com docente "a definir" quebrando o parser (#118).
+- Tasks do Celery não registradas pelo `autodiscover_tasks` (#121).
+- `celery_worker` sem acesso ao banco no Compose (#119).
+- Imagem Docker sem o Chromium do Playwright (#121).
+- CORS bloqueando o frontend (#109).
+- Mensagem de lista vazia aparecendo durante o carregamento e em caso de erro (#125).
+
+### Problemas conhecidos
+
+- O parser do RU falha com os layouts de PDF a partir de 21/09, e o cardápio não é atualizado (#103).
+- Professores e salas aparecem duplicados nas respostas da API.
+- `/v1/professores` ainda não busca por nome normalizado (#38).
+
+[Não lançado]: https://github.com/unb-mds/2026-2-Cerradinho-API/compare/Release_1...dev
+[Release_1]: https://github.com/unb-mds/2026-2-Cerradinho-API/releases/tag/Release_1

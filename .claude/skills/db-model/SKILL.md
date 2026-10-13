@@ -12,7 +12,7 @@ including Alembic, connection management), narrowed to the SQLAlchemy+Alembic+Po
 stack this project already committed to in `docs/ARQUITETURA.md`.
 
 `backend/app/models/` holds SQLAlchemy models — the persisted, normalized shape of each
-domain from `docs/REQUISITOS.md` §2–3. Migrations live in `backend/alembic/`.
+domain from the sources in `docs/REQUISITOS.md` §2 and the specs in `specs/`. Migrations live in `backend/alembic/`.
 
 ## Rules
 
@@ -36,7 +36,7 @@ domain from `docs/REQUISITOS.md` §2–3. Migrations live in `backend/alembic/`.
 
 ## Before writing a migration
 
-Check `docs/REQUISITOS.md` for the RF that motivates the field, and check whether the
+Check the spec in `specs/` for the RF that motivates the field, and check whether the
 same normalization already needs to happen elsewhere (e.g. professor name reconciliation
 across turmas) — that logic should exist once, in `app/domain/`, not be duplicated
 between the migration's constraints and a scraper/parser.

@@ -7,12 +7,13 @@ Regras para levar uma mudança até a `dev`. Como o time se organiza (sprints, r
 ```
 main  ← estável, recebe a dev no fechamento de cada release
 dev   ← integração, recebe os PRs
-feature/nome-da-tarefa, fix/..., docs/..., ci/...  ← uma branch por tarefa, criada a partir da dev
+R2-nome  ← uma branch por pessoa na release, criada a partir da dev (ex.: R2-gabriel)
 ```
 
-- Crie a branch a partir da `dev` atualizada: `git switch dev && git pull && git switch -c feature/nome-da-tarefa`.
+- Cada pessoa tem a sua branch `R2-nome`, com o primeiro nome em minúsculas, sem acento. Ela é criada uma vez, a partir da `dev` atualizada: `git switch dev && git pull && git switch -c R2-nome && git push -u origin R2-nome`.
+- Todo o seu trabalho da release vai nessa branch. Cada entrega (issue) vira um PR da `R2-nome` para a `dev`, e a branch continua aberta depois do merge.
 - **Não faça commit direto na `dev` nem na `main`.** Toda mudança entra por pull request, inclusive documentação e atas.
-- Antes de abrir o PR, traga a `dev` mais recente para a sua branch e resolva os conflitos nela.
+- Mantenha a branch em dia com a `dev`: antes de começar uma tarefa e antes de abrir cada PR, rode `git switch R2-nome && git pull origin dev` e resolva os conflitos na sua branch.
 
 ## 2. Commits
 

@@ -5,7 +5,8 @@
 | Documento | Conteúdo |
 |---|---|
 | [DOCUMENTO-VISAO.md](DOCUMENTO-VISAO.md) | Problema, personas, escopo, restrições e prioridades |
-| [REQUISITOS.md](REQUISITOS.md) | Fontes de dado, requisitos funcionais e não funcionais, rastreabilidade |
+| [REQUISITOS.md](REQUISITOS.md) | Objetivo, fontes de dado e mapa dos requisitos |
+| [specs/](specs/README.md) | Especificação viva: um arquivo por requisito, com critérios de aceitação, regra de negócio e rastreabilidade |
 
 ## Técnica
 

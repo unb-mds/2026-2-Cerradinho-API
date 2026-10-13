@@ -5,6 +5,7 @@ on:
     branches: [dev]
     paths:
       - "docs/**"
+      - "specs/**"   # as specs entram no site pelo link simbólico docs/specs
       - "mkdocs.yml"
       - ".github/workflows/docs.yml"
   # O botão "Run workflow" na aba Actions só aparece pra workflows que já
