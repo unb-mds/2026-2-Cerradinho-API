@@ -83,6 +83,7 @@ nav:
       - Processo: PROCESSO.md
   - Gestão:
       - Planejamento de sprints: scrum/sprint-planning.md
+      - Retrospectivas de sprint: scrum/retrospectivas.md
       - Atas de reunião: scrum/atas.md
       - Checklist Release 1: scrum/checklist-release-1.md
   - Estudos:
