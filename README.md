@@ -1,6 +1,6 @@
 # Cerradinho — API aberta da UnB
 
-API pública que reúne, num só lugar, dados institucionais da UnB hoje espalhados em vários sistemas: disciplinas, professores, salas e cardápio do RU, com eventos e editais a caminho. Os dados vêm só de fontes públicas e são coletados automaticamente por scrapers agendados.
+API pública que reúne, num só lugar, dados institucionais da UnB hoje espalhados em vários sistemas: disciplinas, professores, salas e cardápio do RU. Os dados vêm só de fontes públicas e são coletados automaticamente por scrapers agendados.
 
 Projeto da disciplina de Métodos de Desenvolvimento de Software (MDS), UnB FCTE, 2026/2.
 
@@ -62,6 +62,8 @@ docs/       documentação do projeto
 | [Atas](docs/scrum/atas.md) | Registro das reuniões |
 | [Como contribuir](CONTRIBUTING.md) | Branches, commits, PRs e padrões de código |
 | [Uso de IA](AI-USAGE.md) | Registro de uso de IA no projeto |
+| [Changelog](CHANGELOG.md) | Histórico de versões |
+| [Código de Conduta](CODE_OF_CONDUCT.md) | Regras de convivência no projeto |
 | [Índice completo](docs/indice-completo.md) | Todos os documentos, incluindo fontes de dado e estudos |
 
 Quadro do time no Figma: [CERRADINHO](https://www.figma.com/board/Xn4RLNLqWrNfUc7Zqxmmyq/Cerradinho---Story-Map?node-id=0-1&t=PSvWZ4M5sZV4Ru8U-1).
@@ -70,9 +72,14 @@ Quadro do time no Figma: [CERRADINHO](https://www.figma.com/board/Xn4RLNLqWrNfUc
 
 | Pessoa | Papel |
 |---|---|
-| Gabriel | Product Owner; banco, Docker e deploy |
-| Vitor | Scrum Master; scraping de disciplinas |
-| Ítalo | Scraping do RU, eventos e editais |
+| Gabriel | Product Owner; banco, Docker, deploy e cardápio do RU |
+| Vitor | Scrum Master; scraping de disciplinas, features derivadas e SDK |
 | Daniel | Frontend e portal do desenvolvedor |
 | Arthur | Agendamento, cache e rate limit |
-| João Paulo | QA, testes de contrato e CI |
+| João Paulo | QA, testes de contrato, CI e CLI |
+
+O Ítalo participou da Release 1 (scraping do RU) e saiu do projeto no início da Release 2.
+
+## Licença
+
+Distribuído sob a licença MIT. Veja o arquivo [LICENSE](LICENSE).
