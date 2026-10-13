@@ -14,7 +14,7 @@ Como o time se organiza: papéis, ritos do Scrum, critérios de pronto e registr
 
 O Ítalo participou da Release 1, com o scraping do cardápio do RU, e saiu do projeto no início da Release 2. Eventos e editais saíram do escopo, e o restante das tarefas dele foi redistribuído no [planejamento de sprints](scrum/sprint-planning.md#release-2-sprints-4-a-11).
 
-Quem responde por cada requisito está na [rastreabilidade do REQUISITOS.md](REQUISITOS.md#6-rastreabilidade).
+Quem responde por cada requisito está no [índice do `/specs`](https://github.com/unb-mds/2026-2-Cerradinho-API/blob/dev/specs/README.md).
 
 ## 2. Sprints e ritos
 

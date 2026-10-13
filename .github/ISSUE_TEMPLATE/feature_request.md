@@ -1,6 +1,6 @@
 ---
 name: ✨ Feature
-about: Nova funcionalidade com RF/RNF associado em docs/REQUISITOS.md
+about: Nova funcionalidade com RF/RNF associado em specs/
 title: "[FEAT] "
 labels: feature
 assignees: ''

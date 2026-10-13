@@ -61,6 +61,7 @@ nav:
   - Produto:
       - Documento de Visão: DOCUMENTO-VISAO.md
       - Requisitos: REQUISITOS.md
+      - Especificação (/specs): specs/README.md
   - Arquitetura:
       - Arquitetura: ARQUITETURA.md
       - Decisões de arquitetura (ADR):

@@ -23,7 +23,7 @@ concern, not a scraper concern (see the `web-scraper` skill's resilience rule).
 - **Every task run logs success or failure (RF16)**, including *which* unit/source
   failed when scraping multiple units (e.g. one FCTE-Gama failure shouldn't blank out
   the log entry for a run that succeeded on other units). A failed unit should not raise
-  and kill the whole task run — see RNF05 (resiliência) in `docs/REQUISITOS.md` §5 and the risks in
+  and kill the whole task run — see RNF05 (resiliência) in `specs/RNF05-*.md` and the risks in
   `docs/scrum/sprint-planning.md`.
 - **Schedule outside peak hours** and keep throttling between requests inside the
   scraper (already true of `buscar_html_varias_unidades`) — the task's job is *when*,

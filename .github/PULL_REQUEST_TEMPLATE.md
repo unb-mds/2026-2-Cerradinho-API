@@ -27,7 +27,8 @@ Closes #
 - [ ] Segue o padrão de commits (Conventional Commits)
 - [ ] Segue a separação de camadas da arquitetura (scraper não tem lógica de API, lógica de negócio não fica no router)
 - [ ] Testes adicionados/atualizados, se aplicável
-- [ ] Documentação atualizada, se aplicável (README, REQUISITOS.md, ARQUITETURA.md)
+- [ ] Documentação atualizada, se aplicável (README, ARQUITETURA.md)
+- [ ] Se o PR implementa, testa ou muda um requisito, a spec em `specs/` foi atualizada (critérios e rastreabilidade com este PR e os testes)
 - [ ] Se usou IA neste PR (implementação, testes, docs, refatoração), está registrado em `AI-USAGE.md`
 - [ ] Pipeline de CI está verde (lint, testes, SAST) — obrigatório antes do merge, é porta de qualidade da disciplina
 - [ ] Se este PR envolveu decisão de arquitetura relevante, existe um ADR em `docs/adr/`

@@ -114,7 +114,7 @@ O Cerradinho é um sistema novo, autocontido (monorepo), que não substitui nenh
 
 ## 8. Documentação de apoio
 
-- Requisitos e rastreabilidade: [`REQUISITOS.md`](REQUISITOS.md)
+- Requisitos: [`REQUISITOS.md`](REQUISITOS.md). Especificação e rastreabilidade de cada requisito: [`/specs`](https://github.com/unb-mds/2026-2-Cerradinho-API/tree/dev/specs)
 - Arquitetura: [`ARQUITETURA.md`](ARQUITETURA.md)
 - Decisões técnicas registradas: [`adr/`](adr/)
 - Papéis, ritos e Definition of Done: [`PROCESSO.md`](PROCESSO.md)

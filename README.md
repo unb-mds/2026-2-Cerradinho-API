@@ -54,7 +54,8 @@ docs/       documentação do projeto
 | Documento | Conteúdo |
 |---|---|
 | [Documento de Visão](docs/DOCUMENTO-VISAO.md) | Problema, personas, escopo e prioridades |
-| [Requisitos](docs/REQUISITOS.md) | Fontes de dado, requisitos funcionais e não funcionais, rastreabilidade |
+| [Requisitos](docs/REQUISITOS.md) | Objetivo, fontes de dado e mapa dos requisitos |
+| [Especificação](specs/README.md) | Um arquivo por requisito, com critérios de aceitação, regra de negócio e rastreabilidade |
 | [Arquitetura](docs/ARQUITETURA.md) | Componentes, fluxo de coleta, camadas, modelo de dados |
 | [Decisões (ADRs)](docs/adr/) | O que foi decidido e por quê |
 | [Processo](docs/PROCESSO.md) | Papéis, sprints, ritos e Definition of Done |
