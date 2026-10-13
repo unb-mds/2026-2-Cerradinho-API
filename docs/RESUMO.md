@@ -1,6 +1,6 @@
 # Resumo do projeto — Cerradinho
 
-API aberta que reúne dados públicos da UnB (disciplinas, professores, salas, cardápio do RU, eventos e editais), coletados automaticamente por scrapers. Atende estudantes, pelo site, e devs de outras squads, pela API.
+API aberta que reúne dados públicos da UnB (disciplinas, professores, salas e cardápio do RU), coletados automaticamente por scrapers. Atende estudantes, pelo site, e devs de outras squads, pela API.
 
 ## Objetivo
 
@@ -15,10 +15,11 @@ Os dados públicos da UnB estão espalhados em vários sistemas, como o SIGAA, o
 - Frontend com uma tela para cada domínio, usando dado real.
 - CI com lint, testes unitários, teste de integração com Postgres, testes de contrato e análise de segurança.
 
-## O que vai ser feito (Release 2, Sprints 4 a 12, entrega em 25/11)
+## O que vai ser feito (Release 2, Sprints 4 a 11, entrega em 25/11)
 
-- **Sprint 4:** pendências da R1 (parser do RU para os novos PDFs, log consultável, duplicados na API, UX do cardápio).
-- Novos domínios: eventos e editais.
+- **Sprint 4:** estudos, revisão e correção da documentação e do processo.
+- **Sprint 5:** pendências da R1 (parser do RU para os novos PDFs, log consultável, duplicados na API).
+- **Sprint 11:** só correções, release note e entrega.
 - Features derivadas: salas vazias, agenda do professor e cardápio semanal.
 - Cache e rate limit na API.
 - SDK e CLI em Python e portal do desenvolvedor.

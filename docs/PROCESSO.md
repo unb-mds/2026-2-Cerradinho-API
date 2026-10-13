@@ -6,18 +6,19 @@ Como o time se organiza: papéis, ritos do Scrum, critérios de pronto e registr
 
 | Pessoa | Papel | Área | Tecnologias |
 |---|---|---|---|
-| Gabriel | Product Owner | Banco, Docker e deploy; prioriza o backlog e define critérios de aceitação | PostgreSQL, SQLAlchemy, Alembic, Docker, Railway |
-| Vitor | Scrum Master | Scraping de Disciplinas/Professores/Salas e endpoints; facilita os ritos e o board | Playwright, FastAPI, SQLAlchemy |
-| Ítalo | Desenvolvedor | Scraping de RU, Eventos e Editais e endpoints | BeautifulSoup, pdfplumber, FastAPI |
+| Gabriel | Product Owner | Banco, Docker, deploy, release notes e cardápio do RU; prioriza o backlog e define critérios de aceitação | PostgreSQL, SQLAlchemy, Alembic, Docker, Railway, pdfplumber |
+| Vitor | Scrum Master | Scraping de Disciplinas/Professores/Salas, salas vazias, agenda do professor e SDK; facilita os ritos e o board | Playwright, FastAPI, SQLAlchemy |
 | Daniel | Desenvolvedor | Frontend e portal do desenvolvedor | Next.js, Axios, Swagger UI |
 | Arthur | Desenvolvedor | Agendamento, cache e rate limit | Celery, Redis, slowapi |
-| João Paulo | QA/Integração | Fontes de dado, testes de contrato, CI, observabilidade | pytest, schemathesis, UptimeRobot |
+| João Paulo | QA/Integração | Fontes de dado, testes de contrato, CI, observabilidade e CLI | pytest, schemathesis, UptimeRobot, Typer |
+
+O Ítalo participou da Release 1, com o scraping do cardápio do RU, e saiu do projeto no início da Release 2. Eventos e editais saíram do escopo, e o restante das tarefas dele foi redistribuído no [planejamento de sprints](scrum/sprint-planning.md#release-2-sprints-4-a-11).
 
 Quem responde por cada requisito está na [rastreabilidade do REQUISITOS.md](REQUISITOS.md#6-rastreabilidade).
 
 ## 2. Sprints e ritos
 
-Sprints de **1 semana**, de segunda a segunda. O calendário e o que entra em cada sprint estão no [planejamento de sprints](scrum/sprint-planning.md).
+Sprints de **1 semana**, de domingo a sábado. O calendário e o que entra em cada sprint estão no [planejamento de sprints](scrum/sprint-planning.md).
 
 | Reunião | Quando | Para quê |
 |---|---|---|
@@ -37,7 +38,7 @@ Uma tarefa de código está pronta quando:
 2. os testes unitários (e de integração, quando aplicável) passam;
 3. o CI está verde (lint, SAST e testes);
 4. a documentação e a OpenAPI foram atualizadas, se a tarefa cria ou altera endpoint;
-5. não há lógica de negócio duplicada entre scraper e router ([camadas do backend](ARQUITETURA.md#camadas-do-backend));
+5. não há lógica de negócio duplicada entre scraper e router ([componentes do backend](ARQUITETURA.md#nivel-3-componente));
 6. o uso de IA, se houve, está registrado no [AI-USAGE.md](https://github.com/unb-mds/2026-2-Cerradinho-API/blob/dev/AI-USAGE.md).
 
 ## 4. Ritmo individual
@@ -53,7 +54,8 @@ Uma tarefa de código está pronta quando:
 
 ## 6. Releases
 
-- **Release 1:** Sprints 0 a 3. **Release 2:** Sprints 4 a 12, com entrega em 25/11.
+- **Release 1:** Sprints 0 a 3. **Release 2:** Sprints 4 a 11, com entrega em 25/11.
+- Cada release fechada tem uma release note publicada na aba Releases do GitHub, descrevendo o que foi entregue.
 - A Release 2 precisa estar implantada e acessível publicamente (RNF06).
 
 ## 7. Protótipos

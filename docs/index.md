@@ -49,10 +49,11 @@ A documentação interativa da API (Swagger) fica em `/docs` com o projeto rodan
 |---|---|
 | Gabriel | Product Owner; Banco de Dados |
 | Vitor | Scrum Master; Backend |
-| Ítalo | Backend |
 | Daniel | Frontend |
 | Arthur | Backend; Agendamento e Cache |
 | João Paulo | QA; Testes e CI |
+
+O Ítalo participou da Release 1 e saiu do projeto no início da Release 2.
 
 ---
 
