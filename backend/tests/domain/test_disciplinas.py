@@ -1,7 +1,7 @@
 from sqlalchemy import create_engine
 from sqlalchemy.orm import Session
 
-from app.domain.disciplinas import normalizar_sala, persistir_turma
+from app.domain.disciplinas import normalizar_nome_professor, normalizar_sala, persistir_turma
 from app.models import Base, Horario, Professor, Sala, Turma
 from app.schemas.disciplina import Horario as HorarioCapturado
 from app.schemas.disciplina import Professor as ProfessorCapturado
@@ -37,6 +37,15 @@ def test_normalizar_sala_separa_predio_e_nome():
 
 def test_normalizar_sala_sem_separador_vira_so_nome():
     assert normalizar_sala("Auditório Dois Candangos") == ("", "Auditório Dois Candangos")
+
+
+def test_normalizar_nome_professor_corta_carga_horaria():
+    nome = "ALESSANDRO BORGES DE SOUSA OLIVEIRA (60h)"
+    assert normalizar_nome_professor(nome) == "ALESSANDRO BORGES DE SOUSA OLIVEIRA"
+
+
+def test_normalizar_nome_professor_sem_carga_horaria_fica_igual():
+    assert normalizar_nome_professor("Ana Souza") == "Ana Souza"
 
 
 def test_persistir_turma_cria_disciplina_sala_professores_e_horarios():
@@ -118,4 +127,34 @@ def test_persistir_turmas_de_disciplinas_diferentes_reaproveita_sala_e_professor
 
     assert session.query(Sala).count() == 1
     assert session.query(Professor).count() == 1
+
+
+def test_persistir_turmas_mesmo_professor_cargas_horarias_diferentes_nao_duplica():
+    """Regressão: o SIGAA junta a carga horária da disciplina no nome do
+    docente, e a carga varia por disciplina mesmo pro mesmo professor —
+    sem normalizar, isso criava uma linha de Professor por carga horária."""
+    session = _in_memory_session()
+
+    persistir_turma(
+        session,
+        _turma_capturada(professores=[ProfessorCapturado(nome="Alessandro Borges de Sousa Oliveira (30h)")]),
+        unidade="FCTE",
+    )
+    session.commit()
+
+    persistir_turma(
+        session,
+        _turma_capturada(
+            disciplina_codigo="FGA0001",
+            disciplina_nome="Outra Disciplina",
+            numero="02",
+            professores=[ProfessorCapturado(nome="Alessandro Borges de Sousa Oliveira (60h)")],
+        ),
+        unidade="FCTE",
+    )
+    session.commit()
+
+    professores = session.query(Professor).all()
+    assert len(professores) == 1
+    assert professores[0].nome == "Alessandro Borges de Sousa Oliveira"
     assert session.query(Turma).count() == 2

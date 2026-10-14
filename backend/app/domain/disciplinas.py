@@ -35,7 +35,19 @@ def _get_ou_cria_disciplina(session: Session, codigo: str, nome: str) -> Discipl
     return disciplina
 
 
+def normalizar_nome_professor(nome: str) -> str:
+    """"ALESSANDRO BORGES DE SOUSA OLIVEIRA (60h)" -> "ALESSANDRO BORGES DE SOUSA OLIVEIRA".
+
+    O SIGAA junta a carga horária da disciplina no nome do docente; como a
+    carga varia por disciplina, usar o texto cru como chave de dedup cria uma
+    linha de Professor por carga horária distinta do mesmo professor.
+    """
+    nome, _, _ = nome.partition(" (")
+    return nome.strip()
+
+
 def _get_ou_cria_professor(session: Session, nome: str) -> Professor:
+    nome = normalizar_nome_professor(nome)
     professor = session.query(Professor).filter_by(nome=nome).one_or_none()
     if professor is None:
         professor = Professor(nome=nome)
