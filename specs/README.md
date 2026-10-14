@@ -19,7 +19,7 @@ O objetivo do produto, as fontes de dados e o contexto estão no [`docs/REQUISIT
 | [RF01 · Capturar oferta de disciplinas de todas as unidades](RF01-capturar-oferta-de-disciplinas-de-todas-as-unidades.md) | R1 | Vitor | [#35](https://github.com/unb-mds/2026-2-Cerradinho-API/issues/35) | Entregue |
 | [RF02 · Associar disciplina a professor](RF02-associar-disciplina-a-professor.md) | R1 | Vitor | [#36](https://github.com/unb-mds/2026-2-Cerradinho-API/issues/36) | Entregue |
 | [RF03 · Associar disciplina a sala/prédio](RF03-associar-disciplina-a-sala-predio.md) | R1 | Vitor | [#37](https://github.com/unb-mds/2026-2-Cerradinho-API/issues/37) | Entregue |
-| [RF04 · Cadastrar docentes vinculados às disciplinas](RF04-cadastrar-docentes-vinculados-as-disciplinas.md) | R1 | Vitor | [#38](https://github.com/unb-mds/2026-2-Cerradinho-API/issues/38) | Parcial |
+| [RF04 · Cadastrar docentes vinculados às disciplinas](RF04-cadastrar-docentes-vinculados-as-disciplinas.md) | R1 | Vitor | [#38](https://github.com/unb-mds/2026-2-Cerradinho-API/issues/38) | Entregue |
 | [RF05 · Derivar identificação de salas e prédios a partir das turmas](RF05-derivar-identificacao-de-salas-e-predios-a-partir-das-turmas.md) | R1 | Vitor | [#39](https://github.com/unb-mds/2026-2-Cerradinho-API/issues/39) | Entregue |
 | [RF06 · Capturar cardápio diário do RU](RF06-capturar-cardapio-diario-do-ru.md) | R1 | Gabriel | [#40](https://github.com/unb-mds/2026-2-Cerradinho-API/issues/40) | Parcial |
 | [RF07 · Manter histórico de cardápios](RF07-manter-historico-de-cardapios.md) | R1 | Gabriel | [#41](https://github.com/unb-mds/2026-2-Cerradinho-API/issues/41) | Parcial |
