@@ -1,30 +1,38 @@
 """Seleção do PDF da semana e extração do cardápio (RF06/RF07).
 
-Descobertas da análise do PDF real (Darcy Ribeiro, semana de 14 a
-20/9/2026), testadas com pdfplumber:
+O RU monta a tabela do PDF de um jeito diferente a cada semana. Nos PDFs
+de 14/9 a 12/10/2026 (todos em tests/scrapers/fixtures/) já apareceram:
 
-- extract_tables() com a estratégia PADRÃO (por linhas) funciona bem pra
-  esse layout. strategy="text" embaralha colunas e cabeçalhos — não usar.
-- Cada página tem várias tabelas "fantasma" (fragmentos do cabeçalho, tipo
-  uma tabela só com "3ª FEIRA" e a data); a tabela de verdade é sempre a
-  maior (mais linhas) — extrair_tabela_pagina cuida disso.
-- Às vezes uma célula quebra em mais linhas visuais que as vizinhas (ex:
-  "Carne de sol trinchada" / "com cebola roxa" em duas linhas), e o
-  pdfplumber devolve isso como linhas extras com a coluna de categoria
-  vazia. Sem tratar isso, o dado se perde silenciosamente (confirmado
-  removendo o prato principal de segunda-feira do almoço) — normalizar_tabela
-  agrupa essas linhas de volta ao bloco da categoria anterior.
-- O número de colunas varia entre páginas (às vezes tem uma coluna fantasma
-  vazia entre um dia e outro); por isso as colunas são mapeadas pelas datas
-  do cabeçalho (regex), não por índice fixo.
-- A refeição de cada página é identificada pelo conjunto de categorias que
-  aparecem nela (só café da manhã tem "PANIFICAÇÃO"/"FRUTA"; só almoço tem
-  "GUARNIÇÃO"; só jantar tem "SOPA"/"TORRADA"), em vez de assumir uma ordem
-  fixa de páginas — evita erro silencioso se uma semana vier com menos
-  páginas (feriado sem jantar) ou em ordem diferente.
-- Os ícones de alérgeno (leite, soja, glúten etc.) são imagens embutidas no
-  PDF, não texto, e não são capturados por extract_tables() (ver
-  docs/fontes/ru-cardapio.md).
+- dia e data na mesma célula ("2ª FEIRA\n14/9/2026") ou em linhas
+  separadas, e às vezes cada data numa linha diferente da mesma página;
+- colunas fantasma entre os dias, com o prato numa coluna à esquerda da
+  coluna da data;
+- células mescladas que valem para a semana inteira (ex: "Leite integral
+  OU Bebida de soja" em BEBIDAS).
+
+Por isso a extração é posicional (ver specs/RF06) e não depende de qual
+linha ou coluna da tabela tem cada coisa:
+
+- o dia de cada célula é decidido pela posição x das datas na página: a
+  célula pertence a todos os dias cuja data está dentro da sua largura, o
+  que já aplica as células mescladas a todos os dias que elas cobrem;
+- a categoria é a célula da coluna de "COMPOSIÇÃO" que cobre a altura (y)
+  da célula do prato, então uma categoria que ocupa várias linhas visuais
+  (BEBIDAS com leite e café, por exemplo) junta todo o texto dela;
+- o texto de uma célula é formado pelos caracteres cujo centro está
+  dentro dela, porque uma letra pode passar um pouco da borda ("Rosé"
+  virava "osé" ao exigir o caractere inteiro dentro da célula);
+- as células vêm de todas as tabelas da página, porque o pdfplumber às
+  vezes quebra o cabeçalho em tabelas "fantasma" menores.
+
+A refeição de cada página é identificada pelo conjunto de categorias que
+aparecem nela (só café da manhã tem "PANIFICAÇÃO"/"FRUTA"; só almoço tem
+"GUARNIÇÃO"; só jantar tem "SOPA"/"TORRADA"), em vez de assumir uma ordem
+fixa de páginas, o que evita erro silencioso se uma semana vier com menos
+páginas (feriado sem jantar) ou em ordem diferente.
+
+Os ícones de alérgeno (leite, soja, glúten etc.) são imagens embutidas no
+PDF, não texto, e não são capturados (ver docs/fontes/ru-cardapio.md).
 """
 
 from __future__ import annotations
@@ -32,7 +40,9 @@ from __future__ import annotations
 import io
 import logging
 import re
+from collections import defaultdict
 from datetime import date
+from typing import NamedTuple
 from urllib.parse import urljoin
 
 import pdfplumber
@@ -52,6 +62,18 @@ ASSINATURAS_REFEICAO: dict[Refeicao, set[str]] = {
     "almoco": {"GUARNIÇÃO"},
     "jantar": {"SOPA", "TORRADA"},
 }
+
+RE_DATA = re.compile(r"\d{1,2}/\d{1,2}/\d{4}")
+TITULO_COLUNA_CATEGORIA = "COMPOSIÇÃO"
+TOLERANCIA_Y = 1  # pontos; absorve arredondamento entre bordas de células vizinhas
+
+
+class Celula(NamedTuple):
+    x0: float
+    top: float
+    x1: float
+    bottom: float
+    texto: str
 
 
 def extrair_links_cardapio(html: str, url_base: str = URL_CARDAPIO, campus: str = "darcy") -> list[dict]:
@@ -122,35 +144,60 @@ def encontrar_pdf_da_semana(links_cardapio: list[dict], referencia: date | None 
     return None
 
 
-def _extrair_tabela_pagina(pagina) -> list[list]:
-    """Extrai a tabela principal de uma página (descarta as tabelas fantasmas)."""
-    tabelas = pagina.extract_tables()
-    if not tabelas:
+def _texto_da_celula(pagina, bbox: tuple[float, float, float, float]) -> str:
+    """Junta os caracteres cujo centro está dentro da célula, numa linha só."""
+    x0, top, x1, bottom = bbox
+
+    def dentro(obj) -> bool:
+        if obj.get("object_type") != "char":
+            return False
+        cx = (obj["x0"] + obj["x1"]) / 2
+        cy = (obj["top"] + obj["bottom"]) / 2
+        return x0 <= cx <= x1 and top <= cy <= bottom
+
+    return " ".join((pagina.filter(dentro).extract_text() or "").split())
+
+
+def _posicoes_das_datas(palavras: list[dict]) -> tuple[list[tuple[float, date]], float]:
+    """Retorna as datas da semana ordenadas pela posição x (centro) e a
+    altura (y) onde o cabeçalho termina, que é a parte de baixo da data
+    mais baixa."""
+    datas: dict[date, tuple[float, float]] = {}
+    for palavra in palavras:
+        if RE_DATA.fullmatch(palavra["text"]):
+            centro_x = (palavra["x0"] + palavra["x1"]) / 2
+            datas.setdefault(_string_para_data(palavra["text"]), (centro_x, palavra["bottom"]))
+
+    if not datas:
+        raise ValueError("Não foi possível identificar as datas dos dias no cabeçalho.")
+
+    colunas = sorted((x, data_dia) for data_dia, (x, _) in datas.items())
+    fim_cabecalho = max(bottom for _, bottom in datas.values())
+    return colunas, fim_cabecalho
+
+
+def _x_da_coluna_de_categoria(palavras: list[dict]) -> float:
+    """Posição x (centro) do título da coluna de categorias."""
+    for palavra in palavras:
+        if palavra["text"] == TITULO_COLUNA_CATEGORIA:
+            return (palavra["x0"] + palavra["x1"]) / 2
+    raise ValueError(f"Coluna '{TITULO_COLUNA_CATEGORIA}' não encontrada na página.")
+
+
+def _celulas_do_corpo(pagina, fim_cabecalho: float) -> list[Celula]:
+    """Células com texto abaixo do cabeçalho, de todas as tabelas da página."""
+    bboxes = {bbox for tabela in pagina.find_tables() for bbox in tabela.cells}
+    if not bboxes:
         raise ValueError("Nenhuma tabela encontrada na página.")
-    return max(tabelas, key=len)
 
-
-def _mapear_colunas_dos_dias(cabecalho: list) -> dict[int, date]:
-    """Mapeia índice da coluna -> data, lendo a linha de cabeçalho."""
-    mapa = {}
-    for i, celula in enumerate(cabecalho):
-        if celula:
-            m = re.search(r"\d{1,2}/\d{1,2}/\d{4}", celula)
-            if m:
-                mapa[i] = _string_para_data(m.group())
-    if not mapa:
-        raise ValueError("Não foi possível identificar as colunas de dias no cabeçalho.")
-    return mapa
-
-
-def _categorias_da_tabela(tabela: list, primeira_col_dia: int) -> set[str]:
-    """Coleta o conjunto de categorias (coluna antes dos dias) presentes na tabela."""
-    categorias = set()
-    for linha in tabela[1:]:
-        celula_categoria = next((c for c in linha[:primeira_col_dia] if c), None)
-        if celula_categoria:
-            categorias.add(celula_categoria.replace("\n", " ").strip())
-    return categorias
+    celulas = []
+    for bbox in bboxes:
+        if (bbox[1] + bbox[3]) / 2 < fim_cabecalho:
+            continue
+        texto = _texto_da_celula(pagina, bbox)
+        if texto and texto != TITULO_COLUNA_CATEGORIA and not RE_DATA.search(texto):
+            celulas.append(Celula(*bbox, texto))
+    return celulas
 
 
 def _identificar_refeicao(categorias: set[str]) -> Refeicao:
@@ -161,34 +208,41 @@ def _identificar_refeicao(categorias: set[str]) -> Refeicao:
     raise ValueError(f"Não reconheci a refeição pelas categorias encontradas: {categorias}")
 
 
-def _normalizar_tabela(tabela: list, refeicao: Refeicao, colunas_dias: dict[int, date]) -> list[ItemCardapio]:
-    """Agrupa linhas em blocos por categoria (uma linha de categoria + suas
-    linhas de continuação, quando uma célula quebrou em mais linhas que as
-    vizinhas) e junta o texto de cada coluna dentro do bloco."""
-    primeira_col_dia = min(colunas_dias)
+def _categoria_na_altura(categorias: list[Celula], top: float) -> str | None:
+    for categoria in categorias:
+        if categoria.top - TOLERANCIA_Y <= top + TOLERANCIA_Y <= categoria.bottom:
+            return categoria.texto
+    return None
 
-    blocos: list[tuple[str, dict[int, list[str]]]] = []
-    for linha in tabela[1:]:
-        celula_categoria = next((c for c in linha[:primeira_col_dia] if c), None)
-        if celula_categoria:
-            categoria = celula_categoria.replace("\n", " ").strip()
-            blocos.append((categoria, {idx: [] for idx in colunas_dias}))
-        if not blocos:
-            continue  # linha antes de qualquer categoria (não deveria acontecer)
-        for idx in colunas_dias:
-            texto = linha[idx]
-            if texto:
-                blocos[-1][1][idx].append(texto.replace("\n", " ").strip())
 
-    itens = []
-    for categoria, colunas in blocos:
-        for idx, data_coluna in colunas_dias.items():
-            texto_completo = " ".join(colunas[idx]).strip()
-            if texto_completo:
-                itens.append(
-                    ItemCardapio(data=data_coluna, refeicao=refeicao, categoria=categoria, item=texto_completo)
-                )
-    return itens
+def _extrair_itens_pagina(pagina) -> tuple[Refeicao, list[ItemCardapio]]:
+    """Lê uma página (uma refeição) e devolve os itens na ordem do PDF:
+    categoria de cima para baixo e, dentro dela, dia a dia."""
+    palavras = pagina.extract_words()
+    colunas_dias, fim_cabecalho = _posicoes_das_datas(palavras)
+    x_categoria = _x_da_coluna_de_categoria(palavras)
+    celulas = _celulas_do_corpo(pagina, fim_cabecalho)
+
+    categorias = sorted((c for c in celulas if c.x0 <= x_categoria <= c.x1), key=lambda c: c.top)
+    refeicao = _identificar_refeicao({c.texto for c in categorias})
+
+    textos: dict[tuple[str, date], list[str]] = defaultdict(list)
+    for celula in sorted((c for c in celulas if c.x0 > x_categoria), key=lambda c: (c.top, c.x0)):
+        categoria = _categoria_na_altura(categorias, celula.top)
+        dias = [data_dia for x, data_dia in colunas_dias if celula.x0 <= x <= celula.x1]
+        if categoria is None or not dias:
+            logger.warning("Texto sem categoria ou dia na página de %s, ignorado: %r", refeicao, celula.texto)
+            continue
+        for data_dia in dias:
+            textos[(categoria, data_dia)].append(celula.texto)
+
+    itens = [
+        ItemCardapio(data=data_dia, refeicao=refeicao, categoria=categoria.texto, item=" ".join(partes))
+        for categoria in categorias
+        for _, data_dia in colunas_dias
+        if (partes := textos.get((categoria.texto, data_dia)))
+    ]
+    return refeicao, itens
 
 
 def extrair_itens_cardapio(conteudo_pdf: bytes) -> list[ItemCardapio]:
@@ -199,10 +253,7 @@ def extrair_itens_cardapio(conteudo_pdf: bytes) -> list[ItemCardapio]:
 
     with pdfplumber.open(io.BytesIO(conteudo_pdf)) as pdf:
         for num_pagina, pagina in enumerate(pdf.pages):
-            tabela = _extrair_tabela_pagina(pagina)
-            colunas_dias = _mapear_colunas_dos_dias(tabela[0])
-            categorias = _categorias_da_tabela(tabela, min(colunas_dias))
-            refeicao = _identificar_refeicao(categorias)
+            refeicao, itens_pagina = _extrair_itens_pagina(pagina)
 
             if refeicao in refeicoes_encontradas:
                 logger.warning(
@@ -210,8 +261,7 @@ def extrair_itens_cardapio(conteudo_pdf: bytes) -> list[ItemCardapio]:
                     "pode haver duplicidade nos dados.", refeicao, num_pagina,
                 )
             refeicoes_encontradas.add(refeicao)
-
-            itens.extend(_normalizar_tabela(tabela, refeicao, colunas_dias))
+            itens.extend(itens_pagina)
 
     faltando = set(ASSINATURAS_REFEICAO) - refeicoes_encontradas
     if faltando:
