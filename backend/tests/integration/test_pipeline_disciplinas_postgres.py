@@ -3,7 +3,7 @@ from pathlib import Path
 import pytest
 from sqlalchemy.exc import DataError
 
-from app.domain.disciplinas import normalizar_sala, persistir_turma, persistir_turmas
+from app.domain.disciplinas import normalizar_nome_professor, normalizar_sala, persistir_turma, persistir_turmas
 from app.models import Disciplina, Horario, Professor, Sala, Turma
 from app.schemas.disciplina import Horario as HorarioCapturado
 from app.scrapers.disciplinas.parser import parse_turmas
@@ -23,7 +23,9 @@ def test_pipeline_grava_todas_as_turmas_da_fixture_no_postgres(sessao_postgres):
 
     assert sessao_postgres.query(Turma).count() == len(turmas)
     assert sessao_postgres.query(Disciplina).count() == len({t.disciplina_codigo for t in turmas})
-    assert sessao_postgres.query(Professor).count() == len({p.nome for t in turmas for p in t.professores})
+    assert sessao_postgres.query(Professor).count() == len(
+        {normalizar_nome_professor(p.nome) for t in turmas for p in t.professores}
+    )
     assert sessao_postgres.query(Sala).count() == len(
         {normalizar_sala(t.sala.descricao) for t in turmas if t.sala.descricao.strip()}
     )
@@ -45,7 +47,8 @@ def test_pipeline_grava_os_valores_extraidos_do_sigaa(sessao_postgres):
     assert turma.unidade == "FCTE"
     assert (turma.vagas_ofertadas, turma.vagas_ocupadas) == (80, 77)
     assert (turma.sala.predio, turma.sala.nome) == ("FCTE", "I9/I10")
-    assert [p.nome for p in turma.professores] == ["EDSON ALVES DA COSTA JUNIOR (60h)"]
+    # sem o sufixo de carga horária: "(60h)" é cortado na normalização (dedup de professor)
+    assert [p.nome for p in turma.professores] == ["EDSON ALVES DA COSTA JUNIOR"]
     # só o código, sem o intervalo de datas que o SIGAA junta no mesmo texto
     assert [(h.codigo, h.descricao) for h in turma.horarios] == [("6T2345", "Sexta-feira 14:00 às 17:50")]
 
