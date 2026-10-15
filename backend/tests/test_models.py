@@ -24,6 +24,7 @@ def test_cria_todas_as_tabelas():
         "turma_professores",
         "horarios",
         "cardapios",
+        "execucao_logs",
     }
 
 
