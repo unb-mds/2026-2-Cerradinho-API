@@ -9,6 +9,7 @@ list[ItemCardapio].
 
 from datetime import date
 
+from app.core.exceptions import ErroFonteIndisponivel
 from app.schemas.cardapio import ItemCardapio
 
 from .parser import encontrar_pdf_da_semana, extrair_itens_cardapio, extrair_links_cardapio
@@ -29,11 +30,11 @@ def raspar_cardapio(referencia: date | None = None) -> list[ItemCardapio]:
     html = baixar_html()
     links = extrair_links_cardapio(html)
     if not links:
-        raise RuntimeError("Nenhum link de cardápio encontrado na página do RU.")
+        raise ErroFonteIndisponivel("Nenhum link de cardápio encontrado na página do RU.")
 
     pdf_da_semana = encontrar_pdf_da_semana(links, referencia)
     if not pdf_da_semana:
-        raise RuntimeError("Nenhum PDF de cardápio encontrado para a semana atual.")
+        raise ErroFonteIndisponivel("Nenhum PDF de cardápio encontrado para a semana atual.")
 
     conteudo_pdf = baixar_pdf(pdf_da_semana)
     return extrair_itens_cardapio(conteudo_pdf)

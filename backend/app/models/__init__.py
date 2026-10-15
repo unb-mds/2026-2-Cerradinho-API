@@ -15,4 +15,5 @@ __all__ = [
     "Sala",
     "Turma",
     "turma_professores",
+    "ExecucaoLog",
 ]
