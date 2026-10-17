@@ -2,7 +2,7 @@
 
 | Release | Responsável | Issue | Situação |
 |---|---|---|---|
-| R2 | Arthur | [#67](https://github.com/unb-mds/2026-2-Cerradinho-API/issues/67) | Não iniciado |
+| R2 | Arthur | [#67](https://github.com/unb-mds/2026-2-Cerradinho-API/issues/67) | Parcial |
 
 **Critérios de aceitação**
 - Requisição repetida ao mesmo endpoint, dentro da janela de cache, não gera nova consulta ao banco.
