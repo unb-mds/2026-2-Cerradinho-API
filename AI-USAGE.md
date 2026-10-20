@@ -43,6 +43,7 @@ Cada entrada deve conter: data, pessoa, ferramenta usada, o que foi pedido, o qu
 
 | Data | Pessoa | Ferramenta | O que foi feito | Aceito/ajustado/rejeitado |
 | ---- | ------ | ---------- | --------------- | ------------------------- |
+| 17/10/2026 | Arthur | Claude Code | Desenho do cache (RNF02, Sprint 5), registrado em `specs/RNF02-...md` | Ajustado: cortados trechos redundantes do texto gerado |
 
 ## Observações gerais
 
