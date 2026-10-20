@@ -1,8 +1,8 @@
 # RF10 · Expor endpoints REST por domínio
 
-| Release | Responsável | Issue | Situação |
-|---|---|---|---|
-| R1 | Daniel | [#42](https://github.com/unb-mds/2026-2-Cerradinho-API/issues/42) | Entregue |
+| Release | Responsável | Issue |
+|---|---|---|
+| R1 | Daniel | [#42](https://github.com/unb-mds/2026-2-Cerradinho-API/issues/42) |
 
 **Critérios de aceitação**
 - Cada domínio (disciplinas, professores, salas, cardápio) tem um endpoint `GET` próprio sob `/v1/`.

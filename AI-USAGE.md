@@ -43,6 +43,10 @@ Cada entrada deve conter: data, pessoa, ferramenta usada, o que foi pedido, o qu
 | 19/10/2026 | Daniel | Claude (Figma MCP) | Ajustes no arquivo do Figma a pedido: ligações do protótipo entre todas as telas e unificação em um só protótipo, movimentação e renomeação de 4 frames, item "Salas vazias" com ícone no menu lateral de todas as telas| Aceito sem ajuste: o pedido foi para trabalho repetitivo, e o Daniel conferiu as telas depois |
 | 19/10/2026 | Daniel | Claude| Wireframe do portal do desenvolvedor (RF14): explicação de conceitos (API, endpoint, Swagger, wireframe) e orientação passo a passo no Figma; o Daniel montou topo, hero, endpoints, exemplos e espaço do Swagger;| Ajustado: no início a IA montou o wireframe inteiro sem o Daniel pedir, e isso foi apagado para ele fazer sozinho; seções SDK e CLI e rodapé aceitas após o ajuste do rodapé |
 
+| Data | Pessoa | Ferramenta | O que foi feito | Aceito/ajustado/rejeitado |
+| ---- | ------ | ---------- | --------------- | ------------------------- |
+| 17/10/2026 | Arthur | Claude Code | Desenho do cache (RNF02, Sprint 5), registrado em `specs/RNF02-...md` | Ajustado: cortados trechos redundantes do texto gerado |
+
 ## Observações gerais
 
 - Código gerado por IA passa pela mesma revisão de PR que qualquer outro código (ver `PROCESSO.md`)

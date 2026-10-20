@@ -1,8 +1,8 @@
 # RF04 · Cadastrar docentes vinculados às disciplinas
 
-| Release | Responsável | Issue | Situação |
-|---|---|---|---|
-| R1 | Vitor | [#38](https://github.com/unb-mds/2026-2-Cerradinho-API/issues/38) | Entregue |
+| Release | Responsável | Issue |
+|---|---|---|
+| R1 | Vitor | [#38](https://github.com/unb-mds/2026-2-Cerradinho-API/issues/38) |
 
 **Critérios de aceitação**
 - `GET /v1/professores` lista todo professor que leciona pelo menos uma turma capturada, com as disciplinas associadas.

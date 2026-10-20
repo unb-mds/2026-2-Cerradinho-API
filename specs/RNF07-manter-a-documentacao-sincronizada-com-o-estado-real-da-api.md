@@ -1,8 +1,8 @@
 # RNF07 · Manter a documentação sincronizada com o estado real da API
 
-| Release | Responsável | Issue | Situação |
-|---|---|---|---|
-| R1 | João Paulo | [#72](https://github.com/unb-mds/2026-2-Cerradinho-API/issues/72) | Parcial |
+| Release | Responsável | Issue |
+|---|---|---|
+| R1 | João Paulo | [#72](https://github.com/unb-mds/2026-2-Cerradinho-API/issues/72) |
 
 **Critérios de aceitação**
 - A documentação (OpenAPI, README, portal do desenvolvedor) reflete os endpoints e contratos realmente implementados, sem rota documentada que não existe ou existente que não está documentada.

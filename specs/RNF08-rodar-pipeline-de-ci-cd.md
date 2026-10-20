@@ -1,8 +1,8 @@
 # RNF08 · Rodar pipeline de CI/CD
 
-| Release | Responsável | Issue | Situação |
-|---|---|---|---|
-| R1 | João Paulo | [#73](https://github.com/unb-mds/2026-2-Cerradinho-API/issues/73) | Parcial |
+| Release | Responsável | Issue |
+|---|---|---|
+| R1 | João Paulo | [#73](https://github.com/unb-mds/2026-2-Cerradinho-API/issues/73) |
 
 **Critérios de aceitação**
 - Todo push dispara lint, testes (unitários, contrato, integração) e SAST automaticamente, desde a Release 1.

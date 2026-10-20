@@ -1,8 +1,8 @@
 # RF03 · Associar disciplina a sala/prédio
 
-| Release | Responsável | Issue | Situação |
-|---|---|---|---|
-| R1 | Vitor | [#37](https://github.com/unb-mds/2026-2-Cerradinho-API/issues/37) | Entregue |
+| Release | Responsável | Issue |
+|---|---|---|
+| R1 | Vitor | [#37](https://github.com/unb-mds/2026-2-Cerradinho-API/issues/37) |
 
 **Critérios de aceitação**
 - Turma com local informado no SIGAA aparece com sala e prédio preenchidos na resposta da API.

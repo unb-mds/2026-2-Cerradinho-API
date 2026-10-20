@@ -1,8 +1,8 @@
 # RNF01 · Limitar requisições por cliente/IP (rate limiting)
 
-| Release | Responsável | Issue | Situação |
-|---|---|---|---|
-| R2 | Arthur | [#66](https://github.com/unb-mds/2026-2-Cerradinho-API/issues/66) | Não iniciado |
+| Release | Responsável | Issue |
+|---|---|---|
+| R2 | Arthur | [#66](https://github.com/unb-mds/2026-2-Cerradinho-API/issues/66) |
 
 **Critérios de aceitação**
 - Cliente que ultrapassa o limite de requisições num intervalo recebe HTTP 429, não é simplesmente bloqueado em silêncio.
