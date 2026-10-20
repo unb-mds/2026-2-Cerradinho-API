@@ -9,9 +9,15 @@ Mudanças relevantes do Cerradinho, por release. O formato segue o [Keep a Chang
 - Diagramas de arquitetura no modelo C4 (contexto, container e componente) em `docs/ARQUITETURA.md`.
 - Retrospectivas das Sprints 0 a 4 em `docs/scrum/retrospectivas.md`.
 - Licença MIT, Código de Conduta e este changelog.
+- Guia de deploy no Railway em `docs/DEPLOY.md`, com os serviços, as variáveis de ambiente e a ordem do primeiro deploy.
+
+### Corrigido
+
+- Parser do cardápio do RU, que falhava com os PDFs publicados a partir de 21/09 porque cada semana monta a tabela de um jeito. A leitura agora usa a posição das datas na página, e itens que valem para a semana inteira (como as bebidas do café) aparecem em todos os dias.
 
 ### Alterado
 
+- O endereço do Redis usado pelo Celery vem da variável `REDIS_URL`, com o docker compose como padrão.
 - Uma branch `R2-nome` por pessoa na Release 2, no lugar de uma branch por tarefa (`CONTRIBUTING.md`).
 
 ## [Release_1] - 2026-10-06
