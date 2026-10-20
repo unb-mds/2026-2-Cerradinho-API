@@ -1,14 +1,15 @@
 from celery import Celery
 from celery.schedules import crontab
 
+from app.core.config import settings
 from app.tasks import logging_signals  # noqa: F401 (importa os signals de log (RF16) para registrar no Celery)
 
-# "redis" (não "localhost") porque, dentro da rede do docker compose,
-# o nome do serviço funciona como hostname
+# O endereço vem do REDIS_URL (ver app/core/config.py): no docker compose o
+# padrão aponta para o serviço "redis", e no Railway para o Redis do projeto
 celery_app = Celery(
     "cerradinho",
-    broker="redis://redis:6379/0",
-    backend="redis://redis:6379/1",
+    broker=settings.redis_url,
+    backend=settings.redis_url,
     include=[
         "app.tasks.scraping",
         "app.tasks.cardapio"

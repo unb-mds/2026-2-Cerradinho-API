@@ -1,8 +1,8 @@
 # RNF04 · Validar a API contra testes de contrato
 
-| Release | Responsável | Issue | Situação |
-|---|---|---|---|
-| R1 | João Paulo | [#69](https://github.com/unb-mds/2026-2-Cerradinho-API/issues/69) | Entregue |
+| Release | Responsável | Issue |
+|---|---|---|
+| R1 | João Paulo | [#69](https://github.com/unb-mds/2026-2-Cerradinho-API/issues/69) |
 
 **Critérios de aceitação**
 - Toda rota pública é validada automaticamente contra o `/openapi.json` publicado (schemathesis) no pipeline de CI.

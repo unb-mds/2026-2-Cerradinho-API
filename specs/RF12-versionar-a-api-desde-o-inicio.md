@@ -1,8 +1,8 @@
 # RF12 · Versionar a API desde o início
 
-| Release | Responsável | Issue | Situação |
-|---|---|---|---|
-| R1 | Gabriel | [#44](https://github.com/unb-mds/2026-2-Cerradinho-API/issues/44) | Entregue |
+| Release | Responsável | Issue |
+|---|---|---|
+| R1 | Gabriel | [#44](https://github.com/unb-mds/2026-2-Cerradinho-API/issues/44) |
 
 **Critérios de aceitação**
 - Toda rota pública vive sob o prefixo `/v1/` desde a primeira versão publicada, não só quando uma v2 for necessária.
