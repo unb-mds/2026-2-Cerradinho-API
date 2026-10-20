@@ -1,8 +1,8 @@
 # RNF06 · Garantir disponibilidade do software implantado
 
-| Release | Responsável | Issue | Situação |
-|---|---|---|---|
-| R2 | Gabriel | [#71](https://github.com/unb-mds/2026-2-Cerradinho-API/issues/71) | Não iniciado |
+| Release | Responsável | Issue |
+|---|---|---|
+| R2 | Gabriel | [#71](https://github.com/unb-mds/2026-2-Cerradinho-API/issues/71) |
 
 **Critérios de aceitação**
 - Ao fim da Release 2, o sistema (API + frontend) está implantado e acessível publicamente, não só rodando localmente.
@@ -12,6 +12,6 @@
 
 ## Rastreabilidade
 
-- **PRs:** nenhum ainda.
-- **Testes:** nenhum ainda.
+- **PRs:** [#145](https://github.com/unb-mds/2026-2-Cerradinho-API/pull/145) (variáveis de ambiente e guia de deploy em [`docs/DEPLOY.md`](https://github.com/unb-mds/2026-2-Cerradinho-API/blob/dev/docs/DEPLOY.md))
+- **Testes:** [`tests/tasks/test_celery_app.py`](https://github.com/unb-mds/2026-2-Cerradinho-API/blob/dev/backend/tests/tasks/test_celery_app.py) (endereço do Redis lido do `REDIS_URL`)
 - **Decisões:** [ADR 0009](https://github.com/unb-mds/2026-2-Cerradinho-API/blob/dev/docs/adr/0009-railway-para-deploy.md)

@@ -1,8 +1,8 @@
 # RF17 · Calcular salas vazias por dia e horário
 
-| Release | Responsável | Issue | Situação |
-|---|---|---|---|
-| R2 | Vitor | [#53](https://github.com/unb-mds/2026-2-Cerradinho-API/issues/53) | Não iniciado |
+| Release | Responsável | Issue |
+|---|---|---|
+| R2 | Vitor | [#53](https://github.com/unb-mds/2026-2-Cerradinho-API/issues/53) |
 
 **Critérios de aceitação**
 - `GET /v1/salas/vazias?dia=segunda&horario=14:00` devolve as salas que não têm nenhuma turma cadastrada naquele dia/horário.

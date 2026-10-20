@@ -1,8 +1,8 @@
 # RNF05 · Tratar falhas de scraping de forma resiliente
 
-| Release | Responsável | Issue | Situação |
-|---|---|---|---|
-| R1 | João Paulo | [#70](https://github.com/unb-mds/2026-2-Cerradinho-API/issues/70) | Parcial |
+| Release | Responsável | Issue |
+|---|---|---|
+| R1 | João Paulo | [#70](https://github.com/unb-mds/2026-2-Cerradinho-API/issues/70) |
 
 **Critérios de aceitação**
 - Mudança no layout ou no fluxo de uma fonte externa derruba a raspagem daquela fonte com um erro explícito, sem gravar dado parcial/incorreto no banco.

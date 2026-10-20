@@ -1,8 +1,8 @@
 # RF18 · Listar agenda de turmas por professor
 
-| Release | Responsável | Issue | Situação |
-|---|---|---|---|
-| R2 | Vitor | [#50](https://github.com/unb-mds/2026-2-Cerradinho-API/issues/50) | Não iniciado |
+| Release | Responsável | Issue |
+|---|---|---|
+| R2 | Vitor | [#50](https://github.com/unb-mds/2026-2-Cerradinho-API/issues/50) |
 
 **Critérios de aceitação**
 - `GET /v1/professores/{nome}/agenda` devolve todas as turmas vinculadas àquele professor (RF02), com horário e sala.

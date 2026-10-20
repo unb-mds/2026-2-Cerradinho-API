@@ -1,8 +1,8 @@
 # RF11 · Documentar a API via OpenAPI/Swagger
 
-| Release | Responsável | Issue | Situação |
-|---|---|---|---|
-| R1 | Daniel | [#43](https://github.com/unb-mds/2026-2-Cerradinho-API/issues/43) | Entregue |
+| Release | Responsável | Issue |
+|---|---|---|
+| R1 | Daniel | [#43](https://github.com/unb-mds/2026-2-Cerradinho-API/issues/43) |
 
 **Critérios de aceitação**
 - `/openapi.json` é gerado automaticamente a partir dos schemas Pydantic e reflete exatamente o formato que os endpoints retornam.

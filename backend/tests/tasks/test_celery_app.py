@@ -1,5 +1,6 @@
 import inspect
 import json
+import os
 import subprocess
 import sys
 from pathlib import Path
@@ -64,3 +65,16 @@ def test_agendamento_passa_argumentos_compativeis_com_a_task(nome_agendamento, e
         inspect.signature(task.run).bind(*entrada.get("args", ()), **entrada.get("kwargs", {}))
     except TypeError as erro:
         pytest.fail(f"{nome_agendamento} chama {entrada['task']} com argumentos inválidos: {erro}")
+
+
+def test_celery_le_o_endereco_do_redis_da_variavel_de_ambiente():
+    # processo novo para o Settings ler o REDIS_URL na importação, como no deploy
+    script = "from app.celery_app import celery_app; print(celery_app.conf.broker_url, celery_app.conf.result_backend)"
+    ambiente = {**os.environ, "REDIS_URL": "redis://default:segredo@redis.railway.internal:6379"}
+
+    resultado = subprocess.run(
+        [sys.executable, "-c", script], cwd=BACKEND_DIR, env=ambiente, capture_output=True, text=True, check=True
+    )
+
+    broker, backend = resultado.stdout.strip().splitlines()[-1].split()
+    assert broker == backend == "redis://default:segredo@redis.railway.internal:6379"
