@@ -10,10 +10,10 @@ interface ResourceState<T> {
 }
 
 /**
- * Internal helper shared by the domain hooks below — components should
- * never call this directly, only useDisciplinas/useCardapioSemana/etc.
- * Starts from `initial` (a mock or an empty list) so screens render immediately, then swaps in the
- * real API response once it arrives.
+ * Busca `path` na API (`/v1`) e devolve { data, loading, error }.
+ * Os componentes não chamam este hook direto: usam os hooks de domínio
+ * (useDisciplinas, useProfessores etc.).
+ * `mock` é o valor exibido enquanto a API não responde (nos hooks, uma lista vazia).
  */
 export function useApiResource<T>(path: string, mock: T): ResourceState<T> {
   const [data, setData] = useState<T>(mock);

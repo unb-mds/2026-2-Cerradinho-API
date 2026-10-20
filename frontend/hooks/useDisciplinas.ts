@@ -16,8 +16,7 @@ export interface Disciplina {
   vagasOcupadas: number;
 }
 
-// Formato que a API real devolve (espelha backend/app/schemas/disciplina.py:Turma).
-// É isto que `api.get("/disciplinas")` vai retornar quando o endpoint existir.
+// Formato que a API devolve em /v1/disciplinas (espelha backend/app/schemas/disciplina.py:Turma).
 interface TurmaAPI {
   disciplina_codigo: string;
   disciplina_nome: string;
