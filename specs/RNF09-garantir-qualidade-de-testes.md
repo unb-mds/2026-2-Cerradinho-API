@@ -1,8 +1,8 @@
 # RNF09 · Garantir qualidade de testes
 
-| Release | Responsável | Issue | Situação |
-|---|---|---|---|
-| R2 | João Paulo | [#74](https://github.com/unb-mds/2026-2-Cerradinho-API/issues/74) | Parcial |
+| Release | Responsável | Issue |
+|---|---|---|
+| R2 | João Paulo | [#74](https://github.com/unb-mds/2026-2-Cerradinho-API/issues/74) |
 
 **Critérios de aceitação**
 - Cobertura de linhas do backend ≥ 90%.

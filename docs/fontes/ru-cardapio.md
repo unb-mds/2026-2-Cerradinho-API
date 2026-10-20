@@ -101,8 +101,8 @@ sinal de correção de cardápio, e o histórico do RF07 precisa refletir isso.
 
 ## 6. Pendências
 
-- [ ] Escolher e testar a biblioteca de extração de PDF
-- [ ] Salvar um PDF como fixture no repositório, para teste de parser sem rede
+- [x] Escolher e testar a biblioteca de extração de PDF (pdfplumber, [ADR 0002](../adr/0002-ferramentas-de-scraping.md))
+- [x] Salvar PDFs como fixture no repositório, para teste de parser sem rede (cinco semanas em `backend/tests/scrapers/fixtures/`)
 - [ ] Definir com o PO se os ícones de alérgeno entram no escopo do RF06
 - [ ] Verificar `robots.txt` do domínio
 - [ ] Confirmar se os cinco campi seguem exatamente a mesma estrutura de tabela

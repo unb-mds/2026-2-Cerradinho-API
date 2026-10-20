@@ -1,8 +1,8 @@
 # RF08 · Capturar eventos institucionais
 
-| Release | Responsável | Issue | Situação |
-|---|---|---|---|
-| R2 | Ninguém | [#47](https://github.com/unb-mds/2026-2-Cerradinho-API/issues/47) | Fora do escopo |
+| Release | Responsável | Issue |
+|---|---|---|
+| R2 | Ninguém | [#47](https://github.com/unb-mds/2026-2-Cerradinho-API/issues/47) |
 
 **Critérios de aceitação**
 - O scraper captura data, local e descrição de cada evento publicado na agenda institucional.

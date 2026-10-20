@@ -1,8 +1,8 @@
 # RF19 · Agrupar cardápio semanal
 
-| Release | Responsável | Issue | Situação |
-|---|---|---|---|
-| R2 | Gabriel | [#51](https://github.com/unb-mds/2026-2-Cerradinho-API/issues/51) | Não iniciado |
+| Release | Responsável | Issue |
+|---|---|---|
+| R2 | Gabriel | [#51](https://github.com/unb-mds/2026-2-Cerradinho-API/issues/51) |
 
 **Critérios de aceitação**
 - `GET /v1/cardapio/semana?data_inicio=...` devolve os 7 dias a partir da data informada; sem `data_inicio`, devolve de hoje até hoje+6 dias.

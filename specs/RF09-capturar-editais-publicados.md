@@ -1,8 +1,8 @@
 # RF09 · Capturar editais publicados
 
-| Release | Responsável | Issue | Situação |
-|---|---|---|---|
-| R2 | Ninguém | [#48](https://github.com/unb-mds/2026-2-Cerradinho-API/issues/48) | Fora do escopo |
+| Release | Responsável | Issue |
+|---|---|---|
+| R2 | Ninguém | [#48](https://github.com/unb-mds/2026-2-Cerradinho-API/issues/48) |
 
 **Critérios de aceitação**
 - O scraper captura título, data de publicação, link original e órgão responsável de cada edital listado no portal público.

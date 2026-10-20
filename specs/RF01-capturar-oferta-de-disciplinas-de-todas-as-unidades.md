@@ -1,8 +1,8 @@
 # RF01 · Capturar oferta de disciplinas de todas as unidades
 
-| Release | Responsável | Issue | Situação |
-|---|---|---|---|
-| R1 | Vitor | [#35](https://github.com/unb-mds/2026-2-Cerradinho-API/issues/35) | Entregue |
+| Release | Responsável | Issue |
+|---|---|---|
+| R1 | Vitor | [#35](https://github.com/unb-mds/2026-2-Cerradinho-API/issues/35) |
 
 **Critérios de aceitação**
 - Dado o código de uma unidade (ex: `673` = FCTE/Gama), o scraper devolve todas as turmas abertas daquela unidade com disciplina, código, número da turma, horário, vagas ofertadas e ocupadas.

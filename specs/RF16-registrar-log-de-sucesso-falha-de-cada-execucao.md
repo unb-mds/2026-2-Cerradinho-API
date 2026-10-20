@@ -1,8 +1,8 @@
 # RF16 · Registrar log de sucesso/falha de cada execução
 
-| Release | Responsável | Issue | Situação |
-|---|---|---|---|
-| R1 | Arthur | [#46](https://github.com/unb-mds/2026-2-Cerradinho-API/issues/46) | Concluído |
+| Release | Responsável | Issue |
+|---|---|---|
+| R1 | Arthur | [#46](https://github.com/unb-mds/2026-2-Cerradinho-API/issues/46) |
 
 **Critérios de aceitação**
 - Toda execução agendada (sucesso ou falha) gera um registro identificável — pessoa fazendo triagem de incidente consegue saber se o scraper rodou e o que aconteceu.
