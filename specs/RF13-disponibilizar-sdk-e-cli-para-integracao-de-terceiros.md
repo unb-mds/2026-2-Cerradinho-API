@@ -1,8 +1,8 @@
 # RF13 · Disponibilizar SDK e CLI para integração de terceiros
 
-| Release | Responsável | Issue | Situação |
-|---|---|---|---|
-| R2 | Vitor (SDK), João Paulo (CLI) | [#49](https://github.com/unb-mds/2026-2-Cerradinho-API/issues/49) | Não iniciado |
+| Release | Responsável | Issue |
+|---|---|---|
+| R2 | Vitor (SDK), João Paulo (CLI) | [#49](https://github.com/unb-mds/2026-2-Cerradinho-API/issues/49) |
 
 **Critérios de aceitação**
 - Existe um pacote Python instalável que encapsula chamadas HTTP à API num cliente (SDK) e numa interface de linha de comando (CLI).

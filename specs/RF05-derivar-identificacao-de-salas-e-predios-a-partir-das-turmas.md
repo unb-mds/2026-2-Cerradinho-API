@@ -1,8 +1,8 @@
 # RF05 · Derivar identificação de salas e prédios a partir das turmas
 
-| Release | Responsável | Issue | Situação |
-|---|---|---|---|
-| R1 | Vitor | [#39](https://github.com/unb-mds/2026-2-Cerradinho-API/issues/39) | Entregue |
+| Release | Responsável | Issue |
+|---|---|---|
+| R1 | Vitor | [#39](https://github.com/unb-mds/2026-2-Cerradinho-API/issues/39) |
 
 **Critérios de aceitação**
 - `GET /v1/salas` lista toda sala distinta encontrada nas turmas capturadas, ordenada por prédio e nome.

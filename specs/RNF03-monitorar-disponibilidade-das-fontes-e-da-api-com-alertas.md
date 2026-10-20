@@ -1,8 +1,8 @@
 # RNF03 · Monitorar disponibilidade das fontes e da API, com alertas
 
-| Release | Responsável | Issue | Situação |
-|---|---|---|---|
-| R2 | João Paulo | [#68](https://github.com/unb-mds/2026-2-Cerradinho-API/issues/68) | Não iniciado |
+| Release | Responsável | Issue |
+|---|---|---|
+| R2 | João Paulo | [#68](https://github.com/unb-mds/2026-2-Cerradinho-API/issues/68) |
 
 **Critérios de aceitação**
 - Queda de uma fonte externa (SIGAA, RU) ou da própria API gera um alerta, não só um log silencioso.

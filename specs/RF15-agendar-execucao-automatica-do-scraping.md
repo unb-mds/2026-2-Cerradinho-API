@@ -1,8 +1,8 @@
 # RF15 · Agendar execução automática do scraping
 
-| Release | Responsável | Issue | Situação |
-|---|---|---|---|
-| R1 | Arthur | [#45](https://github.com/unb-mds/2026-2-Cerradinho-API/issues/45) | Parcial |
+| Release | Responsável | Issue |
+|---|---|---|
+| R1 | Arthur | [#45](https://github.com/unb-mds/2026-2-Cerradinho-API/issues/45) |
 
 **Critérios de aceitação**
 - O scraper de cada domínio roda automaticamente, sem intervenção manual, numa frequência definida (disciplinas: semanal; cardápio: diária).

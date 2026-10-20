@@ -25,7 +25,7 @@ Os riscos de cada fonte estão no [relatório de risco](fontes/relatorio-de-risc
 
 ## 3. Requisitos
 
-Os requisitos estão agrupados por domínio abaixo. A situação de cada um (não iniciado, parcial, entregue ou fora do escopo) e o responsável ficam no [índice do `/specs`](https://github.com/unb-mds/2026-2-Cerradinho-API/blob/dev/specs/README.md), para não haver duas versões da mesma informação.
+Os requisitos estão agrupados por domínio abaixo. O responsável e a issue de cada um ficam no [índice do `/specs`](https://github.com/unb-mds/2026-2-Cerradinho-API/blob/dev/specs/README.md), e o andamento é acompanhado pela issue no GitHub Projects.
 
 ### Disciplinas, professores e salas
 

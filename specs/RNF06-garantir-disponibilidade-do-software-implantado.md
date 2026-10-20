@@ -1,8 +1,8 @@
 # RNF06 · Garantir disponibilidade do software implantado
 
-| Release | Responsável | Issue | Situação |
-|---|---|---|---|
-| R2 | Gabriel | [#71](https://github.com/unb-mds/2026-2-Cerradinho-API/issues/71) | Não iniciado |
+| Release | Responsável | Issue |
+|---|---|---|
+| R2 | Gabriel | [#71](https://github.com/unb-mds/2026-2-Cerradinho-API/issues/71) |
 
 **Critérios de aceitação**
 - Ao fim da Release 2, o sistema (API + frontend) está implantado e acessível publicamente, não só rodando localmente.

@@ -1,8 +1,8 @@
 # RF02 · Associar disciplina a professor
 
-| Release | Responsável | Issue | Situação |
-|---|---|---|---|
-| R1 | Vitor | [#36](https://github.com/unb-mds/2026-2-Cerradinho-API/issues/36) | Entregue |
+| Release | Responsável | Issue |
+|---|---|---|
+| R1 | Vitor | [#36](https://github.com/unb-mds/2026-2-Cerradinho-API/issues/36) |
 
 **Critérios de aceitação**
 - Toda turma capturada com professor(es) listado(s) no SIGAA aparece com esse(s) professor(es) vinculado(s) na resposta da API.
