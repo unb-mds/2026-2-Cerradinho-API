@@ -9,6 +9,8 @@ conforme docs/ARQUITETURA.md.
 
 from __future__ import annotations
 
+import re
+
 from sqlalchemy.orm import Session
 
 from app.models import Disciplina, Horario, Professor, Sala, Turma
@@ -17,13 +19,23 @@ from app.schemas.disciplina import Professor as ProfessorCapturado
 from app.schemas.disciplina import Sala as SalaCapturada
 from app.schemas.disciplina import Turma as TurmaCapturada
 
+_SEPARADOR_SALA = re.compile(r"\s*[-/]\s*")
+
 
 def normalizar_sala(descricao: str) -> tuple[str, str]:
-    """"FCTE - I9/I10" -> ("FCTE", "I9/I10"); sem separador, tudo vira nome."""
-    predio, separador, nome = descricao.partition(" - ")
-    if not separador:
-        return "", descricao.strip()
-    return predio.strip(), nome.strip()
+    """"FCTE - I9/I10" -> ("FCTE", "I9/I10"); sem separador, tudo vira nome.
+
+    O SIGAA não usa um separador único entre prédio e sala ("FCTE - I2",
+    "FCTE / I2", "FCTE- LAB NEI 2" são a mesma sala) nem maiúsculas/minúsculas
+    consistentes pro mesmo espaço físico ("Mocap" vs "MOCAP"). Sem
+    normalizar os dois, a mesma sala vira várias linhas distintas."""
+    descricao = descricao.strip()
+    match = _SEPARADOR_SALA.search(descricao)
+    if not match:
+        return "", descricao.upper()
+    predio = descricao[: match.start()].strip()
+    nome = descricao[match.end() :].strip()
+    return predio.upper(), nome.upper()
 
 
 def _get_ou_cria_disciplina(session: Session, codigo: str, nome: str) -> Disciplina:
@@ -35,7 +47,19 @@ def _get_ou_cria_disciplina(session: Session, codigo: str, nome: str) -> Discipl
     return disciplina
 
 
+def normalizar_nome_professor(nome: str) -> str:
+    """"ALESSANDRO BORGES DE SOUSA OLIVEIRA (60h)" -> "ALESSANDRO BORGES DE SOUSA OLIVEIRA".
+
+    O SIGAA junta a carga horária da disciplina no nome do docente; como a
+    carga varia por disciplina, usar o texto cru como chave de dedup cria uma
+    linha de Professor por carga horária distinta do mesmo professor.
+    """
+    nome, _, _ = nome.partition(" (")
+    return nome.strip()
+
+
 def _get_ou_cria_professor(session: Session, nome: str) -> Professor:
+    nome = normalizar_nome_professor(nome)
     professor = session.query(Professor).filter_by(nome=nome).one_or_none()
     if professor is None:
         professor = Professor(nome=nome)

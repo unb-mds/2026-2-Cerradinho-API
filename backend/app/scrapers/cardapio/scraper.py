@@ -13,6 +13,8 @@ import time
 
 import requests
 
+from app.core.exceptions import ErroFonteIndisponivel
+
 logger = logging.getLogger(__name__)
 
 URL_CARDAPIO = "https://ru.unb.br/cardapio-refeitorio/"
@@ -54,4 +56,6 @@ def baixar_pdf(url_pdf: str, timeout: int = 15) -> bytes:
             if tentativa < TENTATIVAS_DOWNLOAD:
                 time.sleep(ESPERA_ENTRE_TENTATIVAS * tentativa)
 
-    raise RuntimeError(f"Não foi possível baixar o PDF após {TENTATIVAS_DOWNLOAD} tentativas.") from ultimo_erro
+    raise ErroFonteIndisponivel(
+        f"Não foi possível baixar o PDF após {TENTATIVAS_DOWNLOAD} tentativas."
+        ) from ultimo_erro

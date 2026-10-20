@@ -9,8 +9,9 @@
 - Turma sem local informado aparece com sala nula, nunca com erro.
 
 **Regra de negócio**
-- O texto de local do SIGAA vem no formato `"PRÉDIO - SALA"` (ex: `"FCTE - I9/I10"`); o prédio é tudo antes do primeiro `" - "`, o resto é o nome da sala.
-- Texto sem o separador `" - "` vira só o nome da sala, com prédio vazio, em vez de ser descartado.
+- O texto de local do SIGAA vem no formato `"PRÉDIO - SALA"` (ex: `"FCTE - I9/I10"`); o prédio é tudo antes do separador, o resto é o nome da sala.
+- O SIGAA não usa um separador único: `"-"` e `"/"` aparecem para o mesmo tipo de informação, com ou sem espaço ao redor (`"FCTE - I2"`, `"FCTE / I2"`, `"FCTE- LAB NEI 2"`). Prédio e nome são normalizados pra maiúsculas, porque o mesmo espaço físico também aparece com caixa inconsistente (`"Mocap"` vs `"MOCAP"`) — sem isso, a mesma sala vira várias linhas.
+- Texto sem separador reconhecido vira só o nome da sala, com prédio vazio, em vez de ser descartado.
 
 ## Rastreabilidade
 

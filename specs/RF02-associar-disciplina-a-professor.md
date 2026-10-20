@@ -9,7 +9,7 @@
 - O mesmo professor lecionando turmas diferentes aparece como uma única entidade (não duplica o cadastro).
 
 **Regra de negócio**
-- O nome do professor, como vem do SIGAA, é a chave de deduplicação (get-or-create por nome) — não há normalização de grafia diferente pro mesmo docente.
+- O nome do professor, normalizado, é a chave de deduplicação (get-or-create por nome). O SIGAA junta a carga horária da disciplina no nome do docente (ex: `"FULANO (60h)"`), e como a carga varia por disciplina pro mesmo professor, esse sufixo é cortado antes do dedup — senão o mesmo professor vira uma linha por carga horária distinta.
 - Turma com docente "a definir" ainda não tem essa normalização tratada: o literal "A DEFINIR DOCENTE" pode ser persistido como se fosse um nome de professor.
 
 ## Rastreabilidade

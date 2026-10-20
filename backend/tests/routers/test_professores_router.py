@@ -65,3 +65,35 @@ def test_listar_professores_sem_dado_retorna_lista_vazia(client):
 
     assert response.status_code == 200
     assert response.json() == []
+
+
+def test_listar_professores_busca_por_nome_parcial(client, db_session):
+    persistir_turma(
+        db_session,
+        _turma_capturada(professores=[Professor(nome="André Luis Araújo"), Professor(nome="Carlos Lima")]),
+        unidade="FCTE",
+    )
+    db_session.commit()
+
+    response = client.get("/v1/professores", params={"nome": "luis"})
+
+    assert [p["nome"] for p in response.json()] == ["André Luis Araújo"]
+
+
+def test_listar_professores_busca_ignora_acento_e_caixa(client, db_session):
+    persistir_turma(db_session, _turma_capturada(professores=[Professor(nome="André Luis Araújo")]), unidade="FCTE")
+    db_session.commit()
+
+    response = client.get("/v1/professores", params={"nome": "andre araujo"})
+
+    assert len(response.json()) == 1
+    assert response.json()[0]["nome"] == "André Luis Araújo"
+
+
+def test_listar_professores_busca_sem_match_retorna_lista_vazia(client, db_session):
+    persistir_turma(db_session, _turma_capturada(), unidade="FCTE")
+    db_session.commit()
+
+    response = client.get("/v1/professores", params={"nome": "zzz"})
+
+    assert response.json() == []

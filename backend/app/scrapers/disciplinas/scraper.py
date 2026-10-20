@@ -15,6 +15,8 @@ import asyncio
 
 from playwright.async_api import Page, async_playwright
 
+from app.core.exceptions import ErroFonteIndisponivel
+
 URL_HOME = "https://sigaa.unb.br/sigaa/public/"
 URL_BUSCA_TURMAS = "https://sigaa.unb.br/sigaa/public/turmas/listar.jsf?aba=p-ensino"
 
@@ -83,7 +85,7 @@ class DisciplinaScraper:
 
             print(f"Sessão expirou na tentativa {tentativa}/{tentativas} (unidade {unidade}), tentando de novo...")
 
-        raise RuntimeError(
+        raise ErroFonteIndisponivel(
             f"SIGAA continuou respondendo 'sessão não está mais ativa' para a unidade {unidade} "
             f"após {tentativas} tentativas."
         )
