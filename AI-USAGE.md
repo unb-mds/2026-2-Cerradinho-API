@@ -43,6 +43,10 @@ Cada entrada deve conter: data, pessoa, ferramenta usada, o que foi pedido, o qu
 
 | Data | Pessoa | Ferramenta | O que foi feito | Aceito/ajustado/rejeitado |
 | ---- | ------ | ---------- | --------------- | ------------------------- |
+| 05/10/2026 | Gabriel | Claude Code | Análise das branches antigas e padrão de branch R2-nome no | Aceito sem ajuste |
+| 13/10/2026 | Gabriel | Claude Code | Auxílio na adição de arquivos necessários e no replanejamento da R2 | Ajustado: formato do `/specs`, datas e escopo definidos por mim |
+| 15/10/2026 | Gabriel | Claude Code | Suporte na correção do parser do RU com fixtures e testes, docs/DEPLOY.md e remoção da coluna Situação das specs | Ajustado: pratos conferidos contra os PDFs|
+| 19/10/2026 | Gabriel | Claude Code | Ajuda em conflitos com a dev| Aceito sem ajuste |
 
 ## Observações gerais
 
