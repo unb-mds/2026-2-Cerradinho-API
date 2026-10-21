@@ -1,6 +1,7 @@
 "use client";
 
 import { useApiResource } from "./useApiResource";
+import { useState } from "react";
 
 // Formato que a API real devolve (espelha backend/app/schemas/cardapio.py:ItemCardapio) —
 // uma linha por item, não agrupada por dia. `data` chega como string ISO ("2026-09-14"),
@@ -40,8 +41,14 @@ const ORDEM_REFEICAO: Record<RefeicaoAPI, number> = { cafe_da_manha: 0, almoco: 
 
 // "2026-09-14" -> "Segunda". Usa meio-dia UTC pra não sofrer com o fuso horário
 // virando a data um dia pra trás/frente ao converter pra Date local.
-function nomeDoDia(data: string): string {
+export function nomeDoDia(data: string): string {
   return NOMES_DIA[new Date(`${data}T12:00:00Z`).getUTCDay()];
+}
+
+export function hojeISO(hoje = new Date()): string {
+  const mes = String(hoje.getMonth() + 1).padStart(2, "0");
+  const dia = String(hoje.getDate()).padStart(2, "0");
+  return `${hoje.getFullYear()}-${mes}-${dia}`;
 }
 
 interface Grupo {
@@ -79,9 +86,27 @@ function segundaDaSemana(hoje = new Date()): string {
 }
 
 export function useCardapioSemana() {
+  const [inicio, setInicio] = useState(() => segundaDaSemana());
+
   const { data, loading, error } = useApiResource<ItemCardapioAPI[]>(
-    `/cardapio/semana?data_inicio=${segundaDaSemana()}`,
+    `/cardapio/semana?data_inicio=${inicio}`,
     [],
   );
-  return { cardapio: mapItensToCardapio(data), loading, error };
+
+  return {
+    cardapio: mapItensToCardapio(data),
+    loading,
+    error,
+    inicio,
+    ehSemanaAtual: inicio === segundaDaSemana(),
+    semanaAnterior: () => setInicio((atual) => somarDias(atual, -7)),
+    proximaSemana: () => setInicio((atual) => somarDias(atual, 7)),
+    semanaAtual: () => setInicio(segundaDaSemana()),
+  };
+}
+
+export function somarDias(data: string, dias: number): string {
+  const d = new Date(`${data}T12:00:00Z`);
+  d.setUTCDate(d.getUTCDate() + dias);
+  return d.toISOString().slice(0, 10);
 }
