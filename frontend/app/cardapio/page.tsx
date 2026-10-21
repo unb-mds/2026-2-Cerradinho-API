@@ -7,7 +7,7 @@ import PageHeader from "@/components/PageHeader";
 import { FilterBar, FilterPills } from "@/components/Filters";
 import Badge from "@/components/Badge";
 
-function FormatarData(data: string): string {
+function formatarData(data: string): string {
   const [, mes, dia] = data.split("-");
   return `${dia}/${mes}`;
 }
@@ -33,13 +33,13 @@ export default function CardapioPage() {
       </div>
 
       <div className="flex items-center gap-3 px-10 pt-4">
-        <button type="button" onClick={() => { setDia(null); semanaAnterior(); }} className="rounded-lg border-border bg-surface px-3 py-1.5 text-sm text-foreground hover:bg-background">
+        <button type="button" onClick={() => { setDia(null); semanaAnterior(); }} className="rounded-lg border border-border bg-surface px-3 py-1.5 text-sm text-foreground hover:bg-background">
           ← Anterior
         </button>
         <span className="text-sm font-medium text-foreground">
-          {FormatarData(inicio)} a {FormatarData(somarDias(inicio, 6))}
+          {formatarData(inicio)} a {formatarData(somarDias(inicio, 6))}
         </span>
-        <button type="button" onClick={() => { setDia(null); proximaSemana(); }} className="rounded-lg border-border bg-surface px-3 py-1.5 text-sm text-foreground hover:bg-background">
+        <button type="button" onClick={() => { setDia(null); proximaSemana(); }} className="rounded-lg border border-border bg-surface px-3 py-1.5 text-sm text-foreground hover:bg-background">
           Próxima →
         </button>
         <button type="button" onClick={() => { setDia(null); semanaAtual(); }} className="rounded-lg border border-border bg-surface px-3 py-1.5 text-sm text-foreground hover:bg-background">
@@ -56,19 +56,19 @@ export default function CardapioPage() {
           <p className="rounded-xl border border-border bg-surface px-6 py-12 text-center text-sm text-muted">
             {diaAtivo === "Todos"
               ? "Nenhum cardápio publicado para essa semana."
-              : `Sem cardápio publicado para ${diaAtivo}, ${FormatarData(somarDias(inicio, DIAS_DA_SEMANA.indexOf(diaAtivo)))}.`}
+              : `Sem cardápio publicado para ${diaAtivo}, ${formatarData(somarDias(inicio, DIAS_DA_SEMANA.indexOf(diaAtivo)))}.`}
           </p>
         )}
         {filtrado.map((c) => (
           <div key={`${c.data}-${c.refeicao}`} className="overflow-hidden rounded-xl border border-border bg-surface">
             <div className="flex items-center gap-3 bg-background px-6 py-4">
-              <div className="font-bold text-foreground">{c.dia}, {FormatarData(c.data)}</div>
-              {c.data == hojeISO() && <Badge>Hoje</Badge>}
+              <div className="font-bold text-foreground">{c.dia}, {formatarData(c.data)}</div>
+              {c.data === hojeISO() && <Badge>Hoje</Badge>}
               <Badge>{c.refeicao}</Badge>
             </div>
             <ul className="divide-y divide-border">
               {c.itens.map((item, i) => (
-                <li key={`${item.categoria}-${i}`} className="grid grid-cols-[15rem_1fr] items-center gap-50 px-6 py-3">
+                <li key={`${item.categoria}-${i}`} className="grid grid-cols-[minmax(0,10rem)_1fr] items-center gap-4 px-6 py-3">
                   <span className="text-xs text-muted">{item.categoria}:</span>
                   <span className="text-sm text-foreground">{item.item}</span>
                 </li>

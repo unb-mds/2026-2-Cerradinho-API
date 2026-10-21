@@ -32,7 +32,7 @@ export function useApiResource<T>(path: string, mock: T): ResourceState<T> {
       })
       .catch(() => {
         if (active) {
-          setState((atual) => ({ path, data: atual.data, error: "Não foi possível conectar à API." }));
+          setState((atual) => ({ ...atual, path, error: "Não foi possível conectar à API." }));
         }
       });
 
@@ -41,6 +41,8 @@ export function useApiResource<T>(path: string, mock: T): ResourceState<T> {
     };
   }, [path]);
 
+  // Enquanto carrega um path novo, ou se ele falhou, não mostra o dado do path anterior.
   const loading = state.path !== path;
-  return { data: state.data, loading, error: loading ? null : state.error };
+  const error = loading ? null : state.error;
+  return { data: loading || error ? mock : state.data, loading, error };
 }
