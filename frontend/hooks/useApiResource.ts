@@ -16,9 +16,11 @@ interface ResourceState<T> {
  * `mock` é o valor exibido enquanto a API não responde (nos hooks, uma lista vazia).
  */
 export function useApiResource<T>(path: string, mock: T): ResourceState<T> {
-  const [data, setData] = useState<T>(mock);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const [state, setState] = useState<{ path: string | null; data: T; error: string | null }>({
+    path: null,
+    data: mock,
+    error: null,
+  });
 
   useEffect(() => {
     let active = true;
@@ -26,15 +28,12 @@ export function useApiResource<T>(path: string, mock: T): ResourceState<T> {
     api
       .get<T>(path)
       .then((res) => {
-        if (active) setData(res.data);
+        if (active) setState({ path, data: res.data, error: null });
       })
       .catch(() => {
         if (active) {
-          setError("Não foi possível conectar à API.");
+          setState((atual) => ({ ...atual, path, error: "Não foi possível conectar à API." }));
         }
-      })
-      .finally(() => {
-        if (active) setLoading(false);
       });
 
     return () => {
@@ -42,5 +41,8 @@ export function useApiResource<T>(path: string, mock: T): ResourceState<T> {
     };
   }, [path]);
 
-  return { data, loading, error };
+  // Enquanto carrega um path novo, ou se ele falhou, não mostra o dado do path anterior.
+  const loading = state.path !== path;
+  const error = loading ? null : state.error;
+  return { data: loading || error ? mock : state.data, loading, error };
 }
