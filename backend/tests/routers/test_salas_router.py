@@ -118,7 +118,7 @@ def test_listar_salas_vazias_sala_ocupada_so_em_outro_horario_nao_e_excluida(cli
     assert [s["nome"] for s in response.json()] == ["I9/I10"]
 
 
-def test_listar_salas_vazias_horario_fora_da_grade_devolve_todas_as_salas(client, db_session):
+def test_listar_salas_vazias_dia_sem_aula_devolve_todas_as_salas(client, db_session):
     persistir_turma(
         db_session,
         _turma_capturada(horarios=[Horario(codigo="6T2345", descricao="Sexta-feira 14:00 às 17:50")]),
@@ -127,6 +127,19 @@ def test_listar_salas_vazias_horario_fora_da_grade_devolve_todas_as_salas(client
     db_session.commit()
 
     response = client.get("/v1/salas/vazias", params={"dia": "domingo", "horario": "14:00"})
+
+    assert [s["nome"] for s in response.json()] == ["I9/I10"]
+
+
+def test_listar_salas_vazias_horario_bem_formatado_mas_fora_da_grade_devolve_todas_as_salas(client, db_session):
+    persistir_turma(
+        db_session,
+        _turma_capturada(horarios=[Horario(codigo="6T2345", descricao="Sexta-feira 14:00 às 17:50")]),
+        unidade="FCTE",
+    )
+    db_session.commit()
+
+    response = client.get("/v1/salas/vazias", params={"dia": "sexta", "horario": "09:00"})
 
     assert [s["nome"] for s in response.json()] == ["I9/I10"]
 
