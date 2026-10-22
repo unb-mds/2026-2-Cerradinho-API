@@ -4,12 +4,15 @@ Não existe fonte própria de salas: a tabela é preenchida por
 `app/domain/disciplinas.py` a partir da sala de cada turma capturada.
 """
 
+import logging
 import re
 
 from sqlalchemy.orm import Session
 
 from app.models import Horario, Sala, Turma
 from app.schemas.api.sala import Espaco
+
+logger = logging.getLogger(__name__)
 
 # Código de horário do SIGAA: um ou mais dígitos de dia (2=segunda ... 7=sábado),
 # um turno (M/T/N) e um ou mais dígitos de aula, ex. "246T23" (seg/qua/sex, tarde,
@@ -79,6 +82,7 @@ def listar_salas_vazias(session: Session, dia: str, horario: str) -> list[Espaco
         for codigo, sala_id in linhas:
             decomposto = _decompor_codigo_horario(codigo)
             if decomposto is None:
+                logger.warning("Código de horário fora do padrão esperado, ignorado: %r", codigo)
                 continue
             dias, turno_codigo, aulas = decomposto
             if turno_codigo == turno and dia_digito in dias and aula in aulas:
