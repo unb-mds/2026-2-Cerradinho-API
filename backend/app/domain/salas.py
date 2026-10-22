@@ -37,12 +37,13 @@ _INICIO_AULA: dict[str, dict[str, str]] = {
 }
 
 
+_TURNO_AULA_POR_HORARIO: dict[str, tuple[str, str]] = {
+    inicio: (turno, aula) for turno, aulas in _INICIO_AULA.items() for aula, inicio in aulas.items()
+}
+
+
 def _localizar_turno_aula(horario: str) -> tuple[str, str] | None:
-    for turno, aulas in _INICIO_AULA.items():
-        for aula, inicio in aulas.items():
-            if inicio == horario:
-                return turno, aula
-    return None
+    return _TURNO_AULA_POR_HORARIO.get(horario)
 
 
 def _decompor_codigo_horario(codigo: str) -> tuple[set[str], str, set[str]] | None:
