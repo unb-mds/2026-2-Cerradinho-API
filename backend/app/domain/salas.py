@@ -19,7 +19,7 @@ logger = logging.getLogger(__name__)
 # aulas 2 e 3). Dia "1" (domingo) nunca aparece — não há aula nesse dia.
 _PADRAO_CODIGO_HORARIO = re.compile(r"^([2-7]+)([MTN])([0-9]+)$")
 
-_DIA_PARA_DIGITO = {
+DIA_PARA_DIGITO = {
     "domingo": "1",
     "segunda": "2",
     "terca": "3",
@@ -64,10 +64,10 @@ def listar_salas(session: Session) -> list[Espaco]:
 
 def listar_salas_vazias(session: Session, dia: str, horario: str) -> list[Espaco]:
     """Salas sem nenhuma turma cadastrada no dia/horário dados. `dia` é um dos
-    nomes de `_DIA_PARA_DIGITO`; `horario` é o início de uma aula, "HH:MM"
+    nomes de `DIA_PARA_DIGITO`; `horario` é o início de uma aula, "HH:MM"
     (ex. "14:00"). Dia ou horário fora da grade de aulas (sem turma possível)
     devolve todas as salas, em vez de erro."""
-    dia_digito = _DIA_PARA_DIGITO.get(dia)
+    dia_digito = DIA_PARA_DIGITO.get(dia)
     turno_aula = _localizar_turno_aula(horario)
 
     ocupadas: set[int] = set()

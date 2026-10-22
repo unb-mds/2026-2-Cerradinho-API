@@ -4,20 +4,13 @@ from fastapi import APIRouter, Depends, Query
 from sqlalchemy.orm import Session
 
 from app.core.database import get_db
-from app.domain.salas import listar_salas, listar_salas_vazias
+from app.domain.salas import DIA_PARA_DIGITO, listar_salas, listar_salas_vazias
 from app.schemas.api.sala import Espaco
 
 router = APIRouter(prefix="/salas", tags=["salas"])
 
-
-class DiaSemana(str, Enum):
-    domingo = "domingo"
-    segunda = "segunda"
-    terca = "terca"
-    quarta = "quarta"
-    quinta = "quinta"
-    sexta = "sexta"
-    sabado = "sabado"
+# Gerado a partir de DIA_PARA_DIGITO pra não duplicar os nomes dos dias da semana.
+DiaSemana = Enum("DiaSemana", {dia: dia for dia in DIA_PARA_DIGITO})
 
 
 @router.get(
