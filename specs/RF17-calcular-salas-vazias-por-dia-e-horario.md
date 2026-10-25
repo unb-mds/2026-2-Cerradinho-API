@@ -10,8 +10,9 @@
 
 **Regra de negócio**
 - "Vazia" significa só "sem aula cadastrada via RF01" — não reflete reserva informal, evento ou uso fora da grade de disciplinas. É uma leitura otimista, não uma garantia de disponibilidade real.
+- `horario` é o início de uma aula ("HH:MM"), na grade de 55 minutos do SIGAA derivada das descrições reais de horário (ex.: `"6T2345"` = sexta-feira 14:00 às 17:50). Dia ou horário fora dessa grade — sem turma possível — devolve todas as salas, em vez de erro.
 
 ## Rastreabilidade
 
 - **PRs:** nenhum ainda.
-- **Testes:** nenhum ainda.
+- **Testes:** [`tests/routers/test_salas_router.py`](https://github.com/unb-mds/2026-2-Cerradinho-API/blob/dev/backend/tests/routers/test_salas_router.py)

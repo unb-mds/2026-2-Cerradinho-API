@@ -64,3 +64,93 @@ def test_listar_salas_turma_sem_sala_nao_cria_espaco(client, db_session):
     response = client.get("/v1/salas")
 
     assert response.json() == []
+
+
+def test_listar_salas_vazias_exclui_sala_ocupada_no_dia_e_horario(client, db_session):
+    persistir_turma(
+        db_session,
+        _turma_capturada(
+            horarios=[Horario(codigo="6T2345", descricao="Sexta-feira 14:00 às 17:50")],
+            sala=Sala(descricao="FCTE - I9/I10"),
+        ),
+        unidade="FCTE",
+    )
+    persistir_turma(
+        db_session,
+        _turma_capturada(
+            numero="02",
+            horarios=[Horario(codigo="2M12", descricao="Segunda-feira 08:00 às 09:50")],
+            sala=Sala(descricao="FCTE - S1"),
+        ),
+        unidade="FCTE",
+    )
+    db_session.commit()
+
+    response = client.get("/v1/salas/vazias", params={"dia": "sexta", "horario": "14:00"})
+
+    assert response.status_code == 200
+    assert [s["nome"] for s in response.json()] == ["S1"]
+
+
+def test_listar_salas_vazias_sala_ocupada_so_em_outro_dia_nao_e_excluida(client, db_session):
+    persistir_turma(
+        db_session,
+        _turma_capturada(horarios=[Horario(codigo="6T2345", descricao="Sexta-feira 14:00 às 17:50")]),
+        unidade="FCTE",
+    )
+    db_session.commit()
+
+    response = client.get("/v1/salas/vazias", params={"dia": "segunda", "horario": "14:00"})
+
+    assert [s["nome"] for s in response.json()] == ["I9/I10"]
+
+
+def test_listar_salas_vazias_sala_ocupada_so_em_outro_horario_nao_e_excluida(client, db_session):
+    persistir_turma(
+        db_session,
+        _turma_capturada(horarios=[Horario(codigo="6T2345", descricao="Sexta-feira 14:00 às 17:50")]),
+        unidade="FCTE",
+    )
+    db_session.commit()
+
+    response = client.get("/v1/salas/vazias", params={"dia": "sexta", "horario": "08:00"})
+
+    assert [s["nome"] for s in response.json()] == ["I9/I10"]
+
+
+def test_listar_salas_vazias_dia_sem_aula_devolve_todas_as_salas(client, db_session):
+    persistir_turma(
+        db_session,
+        _turma_capturada(horarios=[Horario(codigo="6T2345", descricao="Sexta-feira 14:00 às 17:50")]),
+        unidade="FCTE",
+    )
+    db_session.commit()
+
+    response = client.get("/v1/salas/vazias", params={"dia": "domingo", "horario": "14:00"})
+
+    assert [s["nome"] for s in response.json()] == ["I9/I10"]
+
+
+def test_listar_salas_vazias_horario_bem_formatado_mas_fora_da_grade_devolve_todas_as_salas(client, db_session):
+    persistir_turma(
+        db_session,
+        _turma_capturada(horarios=[Horario(codigo="6T2345", descricao="Sexta-feira 14:00 às 17:50")]),
+        unidade="FCTE",
+    )
+    db_session.commit()
+
+    response = client.get("/v1/salas/vazias", params={"dia": "sexta", "horario": "09:00"})
+
+    assert [s["nome"] for s in response.json()] == ["I9/I10"]
+
+
+def test_listar_salas_vazias_horario_mal_formatado_e_422(client):
+    response = client.get("/v1/salas/vazias", params={"dia": "sexta", "horario": "14h"})
+
+    assert response.status_code == 422
+
+
+def test_listar_salas_vazias_dia_invalido_e_422(client):
+    response = client.get("/v1/salas/vazias", params={"dia": "feriado", "horario": "14:00"})
+
+    assert response.status_code == 422
