@@ -1,5 +1,6 @@
 from celery import shared_task
 
+from app.core.cache import invalidar_prefixo
 from app.core.database import SessionLocal
 from app.domain.cardapio import persistir_cardapio
 from app.scrapers.cardapio.parser import encontrar_pdf_da_semana, extrair_itens_cardapio, extrair_links_cardapio
@@ -21,6 +22,7 @@ def scrape_cardapio_task():
     try:
         persistir_cardapio(db, itens)
         db.commit()
+        invalidar_prefixo("cache:v1:cardapio:semana:")
     finally:
         db.close()
 
