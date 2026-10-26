@@ -1,5 +1,2 @@
-[[operations]]
-include-path = "/v1/salas/vazias"
-
-[operations.checks.negative_data_rejection]
+[checks.negative_data_rejection]
 enabled = false
