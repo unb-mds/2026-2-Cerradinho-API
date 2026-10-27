@@ -65,10 +65,26 @@ def test_pipeline_rodado_duas_vezes_nao_duplica_turmas(sessao_postgres):
     assert sessao_postgres.query(Horario).count() == sum(len(t.horarios) for t in turmas)
 
 
-def test_postgres_recusa_codigo_de_horario_maior_que_a_coluna(sessao_postgres):
-    # regressão do bug do horário: no sqlite isso passava, no postgres estoura o String(20)
+def test_postgres_aceita_codigo_de_horario_com_varios_segmentos(sessao_postgres):
+    # regressão do bug do Darcy: turma com aula em vários turnos junta os
+    # segmentos no código ("6M123 7M12345 7T1234 4N12"), e isso não cabia
+    # no String(20) antigo - no sqlite passava, no postgres estourava.
+    codigo = "6M123 7M12345 7T1234 4N12"
     turma = _turmas_da_fixture()[0].model_copy(
-        update={"horarios": [HorarioCapturado(codigo="6T2345 (10/08/2026 - 14/12/2026)", descricao="Sexta-feira")]}
+        update={"horarios": [HorarioCapturado(codigo=codigo, descricao="Segunda a sábado")]}
+    )
+
+    persistir_turma(sessao_postgres, turma, unidade="FCTE")
+    sessao_postgres.flush()
+
+    salva = sessao_postgres.query(Horario).filter_by(codigo=codigo).one()
+    assert salva.codigo == codigo
+
+
+def test_postgres_recusa_codigo_de_horario_maior_que_a_coluna(sessao_postgres):
+    # regressão do bug do horário: no sqlite isso passava, no postgres estoura o String(100)
+    turma = _turmas_da_fixture()[0].model_copy(
+        update={"horarios": [HorarioCapturado(codigo="2" * 101, descricao="Sexta-feira")]}
     )
 
     with pytest.raises(DataError):
