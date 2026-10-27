@@ -11,6 +11,10 @@ Mudanças relevantes do Cerradinho, por release. O formato segue o [Keep a Chang
 ### Corrigido
 
 - Coleta do cardápio do RU, que falhava quando a página consultada ficava parada numa semana antiga. O scraper agora consulta as duas páginas onde o RU publica o PDF.
+- Gravação de turmas do Darcy, que falhava com `StringDataRightTruncation` em código de horário com vários segmentos (`"6M123 7M12345 7T1234 4N12"`); coluna alargada pra 100 caracteres (RF01).
+- `GET /v1/salas/vazias` não contava código de horário com mais de um segmento (`"35M5 35T1"`), e mostrava sala com aula marcada como vazia num dos turnos (RF17).
+- Uma turma com dado fora do esperado derrubava a gravação da unidade inteira, e uma unidade com erro derrubava a raspagem completa; agora cada turma tem sua própria transação e o commit é por unidade (RF01).
+- Sala duplicada pelo ponto inconsistente do SIGAA depois de "LAB" (`"LAB NIT/LDS"` vs `"LAB. NIT/LDS"`), e salas/professores gravados antes da normalização existir, fundidos numa migration de dados (RF04, RF05).
 
 ## [1.1] - 2026-10-19
 

@@ -10,7 +10,8 @@
 
 **Regra de negócio**
 - Não existe fonte própria pra sala/prédio (ver seção 2) — a existência de uma sala depende inteiramente de aparecer em pelo menos uma turma do RF01.
-- A chave de deduplicação é o par (prédio, nome da sala) resultante da normalização do RF03.
+- A chave de deduplicação é o par (prédio, nome da sala) resultante da normalização do RF03, incluindo o ponto inconsistente do SIGAA depois de "LAB" (`"LAB NIT/LDS"` e `"LAB. NIT/LDS"` são a mesma sala).
+- Salas gravadas antes dessa normalização existir (ou com o ponto de "LAB" inconsistente) foram fundidas numa migration de dados ([`0004`](https://github.com/unb-mds/2026-2-Cerradinho-API/blob/dev/backend/alembic/versions/0004_funde_salas_e_professores_duplicados.py)) — não é algo que se repete em raspagens novas.
 
 ## Rastreabilidade
 
