@@ -9,8 +9,10 @@ conforme docs/ARQUITETURA.md.
 
 from __future__ import annotations
 
+import logging
 import re
 
+from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import Session
 
 from app.models import Disciplina, Horario, Professor, Sala, Turma
@@ -20,6 +22,8 @@ from app.schemas.disciplina import Sala as SalaCapturada
 from app.schemas.disciplina import Turma as TurmaCapturada
 
 _SEPARADOR_SALA = re.compile(r"\s*[-/]\s*")
+
+logger = logging.getLogger(__name__)
 
 
 def normalizar_sala(descricao: str) -> tuple[str, str]:
@@ -120,7 +124,23 @@ def persistir_turma(session: Session, turma: TurmaCapturada, unidade: str) -> Tu
 
 
 def persistir_turmas(session: Session, turmas: list[TurmaCapturada], unidade: str) -> list[Turma]:
-    return [persistir_turma(session, turma, unidade) for turma in turmas]
+    """Persiste cada turma em sua própria savepoint: uma turma com dado fora
+    do esperado (ex. erro de integridade) não derruba as outras turmas já
+    processadas da mesma unidade — só ela é descartada, e o erro vai pro log
+    em vez de derrubar a raspagem inteira."""
+    persistidas = []
+    for turma in turmas:
+        try:
+            with session.begin_nested():
+                persistidas.append(persistir_turma(session, turma, unidade))
+        except SQLAlchemyError:
+            logger.exception(
+                "Falha ao persistir turma %s/%s (%s), pulando",
+                turma.disciplina_codigo,
+                turma.numero,
+                unidade,
+            )
+    return persistidas
 
 
 def _descricao_sala(sala: Sala | None) -> str:

@@ -1,7 +1,9 @@
 from sqlalchemy import create_engine
+from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import Session
 
-from app.domain.disciplinas import normalizar_nome_professor, normalizar_sala, persistir_turma
+import app.domain.disciplinas as disciplinas
+from app.domain.disciplinas import normalizar_nome_professor, normalizar_sala, persistir_turma, persistir_turmas
 from app.models import Base, Horario, Professor, Sala, Turma
 from app.schemas.disciplina import Horario as HorarioCapturado
 from app.schemas.disciplina import Professor as ProfessorCapturado
@@ -175,6 +177,33 @@ def test_persistir_turmas_mesmo_professor_cargas_horarias_diferentes_nao_duplica
     assert len(professores) == 1
     assert professores[0].nome == "Alessandro Borges de Sousa Oliveira"
     assert session.query(Turma).count() == 2
+
+
+def test_persistir_turmas_isola_falha_de_uma_turma_das_outras(monkeypatch):
+    """Regressão: uma unidade (Darcy) tinha turma com dado fora do esperado
+    que quebrava a gravação inteira da unidade - as outras turmas, já
+    processadas com sucesso, se perdiam junto. Cada turma precisa de sua
+    própria savepoint."""
+    session = _in_memory_session()
+    persistir_turma_original = disciplinas.persistir_turma
+
+    def persistir_turma_com_falha_na_02(sess, turma, unidade):
+        if turma.numero == "02":
+            raise SQLAlchemyError("falha simulada")
+        return persistir_turma_original(sess, turma, unidade)
+
+    monkeypatch.setattr(disciplinas, "persistir_turma", persistir_turma_com_falha_na_02)
+
+    turmas = [
+        _turma_capturada(numero="01"),
+        _turma_capturada(numero="02"),
+        _turma_capturada(numero="03"),
+    ]
+    persistidas = persistir_turmas(session, turmas, unidade="FCTE")
+    session.commit()
+
+    assert {t.numero for t in persistidas} == {"01", "03"}
+    assert {t.numero for t in session.query(Turma).all()} == {"01", "03"}
 
 
 def test_persistir_turmas_mesma_sala_com_separador_e_caixa_diferentes_nao_duplica():
