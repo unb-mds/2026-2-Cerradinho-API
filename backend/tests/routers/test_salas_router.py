@@ -150,6 +150,14 @@ def test_listar_salas_vazias_horario_mal_formatado_e_422(client):
     assert response.status_code == 422
 
 
+def test_listar_salas_vazias_horario_com_digitos_de_outro_alfabeto_e_422(client):
+    # \d do Python aceita dígitos de qualquer alfabeto ("١٤" em árabe), mas o
+    # pattern da OpenAPI só aceita 0-9 e o teste de contrato acusava a diferença
+    response = client.get("/v1/salas/vazias", params={"dia": "sexta", "horario": "١٤:٠٠"})
+
+    assert response.status_code == 422
+
+
 def test_listar_salas_vazias_dia_invalido_e_422(client):
     response = client.get("/v1/salas/vazias", params={"dia": "feriado", "horario": "14:00"})
 

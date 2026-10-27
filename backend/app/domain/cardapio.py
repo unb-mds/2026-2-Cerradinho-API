@@ -17,6 +17,7 @@ from datetime import date, timedelta
 from sqlalchemy.orm import Session
 
 from app.models import Cardapio
+from app.schemas.api.cardapio import CardapioDia, CardapioSemana, ItemRefeicao
 from app.schemas.cardapio import ItemCardapio, Refeicao
 
 _COLUNA_POR_REFEICAO: dict[Refeicao, str] = {
@@ -58,24 +59,33 @@ def persistir_cardapio(session: Session, itens: list[ItemCardapio]) -> list[Card
     return cardapios
 
 
-def _desagrupar_bloco(bloco: str | None) -> list[tuple[str, str]]:
+def _desagrupar_bloco(bloco: str | None) -> list[ItemRefeicao]:
     if not bloco:
         return []
-    return [tuple(linha.split(": ", 1)) for linha in bloco.split("\n") if linha]
+    return [
+        ItemRefeicao(categoria=categoria, item=item)
+        for categoria, item in (linha.split(": ", 1) for linha in bloco.split("\n") if linha)
+    ]
 
 
-def listar_cardapio_semana(session: Session, data_inicio: date) -> list[ItemCardapio]:
+def listar_cardapio_semana(session: Session, data_inicio: date) -> CardapioSemana:
+    """Lê do histórico (RF07) os 7 dias a partir de `data_inicio`, sem
+    disparar coleta. Dia sem linha no banco entra com `publicado=False` e as
+    refeições vazias, em vez de sumir da resposta (RF19)."""
     data_fim = data_inicio + timedelta(days=6)
-    cardapios = (
-        session.query(Cardapio)
-        .filter(Cardapio.data >= data_inicio, Cardapio.data <= data_fim)
-        .order_by(Cardapio.data)
-        .all()
-    )
+    por_data = {
+        cardapio.data: cardapio
+        for cardapio in session.query(Cardapio).filter(Cardapio.data >= data_inicio, Cardapio.data <= data_fim)
+    }
 
-    itens: list[ItemCardapio] = []
-    for cardapio in cardapios:
-        for refeicao, coluna in _COLUNA_POR_REFEICAO.items():
-            for categoria, item in _desagrupar_bloco(getattr(cardapio, coluna)):
-                itens.append(ItemCardapio(data=cardapio.data, refeicao=refeicao, categoria=categoria, item=item))
-    return itens
+    dias = []
+    for deslocamento in range(7):
+        data_dia = data_inicio + timedelta(days=deslocamento)
+        cardapio = por_data.get(data_dia)
+        refeicoes = {
+            refeicao: _desagrupar_bloco(getattr(cardapio, coluna, None))
+            for refeicao, coluna in _COLUNA_POR_REFEICAO.items()
+        }
+        dias.append(CardapioDia(data=data_dia, publicado=any(refeicoes.values()), **refeicoes))
+
+    return CardapioSemana(data_inicio=data_inicio, data_fim=data_fim, dias=dias)

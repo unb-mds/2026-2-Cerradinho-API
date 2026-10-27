@@ -1,11 +1,11 @@
 """Captura HTTP para o scraper de Cardápio (RF06/RF07): HTML da página de
 listagem e download do PDF selecionado por parser.py.
 
-A URL certa é `cardapio-refeitorio`, não `cardapio/` (ver risco A2 em
-docs/fontes/ru-cardapio.md): essa segunda página existe, responde
-200 e tem HTML válido, mas ficou congelada numa semana antiga depois que o
-RU migrou a publicação para a página agregadora — nenhum monitor de
-disponibilidade detectaria essa falha.
+O RU publica o PDF do Darcy Ribeiro em duas páginas, `cardapio/` e
+`cardapio-refeitorio/`, e alterna qual delas atualiza (ver risco A2 em
+docs/fontes/ru-cardapio.md). A que fica para trás continua respondendo 200
+com HTML válido, só que com a semana antiga. Por isso o scraper consulta as
+duas, na ordem de URLS_CARDAPIO, e usa a primeira que tiver o PDF da semana.
 """
 
 import logging
@@ -17,13 +17,13 @@ from app.core.exceptions import ErroFonteIndisponivel
 
 logger = logging.getLogger(__name__)
 
-URL_CARDAPIO = "https://ru.unb.br/cardapio-refeitorio/"
+URLS_CARDAPIO = ("https://ru.unb.br/cardapio/", "https://ru.unb.br/cardapio-refeitorio/")
 HEADERS = {"User-Agent": "CerradinhoBot/1.0 (+https://github.com/unb-mds/2026-2-Cerradinho-API)"}
 TENTATIVAS_DOWNLOAD = 3
 ESPERA_ENTRE_TENTATIVAS = 2  # segundos; dobra a cada nova tentativa
 
 
-def baixar_html(url: str = URL_CARDAPIO, timeout: int = 10) -> str:
+def baixar_html(url: str, timeout: int = 10) -> str:
     """Faz o request da página de listagem e retorna o HTML como texto."""
     response = requests.get(url, headers=HEADERS, timeout=timeout)
     response.raise_for_status()
