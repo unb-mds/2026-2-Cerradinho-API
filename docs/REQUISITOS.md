@@ -15,7 +15,7 @@ API pública que consolida dados da UnB hoje espalhados em vários sistemas: dis
 | Disciplinas | sigaa.unb.br/sigaa/public/turmas | JSF (ViewState/postback), precisa de Playwright. Ficha: [`fontes/sigaa-disciplinas.md`](fontes/sigaa-disciplinas.md) |
 | Professores | Mesma página das turmas | Vem junto da turma, sem fonte própria |
 | Salas/Prédios | Sem fonte própria | Derivado das turmas (RF05) |
-| Cardápio do RU | ru.unb.br/cardapio-refeitorio | PDF semanal por campus. A URL `/cardapio` está desatualizada. Ficha: [`fontes/ru-cardapio.md`](fontes/ru-cardapio.md) |
+| Cardápio do RU | ru.unb.br/cardapio e ru.unb.br/cardapio-refeitorio | PDF semanal por campus. O RU alterna qual das duas páginas atualiza, então o scraper consulta ambas. Ficha: [`fontes/ru-cardapio.md`](fontes/ru-cardapio.md) |
 | Eventos | noticias.unb.br/agenda | Agenda institucional pública |
 | Editais | Portal público do SIGAA (pós-graduação) | Centralizado |
 | Cursos/Estrutura curricular | sigaa.unb.br/sigaa/public/curso | Complemento possível, ainda não usado |
