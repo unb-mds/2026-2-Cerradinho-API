@@ -58,6 +58,13 @@ def test_normalizar_sala_ignora_caixa_alta_ou_baixa():
     assert normalizar_sala("FCTE - Mocap") == ("FCTE", "MOCAP")
 
 
+def test_normalizar_sala_ignora_ponto_depois_de_lab():
+    """Regressão: "FCTE / LAB NIT/LDS" e "FCTE / LAB. NIT/LDS" são a mesma
+    sala, mas o ponto depois de "LAB" fazia virarem duas linhas."""
+    assert normalizar_sala("FCTE / LAB NIT/LDS") == normalizar_sala("FCTE / LAB. NIT/LDS")
+    assert normalizar_sala("FCTE / LAB. NIT/LDS") == ("FCTE", "LAB NIT/LDS")
+
+
 def test_normalizar_nome_professor_corta_carga_horaria():
     nome = "ALESSANDRO BORGES DE SOUSA OLIVEIRA (60h)"
     assert normalizar_nome_professor(nome) == "ALESSANDRO BORGES DE SOUSA OLIVEIRA"

@@ -22,6 +22,9 @@ from app.schemas.disciplina import Sala as SalaCapturada
 from app.schemas.disciplina import Turma as TurmaCapturada
 
 _SEPARADOR_SALA = re.compile(r"\s*[-/]\s*")
+# O SIGAA também não é consistente em pôr ponto depois de "LAB" ("LAB NIT/LDS"
+# vs "LAB. NIT/LDS" pra mesma sala) - sem normalizar, isso também duplica.
+_PADRAO_LAB_COM_PONTO = re.compile(r"\bLAB\.\s*")
 
 logger = logging.getLogger(__name__)
 
@@ -36,10 +39,14 @@ def normalizar_sala(descricao: str) -> tuple[str, str]:
     descricao = descricao.strip()
     match = _SEPARADOR_SALA.search(descricao)
     if not match:
-        return "", descricao.upper()
+        return "", _normalizar_nome_sala(descricao)
     predio = descricao[: match.start()].strip()
     nome = descricao[match.end() :].strip()
-    return predio.upper(), nome.upper()
+    return predio.upper(), _normalizar_nome_sala(nome)
+
+
+def _normalizar_nome_sala(nome: str) -> str:
+    return _PADRAO_LAB_COM_PONTO.sub("LAB ", nome.upper()).strip()
 
 
 def _get_ou_cria_disciplina(session: Session, codigo: str, nome: str) -> Disciplina:
