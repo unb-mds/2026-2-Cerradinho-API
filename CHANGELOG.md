@@ -4,6 +4,14 @@ Mudanças relevantes do Cerradinho, por release. O formato segue o [Keep a Chang
 
 ## [Não lançado]
 
+### Adicionado
+
+- Cardápio da semana agrupado por dia e refeição em `GET /v1/cardapio/semana`, sempre com os 7 dias e os dias sem cardápio marcados como não publicados (RF19, #51).
+
+### Corrigido
+
+- Coleta do cardápio do RU, que falhava quando a página consultada ficava parada numa semana antiga. O scraper agora consulta as duas páginas onde o RU publica o PDF.
+
 ## [1.1] - 2026-10-19
 
 Sprint 4 e 5 da Release 2, encerradas em 17/10/2026.

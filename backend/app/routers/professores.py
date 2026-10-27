@@ -1,6 +1,7 @@
-from fastapi import APIRouter, Depends, Query
+from fastapi import APIRouter, Depends, Query, Response
 from sqlalchemy.orm import Session
 
+from app.core.cache import TTL_SEMANAL, resposta_cacheada
 from app.core.database import get_db
 from app.domain.professores import listar_professores
 from app.schemas.api.professor import Docente
@@ -22,5 +23,7 @@ router = APIRouter(prefix="/professores", tags=["professores"])
 def listar_docentes(
     nome: str | None = Query(default=None, description="Busca parcial por nome, normalizada"),
     db: Session = Depends(get_db),
-) -> list[Docente]:
-    return listar_professores(db, nome)
+) -> list[Docente] | Response:
+    if nome:
+        return listar_professores(db, nome)
+    return resposta_cacheada("cache:v1:professores", TTL_SEMANAL, lambda: listar_professores(db), list[Docente])

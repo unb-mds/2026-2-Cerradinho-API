@@ -23,6 +23,9 @@ class Settings(BaseSettings):
             f"postgresql+psycopg2://{self.postgres_user}:{self.postgres_password}"
             f"@{self.postgres_host}:{self.postgres_port}/{self.postgres_db}"
         )
-
+    @property
+    def redis_cache_url(self) -> str:
+        base, _, _ = self.redis_url.rpartition("/")
+        return f"{base}/2" 
 
 settings = Settings()
