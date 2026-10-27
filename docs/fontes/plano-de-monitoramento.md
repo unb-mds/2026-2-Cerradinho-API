@@ -31,7 +31,7 @@ Ferramenta prevista: UptimeRobot (plano gratuito).
 |---|---|---|---|
 | SIGAA home | `sigaa.unb.br/sigaa/public/` | 5 min | 2 falhas consecutivas |
 | SIGAA busca | `sigaa.unb.br/sigaa/public/turmas/listar.jsf` | 5 min | 2 falhas consecutivas |
-| RU cardápio | `ru.unb.br/cardapio-refeitorio/` | 15 min | 2 falhas consecutivas |
+| RU cardápio | `ru.unb.br/cardapio/` e `ru.unb.br/cardapio-refeitorio/` | 15 min | 2 falhas consecutivas |
 
 Exigir duas falhas consecutivas evita alerta por instabilidade momentânea.
 

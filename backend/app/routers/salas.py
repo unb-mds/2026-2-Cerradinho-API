@@ -41,7 +41,7 @@ def listar_espacos(db: Session = Depends(get_db)) -> list[Espaco]:
 def listar_espacos_vazios(
     dia: DiaSemana = Query(description="Dia da semana"),
     horario: str = Query(
-        pattern=r"^\d{2}:\d{2}$",
+        pattern=r"^[0-9]{2}:[0-9]{2}$",
         description="Início de uma aula, no formato HH:MM",
         examples=["14:00"],
     ),
