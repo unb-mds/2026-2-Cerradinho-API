@@ -1,4 +1,4 @@
-from datetime import date, timedelta
+from datetime import date, datetime, timedelta, timezone
 
 import pytest
 import schemathesis
@@ -10,7 +10,7 @@ from app.core.database import get_db
 from app.domain.cardapio import persistir_cardapio
 from app.domain.disciplinas import persistir_turma
 from app.main import app
-from app.models import Base
+from app.models import Base, ExecucaoLog
 from app.schemas.cardapio import ItemCardapio
 from app.schemas.disciplina import Horario, Professor, Sala, Turma
 
@@ -32,6 +32,41 @@ def _popular_banco(db_session: Session) -> None:
             vagas_ocupadas=38,
         ),
         unidade="FCTE",
+    )
+
+    # segunda sala com aula em outro dia e turno, pra /v1/salas/vazias não devolver sempre a mesma lista
+    persistir_turma(
+        db_session,
+        Turma(
+            disciplina_codigo="FGA0158",
+            disciplina_nome="Orientação a Objetos",
+            numero="02",
+            ano_periodo="2026.2",
+            professores=[Professor(nome="Carlos Lima")],
+            horarios=[Horario(codigo="35M12", descricao="Terça-feira 08:00 às 09:50 Quinta-feira 08:00 às 09:50")],
+            sala=Sala(descricao="FCTE - S10"),
+            vagas_ofertadas=50,
+            vagas_ocupadas=45,
+        ),
+        unidade="FCTE",
+    )
+
+    agora = datetime.now(timezone.utc)
+    db_session.add_all(
+        [
+            ExecucaoLog(
+                task_name="app.tasks.scraping.scrape_disciplinas_task",
+                status="sucesso",
+                criado_em=agora - timedelta(hours=1),
+            ),
+            ExecucaoLog(
+                task_name="app.tasks.cardapio.scrape_cardapio_task",
+                status="falha",
+                tipo_falha="fonte",
+                mensagem="ConnectionError: ru.unb.br não respondeu",
+                criado_em=agora,
+            ),
+        ]
     )
 
     # /v1/cardapio/semana sem data_inicio devolve de hoje até hoje + 6 dias
