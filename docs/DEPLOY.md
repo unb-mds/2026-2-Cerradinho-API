@@ -36,7 +36,7 @@ Lidas em `backend/app/core/config.py`.
 | `POSTGRES_USER` | `${{Postgres.PGUSER}}` | api, worker |
 | `POSTGRES_PASSWORD` | `${{Postgres.PGPASSWORD}}` | api, worker |
 | `POSTGRES_DB` | `${{Postgres.PGDATABASE}}` | api, worker |
-| `REDIS_URL` | `${{Redis.REDIS_URL}}` | worker, beat |
+| `REDIS_URL` | `${{Redis.REDIS_URL}}` | api, worker, beat |
 | `CORS_ORIGINS` | `["https://<endereço-do-frontend>"]` | api |
 
 O `CORS_ORIGINS` é uma lista, então vai em JSON, com colchetes e aspas. Sem o endereço do frontend nele, o navegador bloqueia as chamadas à API.
