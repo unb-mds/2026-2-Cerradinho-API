@@ -49,12 +49,31 @@ def _localizar_turno_aula(horario: str) -> tuple[str, str] | None:
     return _TURNO_AULA_POR_HORARIO.get(horario)
 
 
-def _decompor_codigo_horario(codigo: str) -> tuple[set[str], str, set[str]] | None:
-    match = _PADRAO_CODIGO_HORARIO.match(codigo)
+def _decompor_segmento(segmento: str) -> tuple[set[str], str, set[str]] | None:
+    match = _PADRAO_CODIGO_HORARIO.match(segmento)
     if match is None:
         return None
     dias, turno, aulas = match.groups()
     return set(dias), turno, set(aulas)
+
+
+def _decompor_codigo_horario(codigo: str) -> list[tuple[set[str], str, set[str]]]:
+    """Um código pode ter mais de um segmento dia+turno+aula colado com
+    espaço, quando a turma tem aula em turnos diferentes (ex. "35M5 35T1").
+    Segmentos que não casam o padrão são ignorados (com warning) sem
+    descartar os outros segmentos válidos do mesmo código."""
+    segmentos = []
+    for parte in codigo.split():
+        decomposto = _decompor_segmento(parte)
+        if decomposto is None:
+            logger.warning(
+                "Segmento de horário fora do padrão esperado, ignorado: %r (código completo: %r)",
+                parte,
+                codigo,
+            )
+            continue
+        segmentos.append(decomposto)
+    return segmentos
 
 
 def listar_salas(session: Session) -> list[Espaco]:
@@ -80,13 +99,10 @@ def listar_salas_vazias(session: Session, dia: str, horario: str) -> list[Espaco
             .all()
         )
         for codigo, sala_id in linhas:
-            decomposto = _decompor_codigo_horario(codigo)
-            if decomposto is None:
-                logger.warning("Código de horário fora do padrão esperado, ignorado: %r", codigo)
-                continue
-            dias, turno_codigo, aulas = decomposto
-            if turno_codigo == turno and dia_digito in dias and aula in aulas:
-                ocupadas.add(sala_id)
+            for dias, turno_codigo, aulas in _decompor_codigo_horario(codigo):
+                if turno_codigo == turno and dia_digito in dias and aula in aulas:
+                    ocupadas.add(sala_id)
+                    break
 
     salas = (
         session.query(Sala)

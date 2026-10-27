@@ -144,6 +144,21 @@ def test_listar_salas_vazias_horario_bem_formatado_mas_fora_da_grade_devolve_tod
     assert [s["nome"] for s in response.json()] == ["I9/I10"]
 
 
+def test_listar_salas_vazias_exclui_sala_de_codigo_com_varios_segmentos(client, db_session):
+    persistir_turma(
+        db_session,
+        _turma_capturada(horarios=[Horario(codigo="46M5  46T1", descricao="Quarta e sexta, 12:00 e 12:55")]),
+        unidade="FCTE",
+    )
+    db_session.commit()
+
+    quarta_meio_dia = client.get("/v1/salas/vazias", params={"dia": "quarta", "horario": "12:00"})
+    sexta_doze_e_cinquenta_e_cinco = client.get("/v1/salas/vazias", params={"dia": "sexta", "horario": "12:55"})
+
+    assert quarta_meio_dia.json() == []
+    assert sexta_doze_e_cinquenta_e_cinco.json() == []
+
+
 def test_listar_salas_vazias_horario_mal_formatado_e_422(client):
     response = client.get("/v1/salas/vazias", params={"dia": "sexta", "horario": "14h"})
 
