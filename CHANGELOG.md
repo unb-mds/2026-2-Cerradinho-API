@@ -6,19 +6,41 @@ Mudanças relevantes do Cerradinho, por release. O formato segue o [Keep a Chang
 
 ### Adicionado
 
-- Diagramas de arquitetura no modelo C4 (contexto, container e componente) em `docs/ARQUITETURA.md`.
-- Retrospectivas das Sprints 0 a 4 em `docs/scrum/retrospectivas.md`.
-- Licença MIT, Código de Conduta e este changelog.
-- Guia de deploy no Railway em `docs/DEPLOY.md`, com os serviços, as variáveis de ambiente e a ordem do primeiro deploy.
+- Cardápio da semana agrupado por dia e refeição em `GET /v1/cardapio/semana`, sempre com os 7 dias e os dias sem cardápio marcados como não publicados (RF19, #51).
 
 ### Corrigido
 
-- Parser do cardápio do RU, que falhava com os PDFs publicados a partir de 21/09 porque cada semana monta a tabela de um jeito. A leitura agora usa a posição das datas na página, e itens que valem para a semana inteira (como as bebidas do café) aparecem em todos os dias.
+- Coleta do cardápio do RU, que falhava quando a página consultada ficava parada numa semana antiga. O scraper agora consulta as duas páginas onde o RU publica o PDF.
+
+## [1.1] - 2026-10-19
+
+Sprint 4 e 5 da Release 2, encerradas em 17/10/2026.
+
+### Adicionado
+
+- Diagramas de arquitetura no modelo C4 (contexto, container e componente) em `docs/ARQUITETURA.md`.
+- Retrospectivas das Sprints 0 a 5 em `docs/scrum/retrospectivas.md`.
+- Licença MIT, Código de Conduta e este changelog.
+- Guia de deploy no Railway em `docs/DEPLOY.md`, com os serviços, as variáveis de ambiente e a ordem do primeiro deploy.
+- Busca de docente por nome normalizado, `GET /v1/professores?nome=`, sem diferenciar acento nem caixa (RF04, #140).
+- Log de execução dos scrapers: toda execução é gravada em `execucao_logs`, diferenciando falha de fonte de falha interna, e exposta pelo endpoint `GET /v1/execucoes` (RF16).
+- Medição da cobertura de testes do backend e definição dos módulos críticos (RNF09).
+
+### Corrigido
+
+- Parser do cardápio do RU, que falhava com os PDFs publicados a partir de 21/09 porque cada semana monta a tabela de um jeito. A leitura agora usa a posição das datas na página, e itens que valem para a semana inteira (como as bebidas do café) aparecem em todos os dias (#145).
+- Professor duplicado quando o SIGAA publica carga horária diferente por disciplina no nome do docente (RF02, #140).
+- Sala duplicada quando o SIGAA usa separador (`-`/`/`) ou caixa diferente pro mesmo espaço físico (RF03, #140).
 
 ### Alterado
 
 - O endereço do Redis usado pelo Celery vem da variável `REDIS_URL`, com o docker compose como padrão.
 - Uma branch `R2-nome` por pessoa na Release 2, no lugar de uma branch por tarefa (`CONTRIBUTING.md`).
+- Pipeline de CI e workflow de deploy das docs atualizados para Node 24.
+
+### Mudança no time
+
+- O Ítalo saiu do projeto no início da Release 2. Eventos (RF08) e editais (RF09) saíram do escopo; o parser do RU, o cardápio semanal e a CLI foram redistribuídos entre Gabriel e João Paulo (`specs/README.md`).
 
 ## [Release_1] - 2026-10-06
 
@@ -53,5 +75,6 @@ Sprints 0 a 3, encerradas em 27/09/2026.
 - Professores e salas aparecem duplicados nas respostas da API.
 - `/v1/professores` ainda não busca por nome normalizado (#38).
 
-[Não lançado]: https://github.com/unb-mds/2026-2-Cerradinho-API/compare/Release_1...dev
+[Não lançado]: https://github.com/unb-mds/2026-2-Cerradinho-API/compare/v1.1...dev
+[1.1]: https://github.com/unb-mds/2026-2-Cerradinho-API/compare/Release_1...v1.1
 [Release_1]: https://github.com/unb-mds/2026-2-Cerradinho-API/releases/tag/Release_1

@@ -33,4 +33,4 @@ cp .env.example .env.local
 As telas de consulta (Visão Geral, Disciplinas, Cardápio, Professores e Salas) consomem a API real em `/v1`,
 sem dados de exemplo. Enquanto a API carrega, as telas mostram "Carregando...". Se a API não responder, aparece um aviso de erro.
 
-Link do protótipo de UI (Figma/mockup): [Cerradinho no Figma](https://www.figma.com/make/0xz0SuyDpsy3e05VknPfkc/Cerradinho?t=YZTahmjwBzk1zsxR-1)
+Link do protótipo de UI (Figma/mockup): [Cerradinho no Figma](https://www.figma.com/design/6LIOBmUcLfMeyCCD4mKbKY/Cerradinho-API?node-id=0-1&t=AsgTNL9BLDTmmhxe-1)

@@ -120,3 +120,23 @@ Registro das reuniões do time: presença, o que foi feito e o que ficou combina
 - **João Paulo**: organizou o repositório e limpou as branches remotas — removeu dezenas de branches já mergeadas ou obsoletas (features antigas, estudos, fixes e PRs já fechados), deixando só as branches realmente ativas no remoto.
 
 ---
+
+### Segunda-feira, 19/10 — Review da Sprint 5
+
+**Presentes:** Vitor, Arthur, Gabriel, Daniel, João Paulo
+
+**Progresso:**
+
+- **Vitor**: na branch `R2-vitor`, corrigiu a duplicidade de professor — o SIGAA embute a carga horária da disciplina no nome do docente (ex: `"FULANO (60h)"`), e como essa carga varia por disciplina pro mesmo professor, ele acabava virando um registro por carga horária distinta; a normalização agora corta esse sufixo antes do get-or-create. Corrigiu também a duplicidade de sala — o SIGAA usa separador `-`/`/` inconsistente e caixa inconsistente pro mesmo espaço físico (ex: `"Mocap"` vs `"MOCAP"`); a normalização passou a unificar prédio e nome em maiúsculas, mantendo as turmas distinguidas pelo próprio horário e dia. Implementou o RF04 (busca de docente por nome normalizado, `GET /v1/professores?nome=`, sem diferenciar acento/caixa, palavra a palavra). Abriu o PR #140 pra `dev` com revisão do Gabriel; um teste de integração contra Postgres real quebrou no CI por ainda codificar o comportamento antigo (pré-correção) — corrigido e confirmado verde.
+
+- **Arthur**: terminou o log de execução (RF16) — os scrapers agora diferenciam falha de fonte de falha interna, toda execução é gravada no banco (`execucao_logs`), e o endpoint `GET /v1/execucoes` expõe esse histórico, com testes cobrindo a classificação fonte/interna e o endpoint. Também fez o desenho do cache (RNF02).
+
+- **Gabriel**: corrigiu o parser do RU pros PDFs em layout novo, com testes (#145, mergeado), e preparou o deploy — `REDIS_URL` e `docs/DEPLOY.md`. As variáveis de ambiente no Railway ficaram pra Sprint 6.
+
+- **Daniel**: fez os protótipos das novas telas no Figma — agenda do professor e tela de salas vazias — e ligou todas as telas num único protótipo navegável, com o menu lateral completo incluindo o novo item "Salas vazias". Também fez o wireframe do portal do desenvolvedor: topo, apresentação com a URL base, tabela de endpoints, exemplos de uso e espaço reservado pro Swagger UI.
+
+- **João Paulo**: atualizou as actions do pipeline e o workflow pra Node 24. Mediu a cobertura de testes do backend e definiu os módulos críticos, parte do RNF09, registrado na especificação do requisito.
+
+**Observação:** o Ítalo não participa mais das reuniões — saiu do projeto no início da Release 2. RF08 (eventos) e RF09 (editais), que eram dele, saíram do escopo; os demais itens que ele tocava (parser do RU, cardápio semanal, CLI) já têm novos responsáveis, registrados em `specs/README.md` e no planejamento de sprints.
+
+---
