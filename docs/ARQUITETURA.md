@@ -148,7 +148,7 @@ Todas sob `/v1/` ([ADR 0005](adr/0005-api-versionada-desde-o-inicio.md)). A docu
 | `GET /v1/disciplinas` | Turmas com professores, horários, sala e vagas |
 | `GET /v1/professores` | Docentes e os códigos das disciplinas de cada um |
 | `GET /v1/salas` | Salas com prédio e nome separados |
-| `GET /v1/cardapio/semana?data_inicio=` | Itens do cardápio de 7 dias, por refeição e categoria |
+| `GET /v1/cardapio/semana?data_inicio=` | Cardápio dos 7 dias, agrupado por dia e refeição, com os dias sem cardápio marcados como não publicados |
 
 ## Modelo de dados
 

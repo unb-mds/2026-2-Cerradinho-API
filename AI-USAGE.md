@@ -42,8 +42,12 @@ Cada entrada deve conter: data, pessoa, ferramenta usada, o que foi pedido, o qu
 ### Release 2
 
 | Data | Pessoa | Ferramenta | O que foi feito | Aceito/ajustado/rejeitado |
-|---|---|---|---|---|
+| ---- | ------ | ---------- | --------------- | ------------------------- |
+| 05/10/2026 | Gabriel | Claude Code | Análise das branches antigas e padrão de branch R2-nome no | Aceito sem ajuste |
+| 13/10/2026 | Gabriel | Claude Code | Auxílio na adição de arquivos necessários e no replanejamento da R2 | Ajustado: formato do `/specs`, datas e escopo definidos por mim |
+| 15/10/2026 | Gabriel | Claude Code | Suporte na correção do parser do RU com fixtures e testes, docs/DEPLOY.md e remoção da coluna Situação das specs | Ajustado: pratos conferidos contra os PDFs|
 | 17/10/2026 | Arthur | Claude Code | Desenho do cache (RNF02, Sprint 5), registrado em `specs/RNF02-...md` | Ajustado: cortados trechos redundantes do texto gerado |
+| 19/10/2026 | Gabriel | Claude Code | Ajuda em conflitos com a dev| Aceito sem ajuste |
 | 19/10/2026 | Daniel | Claude (Figma MCP) | Ajustes no arquivo do Figma a pedido: ligações do protótipo entre todas as telas e unificação em um só protótipo, movimentação e renomeação de 4 frames, item "Salas vazias" com ícone no menu lateral de todas as telas| Aceito sem ajuste: o pedido foi para trabalho repetitivo, e o Daniel conferiu as telas depois |
 | 19/10/2026 | Daniel | Claude| Wireframe do portal do desenvolvedor (RF14): explicação de conceitos (API, endpoint, Swagger, wireframe) e orientação passo a passo no Figma; o Daniel montou topo, hero, endpoints, exemplos e espaço do Swagger;| Ajustado: no início a IA montou o wireframe inteiro sem o Daniel pedir, e isso foi apagado para ele fazer sozinho; seções SDK e CLI e rodapé aceitas após o ajuste do rodapé |
 | 21/10/2026 | Daniel | Claude | Tela do cardápio: navegação entre semanas e filtro por dia (`56d78e3`); a tela não mostra mais o cardápio da semana anterior enquanto a nova carrega ou quando dá erro, e o layout e as bordas foram ajustados (`b8c904c`) | Ajustado: a IA explicou e orientou, e o próprio Daniel escreveu o código, pedindo explicações ao longo do caminho para entender o que era escrito |

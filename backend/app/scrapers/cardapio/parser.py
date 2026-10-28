@@ -50,7 +50,7 @@ from bs4 import BeautifulSoup
 
 from app.schemas.cardapio import ItemCardapio, Refeicao
 
-from .scraper import URL_CARDAPIO
+from .scraper import URLS_CARDAPIO
 
 logger = logging.getLogger(__name__)
 
@@ -76,7 +76,7 @@ class Celula(NamedTuple):
     texto: str
 
 
-def extrair_links_cardapio(html: str, url_base: str = URL_CARDAPIO, campus: str = "darcy") -> list[dict]:
+def extrair_links_cardapio(html: str, url_base: str = URLS_CARDAPIO[0], campus: str = "darcy") -> list[dict]:
     """Percorre o HTML da página de listagem e retorna uma lista de dicts
     com o texto do link (ex: "ISM – 7/9/2026 A 13/9/2026") e a URL absoluta
     do PDF correspondente ao `campus` informado.
