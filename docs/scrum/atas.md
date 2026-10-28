@@ -140,3 +140,23 @@ Registro das reuniões do time: presença, o que foi feito e o que ficou combina
 **Observação:** o Ítalo não participa mais das reuniões — saiu do projeto no início da Release 2. RF08 (eventos) e RF09 (editais), que eram dele, saíram do escopo; os demais itens que ele tocava (parser do RU, cardápio semanal, CLI) já têm novos responsáveis, registrados em `specs/README.md` e no planejamento de sprints.
 
 ---
+
+### Segunda-feira, 26/10 — Review da Sprint 6
+
+**Presentes:** Vitor, Arthur, Gabriel, Daniel, João Paulo
+
+**Progresso:**
+
+- **Vitor**: implementou o RF17 (salas vazias por dia e horário, `GET /v1/salas/vazias`), PR #149. Depois, rodando o scraper contra todas as unidades (Darcy incluso), corrigiu um lote de bugs achados em produção: código de horário com mais de um segmento colado (ex. `"35M5 35T1"`) que era ignorado por completo no cálculo de salas vazias; estouro de coluna (`StringDataRightTruncation`) com código de horário de 4+ segmentos; uma turma com dado fora do esperado derrubando a gravação da unidade inteira (agora cada turma tem sua própria savepoint, e o commit é por unidade); sala duplicada pelo ponto inconsistente do SIGAA depois de "LAB"; salas e professores gravados antes da normalização existir, fundidos numa migration de dados; turma com sala diferente por dia (ex. `"FCTE - S1 / MOCAP"`) que não marcava a ocupação certa — a sala passou a viver no horário, não na turma (ADR 0010); cache de salas vazias que ignorava `dia`/`horario`; e o prédio do Darcy sem separador (`"PAT AT 125"`, `"ICC ANF.16"`) e andar sendo gravado como prédio. Tudo no PR #230, mergeado na `dev`.
+
+- **Gabriel**: corrigiu o parser do RU pros PDFs em layout novo e o formato do `REDIS_URL` pro Railway (#145). Implementou o RF19 (cardápio da semana agrupado por dia e refeição, sempre com os 7 dias) e o scraper do RU consultando as duas páginas onde o cardápio é publicado (#227). Revisou a `dev` antes do merge pra `main`, corrigindo o formato do Redis no Railway, horários repetidos em `GET /v1/disciplinas` e atualizando o guia de deploy (#233). Escreveu a release note da v1.2 e o changelog (#235), e fez o merge da `dev` na `main` — a primeira release desde a `Release_1`.
+
+- **Daniel**: fez os protótipos das novas telas e o wireframe do portal do desenvolvedor (#144). Implementou a navegação por semana e o filtro por dia no cardápio, e a página de desenvolvedores com Swagger UI embutido, RF14 (#148). Implementou a tela de Salas Vazias no frontend, consumindo o RF17 (#228).
+
+- **Arthur**: implementou o cache em Redis nas rotas de leitura, RNF02 (#150), e o rate limit de 60 requisições por minuto por IP com slowapi, RNF01 (#229).
+
+- **João Paulo**: mediu a cobertura atual e definiu os módulos críticos do RNF09 (#147). Escreveu testes de contrato cobrindo salas vazias, cardápio semanal e log de execução, e corrigiu `criado_em` de `GET /v1/execucoes` sem fuso horário (#231).
+
+**Observação:** a `dev` foi mergeada na `main` nesta sprint (PR #236) — a primeira desde a `Release_1` — com a release note da v1.2 publicada no GitHub.
+
+---
