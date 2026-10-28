@@ -15,6 +15,8 @@ Mudanças relevantes do Cerradinho, por release. O formato segue o [Keep a Chang
 - `GET /v1/salas/vazias` não contava código de horário com mais de um segmento (`"35M5 35T1"`), e mostrava sala com aula marcada como vazia num dos turnos (RF17).
 - Uma turma com dado fora do esperado derrubava a gravação da unidade inteira, e uma unidade com erro derrubava a raspagem completa; agora cada turma tem sua própria transação e o commit é por unidade (RF01).
 - Sala duplicada pelo ponto inconsistente do SIGAA depois de "LAB" (`"LAB NIT/LDS"` vs `"LAB. NIT/LDS"`), e salas/professores gravados antes da normalização existir, fundidos numa migration de dados (RF04, RF05).
+- Turma com sala diferente por dia (ex. `"FCTE - S1 / MOCAP"`) gravava como uma sala só e nunca aparecia ocupada em nenhuma delas no `GET /v1/salas/vazias`; a sala agora é por horário, casada com o dia certo (RF05, RF17, ADR 0010).
+- `GET /v1/salas/vazias` ficava em cache pro primeiro `dia`/`horario` consultado e devolvia esse mesmo resultado pra qualquer consulta seguinte, porque a chave de cache não incluía os parâmetros (RF17, RNF02).
 
 ## [1.1] - 2026-10-19
 
