@@ -12,12 +12,14 @@ O projeto no Railway tem os mesmos serviços do `docker-compose.yml`, com exceç
 |---|---|---|---|
 | Postgres | Banco gerenciado do Railway | | |
 | Redis | Redis gerenciado do Railway | | |
-| api | Este repositório, pelo `backend/Dockerfile` | `/backend` | `sh -c "alembic upgrade head && uvicorn app.main:app --host 0.0.0.0 --port $PORT"` |
+| api | Este repositório, pelo `backend/Dockerfile` | `/backend` | `sh -c "alembic upgrade head && uvicorn app.main:app --host 0.0.0.0 --port $PORT --forwarded-allow-ips='*'"` |
 | worker | Este repositório, pelo `backend/Dockerfile` | `/backend` | `celery -A app.celery_app worker --loglevel=info --concurrency=1` |
 | beat | Este repositório, pelo `backend/Dockerfile` | `/backend` | `celery -A app.celery_app beat --loglevel=info` |
 | frontend | Este repositório | `/frontend` | `npm run start` (o build com `npm run build` é detectado pelo Railway) |
 
 O `Dockerfile` do backend termina com `alembic upgrade head`, por isso cada serviço do backend precisa do próprio comando de início. A API roda as migrations antes de subir, e o worker só deve ser ligado depois do primeiro deploy da API, quando as tabelas já existem.
+
+O `--forwarded-allow-ips='*'` faz o uvicorn aceitar o IP do cliente que o proxy do Railway manda no `X-Forwarded-For`. Sem ele, toda requisição parece vir do proxy, e o rate limit (RNF01) vira um limite único de 60 por minuto para todos os usuários juntos.
 
 Se o plano gratuito não comportar todos os serviços, o beat pode rodar dentro do worker com `celery -A app.celery_app worker -B --loglevel=info --concurrency=1`. Nesse caso só pode existir um worker, senão os agendamentos rodam em dobro.
 
