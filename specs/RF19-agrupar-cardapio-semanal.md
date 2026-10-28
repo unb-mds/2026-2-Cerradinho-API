@@ -13,6 +13,6 @@
 
 ## Rastreabilidade
 
-- **PRs:** nenhum ainda.
+- **PRs:** [#227](https://github.com/unb-mds/2026-2-Cerradinho-API/pull/227)
 - **Testes:** [`tests/routers/test_cardapio_router.py`](https://github.com/unb-mds/2026-2-Cerradinho-API/blob/dev/backend/tests/routers/test_cardapio_router.py)
 - **Observação:** A resposta tem `data_inicio`, `data_fim` e a lista `dias`, sempre com 7 dias. Cada dia traz `cafe_da_manha`, `almoco` e `jantar` com os itens (`categoria` e `item`) e o campo `publicado`, que vem falso quando não há cardápio coletado para o dia. Antes o endpoint devolvia uma lista solta de itens e o dia sem cardápio sumia da resposta.

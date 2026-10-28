@@ -14,5 +14,5 @@
 
 ## Rastreabilidade
 
-- **PRs:** nenhum ainda.
+- **PRs:** [#149](https://github.com/unb-mds/2026-2-Cerradinho-API/pull/149), [#227](https://github.com/unb-mds/2026-2-Cerradinho-API/pull/227)
 - **Testes:** [`tests/routers/test_salas_router.py`](https://github.com/unb-mds/2026-2-Cerradinho-API/blob/dev/backend/tests/routers/test_salas_router.py)

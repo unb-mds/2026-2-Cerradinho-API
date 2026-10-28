@@ -13,5 +13,5 @@
 
 ## Rastreabilidade
 
-- **PRs:** [#112](https://github.com/unb-mds/2026-2-Cerradinho-API/pull/112), [#114](https://github.com/unb-mds/2026-2-Cerradinho-API/pull/114)
+- **PRs:** [#112](https://github.com/unb-mds/2026-2-Cerradinho-API/pull/112), [#114](https://github.com/unb-mds/2026-2-Cerradinho-API/pull/114), [#227](https://github.com/unb-mds/2026-2-Cerradinho-API/pull/227)
 - **Testes:** [`tests/contract/test_openapi_contract.py`](https://github.com/unb-mds/2026-2-Cerradinho-API/blob/dev/backend/tests/contract/test_openapi_contract.py)
