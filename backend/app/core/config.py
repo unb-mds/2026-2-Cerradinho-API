@@ -1,3 +1,5 @@
+from urllib.parse import urlsplit, urlunsplit
+
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
@@ -23,14 +25,21 @@ class Settings(BaseSettings):
             f"postgresql+psycopg2://{self.postgres_user}:{self.postgres_password}"
             f"@{self.postgres_host}:{self.postgres_port}/{self.postgres_db}"
         )
+
     @property
     def redis_cache_url(self) -> str:
-        base, _, _ = self.redis_url.rpartition("/")
-        return f"{base}/2" 
+        return _trocar_banco_redis(self.redis_url, 2)
 
     @property
     def redis_rate_limit_url(self) -> str:
-        base, _, _ = self.redis_url.rpartition("/")
-        return f"{base}/3"
-    
+        return _trocar_banco_redis(self.redis_url, 3)
+
+
+def _trocar_banco_redis(url: str, banco: int) -> str:
+    """Troca o número do banco no path da URL. O REDIS_URL do Railway vem
+    sem path ("redis://default:senha@host:6379"), então não dá pra cortar
+    no último "/", que nesse caso é o de "redis://"."""
+    return urlunsplit(urlsplit(url)._replace(path=f"/{banco}"))
+
+
 settings = Settings()
