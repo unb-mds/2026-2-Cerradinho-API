@@ -13,7 +13,9 @@
 **Regra de negócio**
 - A chave natural de uma turma é (disciplina, número, ano/período) — é o que o SIGAA considera uma oferta única; é por essa chave que o upsert decide atualizar em vez de duplicar.
 - O SIGAA junta o código do horário com o intervalo de datas da turma no mesmo texto (ex: `"6T2345 (10/08/2026 - 14/12/2026)"`); só o código antes do `(` é persistido — guardar o texto inteiro estoura a coluna do banco.
+- Turma com aula em turnos diferentes junta os segmentos de horário no mesmo código, separados por espaço (ex: `"35M5 35T1"`), podendo chegar a 4+ segmentos em algumas unidades (Darcy) — a coluna acomoda até 100 caracteres.
 - Turma com docente "a definir" vem do SIGAA sem o número de vagas ofertadas publicado; nesse caso o valor é tratado como `0`, nunca como erro que interrompe a raspagem.
+- Uma turma com dado fora do esperado (ex. erro de integridade) não derruba as demais turmas já persistidas da mesma unidade — cada turma é gravada em sua própria transação (savepoint), e o commit é por unidade.
 - Entre requisições a unidades diferentes, o scraper aguarda um intervalo mínimo (throttling) — etiqueta com o servidor da UnB, não é otimização.
 
 ## Rastreabilidade

@@ -1,7 +1,15 @@
 from sqlalchemy import create_engine
+from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import Session
 
-from app.domain.disciplinas import normalizar_nome_professor, normalizar_sala, persistir_turma
+import app.domain.disciplinas as disciplinas
+from app.domain.disciplinas import (
+    normalizar_nome_professor,
+    normalizar_sala,
+    normalizar_salas,
+    persistir_turma,
+    persistir_turmas,
+)
 from app.models import Base, Horario, Professor, Sala, Turma
 from app.schemas.disciplina import Horario as HorarioCapturado
 from app.schemas.disciplina import Professor as ProfessorCapturado
@@ -56,6 +64,101 @@ def test_normalizar_sala_ignora_caixa_alta_ou_baixa():
     assert normalizar_sala("FCTE - Mocap") == ("FCTE", "MOCAP")
 
 
+def test_normalizar_sala_ignora_ponto_depois_de_lab():
+    """Regressão: "FCTE / LAB NIT/LDS" e "FCTE / LAB. NIT/LDS" são a mesma
+    sala, mas o ponto depois de "LAB" fazia virarem duas linhas."""
+    assert normalizar_sala("FCTE / LAB NIT/LDS") == normalizar_sala("FCTE / LAB. NIT/LDS")
+    assert normalizar_sala("FCTE / LAB. NIT/LDS") == ("FCTE", "LAB NIT/LDS")
+
+
+def test_normalizar_sala_reconhece_predio_do_darcy_sem_separador():
+    """Achado real do Darcy: "PAT AT 125" e "ICC ANF.16" não usam "-" nem
+    "/" entre prédio e sala, só espaço."""
+    assert normalizar_sala("PAT AT 125") == ("PAT", "AT 125")
+    assert normalizar_sala("ICC ANF.16") == ("ICC", "ANF.16")
+
+
+def test_normalizar_sala_prefixo_desconhecido_sem_separador_fica_so_nome():
+    """Sem saber se é prédio, não arrisca separar — igual ao comportamento
+    de sempre pra texto sem separador."""
+    assert normalizar_sala("XYZ 123") == ("", "XYZ 123")
+
+
+def test_normalizar_sala_nao_promove_andar_a_predio():
+    """Achado real do Darcy: "TÉRREO"/"SUBSOLO" são andar, não prédio - o
+    separador "/" fazia "TÉRREO/SUBSOLO" virar prédio "TÉRREO" errado."""
+    assert normalizar_sala("TÉRREO/SUBSOLO") == ("", "TÉRREO SUBSOLO")
+
+
+def test_normalizar_salas_separa_com_barra_espacada():
+    """Turma com sala diferente por dia: "FCTE - S1 / MOCAP" é segunda na
+    S1 e quarta na MOCAP (achado real do Vitor)."""
+    assert normalizar_salas("FCTE - S1 / MOCAP") == [("FCTE", "S1"), ("FCTE", "MOCAP")]
+
+
+def test_normalizar_salas_separa_tres_salas():
+    assert normalizar_salas("FCTE - S8 / I3 / LAB TERMOFLUIDOS") == [
+        ("FCTE", "S8"),
+        ("FCTE", "I3"),
+        ("FCTE", "LAB TERMOFLUIDOS"),
+    ]
+
+
+def test_normalizar_salas_separa_barra_sem_espaco_quando_marcada_com_dia():
+    assert normalizar_salas("FCTE - LDS(SEGUNDA)/I1(SEXTA)") == [
+        ("FCTE", "LDS(SEGUNDA)"),
+        ("FCTE", "I1(SEXTA)"),
+    ]
+
+
+def test_normalizar_salas_nao_separa_barra_sem_espaco_e_sem_dia():
+    """"LAB NIT/LDS" é uma sala só, que por acaso tem barra no nome — não
+    tem o espaço nem a marcação de dia que indicam múltiplas salas."""
+    assert normalizar_salas("FCTE - LAB NIT/LDS") == [("FCTE", "LAB NIT/LDS")]
+    assert normalizar_salas("FCTE - I9/I10") == [("FCTE", "I9/I10")]
+
+
+def test_persistir_turma_com_sala_por_dia_associa_cada_sala_ao_dia_certo():
+    """Achado real: "24M5 24T1" é segunda e quarta (12:00 às 13:50), e
+    "FCTE - S1 / MOCAP" é segunda na S1, quarta na MOCAP — a ordem das
+    salas acompanha a ordem crescente dos dias."""
+    session = _in_memory_session()
+
+    turma_salva = persistir_turma(
+        session,
+        _turma_capturada(
+            horarios=[HorarioCapturado(codigo="24M5 24T1", descricao="Segunda e quarta, 12:00 às 13:50")],
+            sala=SalaCapturada(descricao="FCTE - S1 / MOCAP"),
+        ),
+        unidade="FCTE",
+    )
+    session.commit()
+
+    horarios_por_codigo = {h.codigo: h.sala.nome for h in turma_salva.horarios}
+    assert horarios_por_codigo == {"2M5 2T1": "S1", "4M5 4T1": "MOCAP"}
+
+
+def test_persistir_turma_com_salas_e_dias_que_nao_casam_associa_tudo_a_todas():
+    """Quando o número de salas não bate com o de dias distintos, não dá
+    pra casar com segurança — cada sala fica associada a todos os
+    horários, em vez de arriscar um pareamento errado."""
+    session = _in_memory_session()
+
+    turma_salva = persistir_turma(
+        session,
+        _turma_capturada(
+            horarios=[HorarioCapturado(codigo="246T1", descricao="Segunda, quarta e sexta, 12:55")],
+            sala=SalaCapturada(descricao="FCTE - S1 / MOCAP"),
+        ),
+        unidade="FCTE",
+    )
+    session.commit()
+
+    assert len(turma_salva.horarios) == 2
+    assert {h.sala.nome for h in turma_salva.horarios} == {"S1", "MOCAP"}
+    assert {h.codigo for h in turma_salva.horarios} == {"246T1"}
+
+
 def test_normalizar_nome_professor_corta_carga_horaria():
     nome = "ALESSANDRO BORGES DE SOUSA OLIVEIRA (60h)"
     assert normalizar_nome_professor(nome) == "ALESSANDRO BORGES DE SOUSA OLIVEIRA"
@@ -75,8 +178,8 @@ def test_persistir_turma_cria_disciplina_sala_professores_e_horarios():
     assert turma_salva.unidade == "FCTE"
     assert turma_salva.vagas_ofertadas == 40
     assert turma_salva.vagas_ocupadas == 38
-    assert turma_salva.sala.predio == "FCTE"
-    assert turma_salva.sala.nome == "I9/I10"
+    assert turma_salva.horarios[0].sala.predio == "FCTE"
+    assert turma_salva.horarios[0].sala.nome == "I9/I10"
     assert [p.nome for p in turma_salva.professores] == ["Ana Souza"]
     assert [h.codigo for h in turma_salva.horarios] == ["6T2345"]
 
@@ -89,7 +192,7 @@ def test_persistir_turma_sem_texto_de_sala_fica_com_sala_nula():
     )
     session.commit()
 
-    assert turma_salva.sala is None
+    assert turma_salva.horarios[0].sala is None
     assert turma_salva.professores == []
 
 
@@ -177,6 +280,33 @@ def test_persistir_turmas_mesmo_professor_cargas_horarias_diferentes_nao_duplica
     assert session.query(Turma).count() == 2
 
 
+def test_persistir_turmas_isola_falha_de_uma_turma_das_outras(monkeypatch):
+    """Regressão: uma unidade (Darcy) tinha turma com dado fora do esperado
+    que quebrava a gravação inteira da unidade - as outras turmas, já
+    processadas com sucesso, se perdiam junto. Cada turma precisa de sua
+    própria savepoint."""
+    session = _in_memory_session()
+    persistir_turma_original = disciplinas.persistir_turma
+
+    def persistir_turma_com_falha_na_02(sess, turma, unidade):
+        if turma.numero == "02":
+            raise SQLAlchemyError("falha simulada")
+        return persistir_turma_original(sess, turma, unidade)
+
+    monkeypatch.setattr(disciplinas, "persistir_turma", persistir_turma_com_falha_na_02)
+
+    turmas = [
+        _turma_capturada(numero="01"),
+        _turma_capturada(numero="02"),
+        _turma_capturada(numero="03"),
+    ]
+    persistidas = persistir_turmas(session, turmas, unidade="FCTE")
+    session.commit()
+
+    assert {t.numero for t in persistidas} == {"01", "03"}
+    assert {t.numero for t in session.query(Turma).all()} == {"01", "03"}
+
+
 def test_persistir_turmas_mesma_sala_com_separador_e_caixa_diferentes_nao_duplica():
     """Regressão: o SIGAA descreve a mesma sala física com separador
     ("FCTE - Mocap" vs "FCTE / Mocap") e caixa ("Mocap" vs "MOCAP")
@@ -214,5 +344,5 @@ def test_persistir_turmas_mesma_sala_com_separador_e_caixa_diferentes_nao_duplic
     # só compartilhando a mesma sala
     turmas = session.query(Turma).order_by(Turma.numero).all()
     assert len(turmas) == 2
-    assert [t.sala_id for t in turmas] == [salas[0].id, salas[0].id]
+    assert [t.horarios[0].sala_id for t in turmas] == [salas[0].id, salas[0].id]
     assert [h.codigo for t in turmas for h in t.horarios] == ["6T2345", "2M1234"]

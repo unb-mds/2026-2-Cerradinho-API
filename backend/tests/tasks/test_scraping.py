@@ -2,6 +2,7 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import Session
 
 import app.tasks.scraping as scraping_task
+from app.domain.disciplinas import persistir_turmas
 from app.models import Base, Turma
 from app.schemas.disciplina import Horario, Professor, Sala
 from app.schemas.disciplina import Turma as TurmaCapturada
@@ -52,6 +53,28 @@ def test_scrape_disciplinas_task_persiste_turmas_de_cada_unidade(monkeypatch):
     assert total == 2
     turmas = session.query(Turma).all()
     assert {t.unidade for t in turmas} == {"FCTE", "FUP"}
+
+
+def test_scrape_disciplinas_task_unidade_com_falha_nao_derruba_as_outras(monkeypatch):
+    """Regressão: um erro ao persistir uma unidade derrubava a raspagem
+    inteira numa transação só, perdendo as unidades já persistidas com
+    sucesso antes dela - commit precisa ser por unidade."""
+    session = _in_memory_session()
+    monkeypatch.setattr(scraping_task, "SessionLocal", lambda: session)
+    monkeypatch.setattr(scraping_task, "raspar_disciplinas_varias_unidades", _raspagem_falsa)
+
+    def persistir_turmas_falha_na_fup(sess, turmas, unidade):
+        if unidade == "FUP":
+            raise RuntimeError("falha simulada na unidade")
+        return persistir_turmas(sess, turmas, unidade)
+
+    monkeypatch.setattr(scraping_task, "persistir_turmas", persistir_turmas_falha_na_fup)
+
+    total = scraping_task.scrape_disciplinas_task.run(nivel="G", ano="2026", periodo="2")
+
+    assert total == 1
+    turmas = session.query(Turma).all()
+    assert {t.unidade for t in turmas} == {"FCTE"}
 
 
 def test_scrape_disciplinas_task_varre_todas_as_unidades_por_padrao(monkeypatch):
