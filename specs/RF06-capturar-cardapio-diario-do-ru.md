@@ -14,7 +14,7 @@
 
 ## Rastreabilidade
 
-- **PRs:** [#92](https://github.com/unb-mds/2026-2-Cerradinho-API/pull/92), [#145](https://github.com/unb-mds/2026-2-Cerradinho-API/pull/145)
+- **PRs:** [#92](https://github.com/unb-mds/2026-2-Cerradinho-API/pull/92), [#145](https://github.com/unb-mds/2026-2-Cerradinho-API/pull/145), [#227](https://github.com/unb-mds/2026-2-Cerradinho-API/pull/227)
 - **Testes:** [`tests/scrapers/test_cardapio_parser.py`](https://github.com/unb-mds/2026-2-Cerradinho-API/blob/dev/backend/tests/scrapers/test_cardapio_parser.py), [`tests/scrapers/test_cardapio_scraper.py`](https://github.com/unb-mds/2026-2-Cerradinho-API/blob/dev/backend/tests/scrapers/test_cardapio_scraper.py), [`tests/domain/test_cardapio.py`](https://github.com/unb-mds/2026-2-Cerradinho-API/blob/dev/backend/tests/domain/test_cardapio.py)
 - **Decisões:** [ADR 0002](https://github.com/unb-mds/2026-2-Cerradinho-API/blob/dev/docs/adr/0002-ferramentas-de-scraping.md)
 - **Observação:** O RU monta a tabela do PDF de um jeito diferente a cada semana. Os testes rodam com cinco PDFs reais (semanas de 14/09 a 12/10), cada um com um layout, e o parser lê pela posição das datas na página em vez de pela linha ou coluna da tabela (#103).

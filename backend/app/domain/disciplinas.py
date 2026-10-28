@@ -295,6 +295,20 @@ def _descricao_salas(turma: Turma) -> str:
     return f"{predio} - {nomes}" if predio else nomes
 
 
+def _horarios_sem_repeticao(turma: Turma) -> list[HorarioCapturado]:
+    """Quando as salas não casam com os dias, o mesmo horário é gravado uma
+    vez por sala (ver `_montar_horarios`). No contrato público ele aparece
+    uma vez só."""
+    vistos: set[tuple[str, str]] = set()
+    horarios = []
+    for horario in turma.horarios:
+        chave = (horario.codigo, horario.descricao)
+        if chave not in vistos:
+            vistos.add(chave)
+            horarios.append(HorarioCapturado(codigo=horario.codigo, descricao=horario.descricao))
+    return horarios
+
+
 def _turma_para_contrato(turma: Turma) -> TurmaCapturada:
     return TurmaCapturada(
         disciplina_codigo=turma.disciplina.codigo,
@@ -302,7 +316,7 @@ def _turma_para_contrato(turma: Turma) -> TurmaCapturada:
         numero=turma.numero,
         ano_periodo=turma.ano_periodo,
         professores=[ProfessorCapturado(nome=p.nome) for p in turma.professores],
-        horarios=[HorarioCapturado(codigo=h.codigo, descricao=h.descricao) for h in turma.horarios],
+        horarios=_horarios_sem_repeticao(turma),
         sala=SalaCapturada(descricao=_descricao_salas(turma)),
         vagas_ofertadas=turma.vagas_ofertadas,
         vagas_ocupadas=turma.vagas_ocupadas,

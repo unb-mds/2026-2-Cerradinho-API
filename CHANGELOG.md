@@ -17,6 +17,9 @@ Mudanças relevantes do Cerradinho, por release. O formato segue o [Keep a Chang
 - Sala duplicada pelo ponto inconsistente do SIGAA depois de "LAB" (`"LAB NIT/LDS"` vs `"LAB. NIT/LDS"`), e salas/professores gravados antes da normalização existir, fundidos numa migration de dados (RF04, RF05).
 - Turma com sala diferente por dia (ex. `"FCTE - S1 / MOCAP"`) gravava como uma sala só e nunca aparecia ocupada em nenhuma delas no `GET /v1/salas/vazias`; a sala agora é por horário, casada com o dia certo (RF05, RF17, ADR 0010).
 - `GET /v1/salas/vazias` ficava em cache pro primeiro `dia`/`horario` consultado e devolvia esse mesmo resultado pra qualquer consulta seguinte, porque a chave de cache não incluía os parâmetros (RF17, RNF02).
+- Cache e rate limit sem Redis em produção. O `REDIS_URL` do Railway vem sem o número do banco, e a troca do banco cortava a URL no lugar errado (RNF01, RNF02).
+- `GET /v1/salas/vazias` continuava com as salas da raspagem anterior por até 7 dias, porque a raspagem semanal não limpava o cache por dia e horário (RF17, RNF02).
+- Turma com salas que não casam com os dias aparecia com os horários repetidos em `GET /v1/disciplinas` (RF01).
 
 ## [1.1] - 2026-10-19
 

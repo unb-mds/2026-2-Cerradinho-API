@@ -18,7 +18,7 @@ celery_app = Celery(
 
 celery_app.conf.timezone = "America/Sao_Paulo"
 
-# RF15 — roda o scraper de Disciplinas todo domingo às 5h da manhã
+# RF15: disciplinas todo domingo às 3h e cardápio todo dia às 5h
 celery_app.conf.beat_schedule = {
     "scrape-disciplinas-semanal": {
         "task": "app.tasks.scraping.scrape_disciplinas_task",

@@ -4,6 +4,7 @@ from sqlalchemy.orm import Session
 
 import app.domain.disciplinas as disciplinas
 from app.domain.disciplinas import (
+    listar_turmas,
     normalizar_nome_professor,
     normalizar_sala,
     normalizar_salas,
@@ -157,6 +158,26 @@ def test_persistir_turma_com_salas_e_dias_que_nao_casam_associa_tudo_a_todas():
     assert len(turma_salva.horarios) == 2
     assert {h.sala.nome for h in turma_salva.horarios} == {"S1", "MOCAP"}
     assert {h.codigo for h in turma_salva.horarios} == {"246T1"}
+
+
+def test_listar_turmas_nao_repete_horario_gravado_uma_vez_por_sala():
+    """O horário gravado uma vez para cada sala (caso acima) aparece uma vez
+    só em GET /v1/disciplinas."""
+    session = _in_memory_session()
+    persistir_turma(
+        session,
+        _turma_capturada(
+            horarios=[HorarioCapturado(codigo="246T1", descricao="Segunda, quarta e sexta, 12:55")],
+            sala=SalaCapturada(descricao="FCTE - S1 / MOCAP"),
+        ),
+        unidade="FCTE",
+    )
+    session.commit()
+
+    [turma] = listar_turmas(session)
+
+    assert [h.codigo for h in turma.horarios] == ["246T1"]
+    assert turma.sala.descricao == "FCTE - S1 / MOCAP"
 
 
 def test_normalizar_nome_professor_corta_carga_horaria():
