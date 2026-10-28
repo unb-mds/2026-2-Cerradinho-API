@@ -3,7 +3,7 @@
 Skills used by Claude Code agents working in this repo. Per team decision, each skill is
 **adapted from an existing public skill** (mainly from [skills.sh](https://www.skills.sh/))
 rather than invented from scratch, scoped down to Cerradinho's actual stack and the
-conventions in `docs/REQUISITOS.md`, `docs/ARQUITETURA.md`, and `docs/PROCESSO.md`. Each
+conventions in `docs/REQUISITOS.md`, `specs/`, `docs/ARQUITETURA.md`, and `docs/PROCESSO.md`. Each
 `SKILL.md` opens with a **Source** line naming what it's adapted from. Only one skill
 (`ai-usage-log`) is fully custom — no public skill covers this course's specific AI
 disclosure policy. This file is plain documentation, not a skill itself.

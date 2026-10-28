@@ -1,8 +1,12 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from slowapi import _rate_limit_exceeded_handler
+from slowapi.errors import RateLimitExceeded
+from slowapi.middleware import SlowAPIASGIMiddleware
 
 from app.core.config import settings
-from app.routers import cardapio, disciplinas, professores, salas
+from app.core.rate_limit import limiter
+from app.routers import cardapio, disciplinas, execucoes, professores, salas
 
 DESCRICAO = """
 API pública que reúne dados institucionais da UnB hoje espalhados em vários sistemas:
@@ -27,6 +31,10 @@ TAGS = [
 
 app = FastAPI(title="Cerradinho API", version="1.0.0", description=DESCRICAO, openapi_tags=TAGS)
 
+app.state.limiter = limiter
+app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
+app.add_middleware(SlowAPIASGIMiddleware)
+
 app.add_middleware(
     CORSMiddleware,
     allow_origins=settings.cors_origins,
@@ -38,3 +46,4 @@ app.include_router(disciplinas.router, prefix="/v1")
 app.include_router(cardapio.router, prefix="/v1")
 app.include_router(professores.router, prefix="/v1")
 app.include_router(salas.router, prefix="/v1")
+app.include_router(execucoes.router, prefix="/v1")

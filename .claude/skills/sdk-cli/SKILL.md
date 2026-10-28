@@ -13,8 +13,8 @@ schema/language/package options) for the SDK's client layer, and
 (Typer + Rich scaffold) for the CLI layer on top of it.
 
 `sdk/` is an installable Python package that lets other squads/consumers integrate with
-Cerradinho's API without hand-rolling HTTP calls (RF13, Release 2, owned by Vitor per
-the traceability table in `docs/REQUISITOS.md` §6).
+Cerradinho's API without hand-rolling HTTP calls (RF13, Release 2: SDK owned by Vitor, CLI by João Paulo, per
+the spec in `specs/RF13-*.md`).
 
 ## Rules
 

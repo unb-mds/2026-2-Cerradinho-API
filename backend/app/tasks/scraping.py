@@ -1,10 +1,14 @@
 import asyncio
+import logging
 
 from celery import shared_task
 
+from app.core.cache import invalidar, invalidar_prefixo
 from app.core.database import SessionLocal
 from app.domain.disciplinas import persistir_turmas
 from app.scrapers.disciplinas import raspar_disciplinas_varias_unidades
+
+logger = logging.getLogger(__name__)
 
 NIVEL = "G"
 UNIDADE_FCTE = "673"
@@ -25,14 +29,24 @@ def scrape_disciplinas_task(
     de turmas persistidas, pra aparecer no log de sucesso (RF16).
     """
     turmas_por_unidade = asyncio.run(raspar_disciplinas_varias_unidades(nivel, ano, periodo, unidades))
- 
+
     db = SessionLocal()
     try:
         total = 0
         for unidade, turmas in turmas_por_unidade.items():
-            persistir_turmas(db, turmas, unidade)
-            total += len(turmas)
-        db.commit()
+            try:
+                persistidas = persistir_turmas(db, turmas, unidade)
+                db.commit()
+                total += len(persistidas)
+            except Exception:
+                # uma unidade com erro não pode levar as outras já persistidas
+                # junto na rolagem de volta - commit por unidade, não um só no fim.
+                db.rollback()
+                logger.exception("Falha ao persistir a unidade %s, pulando", unidade)
+        invalidar("cache:v1:disciplinas")
+        invalidar("cache:v1:professores")
+        # prefixo, pra levar junto as chaves de salas vazias por dia e horário
+        invalidar_prefixo("cache:v1:salas")
         return total
     finally:
         db.close()

@@ -4,7 +4,7 @@
 
 Este documento define a visão do produto Cerradinho: por que ele será construído, para quem, e o que ele entrega em alto nível. Ele serve como referência compartilhada para o time antes de qualquer detalhamento técnico, e deve permanecer estável mesmo quando requisitos específicos mudarem ao longo do projeto. Requisitos funcionais e não-funcionais detalhados estão em [`REQUISITOS.md`](REQUISITOS.md), e as decisões técnicas de como construir o sistema estão em [`ARQUITETURA.md`](ARQUITETURA.md) e nos ADRs em [`adr/`](adr/).
 
-**Escopo**: cobre as duas releases do projeto, em sprints semanais (Release 1: Sprints 0 a 3, até 27/09; Release 2: Sprints 4 a 12, com entrega em 25/11), desenvolvido como parte da disciplina de Métodos de Desenvolvimento de Software (MDS) da FCTE/UnB.
+**Escopo**: cobre as duas releases do projeto, em sprints semanais (Release 1: Sprints 0 a 3, até 27/09; Release 2: Sprints 4 a 11, com entrega em 25/11), desenvolvido como parte da disciplina de Métodos de Desenvolvimento de Software (MDS) da FCTE/UnB.
 
 ## 2. Posicionamento
 
@@ -27,7 +27,7 @@ Para **estudantes da UnB e desenvolvedores de squads terceiras** que **precisam 
 
 | Stakeholder | Interesse no projeto |
 |---|---|
-| Equipe do projeto (Vitor, Ítalo, Daniel, Arthur, Gabriel, João Paulo) | Entregar o sistema dentro do prazo da disciplina, com qualidade avaliável (testes, CI, documentação) |
+| Equipe do projeto (Vitor, Daniel, Arthur, Gabriel, João Paulo; o Ítalo participou da Release 1) | Entregar o sistema dentro do prazo da disciplina, com qualidade avaliável (testes, CI, documentação) |
 | Professor/avaliador da disciplina de MDS | Avaliar aderência ao processo (Scrum, ADRs, releases, DoD) e qualidade técnica do entregável |
 | Estudantes da UnB | Usuários finais que consultam a API via frontend ou diretamente |
 | Desenvolvedores de outras squads/projetos de extensão | Consumidores técnicos, via SDK/CLI, que integram o Cerradinho em seus próprios sistemas |
@@ -108,13 +108,13 @@ O Cerradinho é um sistema novo, autocontido (monorepo), que não substitui nenh
 |---|---|---|
 | **Essencial (must have)** | Disciplinas + Professores + Salas (RF01-05), rotas REST versionadas (RF10-12), agendamento automático com log (RF15-16) | Release 1 |
 | **Essencial (must have)** | Cardápio do RU (RF06-07) | Release 1 |
-| **Importante (should have)** | Eventos e Editais (RF08-09), features derivadas (RF17-19), SDK/CLI (RF13), cache e rate limit (RNF01-02) | Release 2 |
+| **Importante (should have)** | Features derivadas (RF17-19), SDK/CLI (RF13), cache e rate limit (RNF01-02) | Release 2 |
 | **Desejável (could have)** | Portal do desenvolvedor dedicado além do Swagger (RF14), observabilidade avançada além de uptime básico (RNF03) | Release 2, se sobrar tempo |
-| **Fora de escopo (won't have, por ora)** | Autenticação de usuário, aplicativo mobile nativo, tradução multilíngue, recomendação com IA | Nenhuma release atual |
+| **Fora de escopo (won't have, por ora)** | Eventos e editais (RF08-09), que saíram da Release 2 com a saída do Ítalo; autenticação de usuário, aplicativo mobile nativo, tradução multilíngue, recomendação com IA | Nenhuma release atual |
 
 ## 8. Documentação de apoio
 
-- Requisitos e rastreabilidade: [`REQUISITOS.md`](REQUISITOS.md)
+- Requisitos: [`REQUISITOS.md`](REQUISITOS.md). Especificação e rastreabilidade de cada requisito: [`/specs`](https://github.com/unb-mds/2026-2-Cerradinho-API/tree/dev/specs)
 - Arquitetura: [`ARQUITETURA.md`](ARQUITETURA.md)
 - Decisões técnicas registradas: [`adr/`](adr/)
 - Papéis, ritos e Definition of Done: [`PROCESSO.md`](PROCESSO.md)

@@ -5,13 +5,15 @@
 | Documento | Conteúdo |
 |---|---|
 | [DOCUMENTO-VISAO.md](DOCUMENTO-VISAO.md) | Problema, personas, escopo, restrições e prioridades |
-| [REQUISITOS.md](REQUISITOS.md) | Fontes de dado, requisitos funcionais e não funcionais, rastreabilidade |
+| [REQUISITOS.md](REQUISITOS.md) | Objetivo, fontes de dado e mapa dos requisitos |
+| [specs/](specs/README.md) | Especificação viva: um arquivo por requisito, com critérios de aceitação, regra de negócio e rastreabilidade |
 
 ## Técnica
 
 | Documento | Conteúdo |
 |---|---|
 | [ARQUITETURA.md](ARQUITETURA.md) | Componentes, fluxo de coleta, rotas, camadas, modelo de dados, estrutura de pastas |
+| [DEPLOY.md](DEPLOY.md) | Serviços, variáveis de ambiente e ordem do deploy no Railway |
 | [adr/](adr/) | Registro das decisões de arquitetura, um arquivo por decisão ([template](adr/template.md)) |
 | [fontes/sigaa-disciplinas.md](fontes/sigaa-disciplinas.md) | Ficha da fonte: consulta pública de turmas do SIGAA |
 | [fontes/ru-cardapio.md](fontes/ru-cardapio.md) | Ficha da fonte: cardápio semanal do RU |

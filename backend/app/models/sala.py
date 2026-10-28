@@ -6,7 +6,7 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 from app.models.base import Base
 
 if TYPE_CHECKING:
-    from app.models.turma import Turma
+    from app.models.horario import Horario
 
 
 class Sala(Base):
@@ -16,4 +16,4 @@ class Sala(Base):
     nome: Mapped[str] = mapped_column(String(50), nullable=False)
     predio: Mapped[str] = mapped_column(String(100), nullable=False)
 
-    turmas: Mapped[list["Turma"]] = relationship(back_populates="sala")
+    horarios: Mapped[list["Horario"]] = relationship(back_populates="sala")

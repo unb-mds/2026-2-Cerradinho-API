@@ -61,8 +61,10 @@ nav:
   - Produto:
       - Documento de Visão: DOCUMENTO-VISAO.md
       - Requisitos: REQUISITOS.md
+      - Especificação (/specs): specs/README.md
   - Arquitetura:
       - Arquitetura: ARQUITETURA.md
+      - Deploy no Railway: DEPLOY.md
       - Decisões de arquitetura (ADR):
           - 0001 — Base técnica do backend: adr/0001-base-tecnica-backend.md
           - 0002 — Ferramentas de scraping por fonte: adr/0002-ferramentas-de-scraping.md
@@ -83,6 +85,7 @@ nav:
       - Processo: PROCESSO.md
   - Gestão:
       - Planejamento de sprints: scrum/sprint-planning.md
+      - Retrospectivas de sprint: scrum/retrospectivas.md
       - Atas de reunião: scrum/atas.md
       - Checklist Release 1: scrum/checklist-release-1.md
   - Estudos:

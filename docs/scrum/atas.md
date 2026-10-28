@@ -1,6 +1,6 @@
 # Atas de reunião — Cerradinho
 
-Registro das reuniões do time: presença, o que foi feito e o que ficou combinado. Os horários e o papel de cada reunião estão no [PROCESSO.md](../PROCESSO.md#2-sprints-e-ritos); o calendário das sprints, no [planejamento](sprint-planning.md).
+Registro das reuniões do time: presença, o que foi feito e o que ficou combinado. Os horários e o papel de cada reunião estão no [PROCESSO.md](../PROCESSO.md#2-sprints-e-ritos); o calendário das sprints, no [planejamento](sprint-planning.md); o fechamento de cada sprint, nas [retrospectivas](retrospectivas.md).
 
 ## Registros
 
@@ -104,5 +104,39 @@ Registro das reuniões do time: presença, o que foi feito e o que ficou combina
 - **João Paulo**: adicionou análise estática de segurança com bandit no CI, criou teste de integração do pipeline de Disciplinas contra Postgres real (rodando no pipeline via serviço postgres), e adicionou testes de registro/agendamento das tasks do Celery.
 
 - **Ítalo**: tem que estabilizar o scraper do cardápio do RU e corrigir os bugs essenciais pré Release 1.
+
+---
+
+### Segunda-feira, 05/10 — Acompanhamento da Sprint 3
+
+**Presentes:** Vitor, João Paulo, Daniel, Gabriel
+
+**Progresso:**
+
+- **Vitor**: configurou o site de documentação do projeto no GitHub Pages, usando MkDocs com o tema Material (abas de navegação, busca, modo escuro), no mesmo estilo de outros projetos da disciplina — a home foi reescrita como página de entrada de verdade em vez de só uma tabela de links, e o workflow de deploy builda com `--strict` (falha se algum link do menu estiver quebrado) a cada push na `dev`. Também reestruturou `docs/REQUISITOS.md` por completo: todo requisito funcional e não funcional passou a ter título no formato verbo + objeto, com seções próprias de Critérios de aceitação e Regra de negócio — pedido da professora pra padronizar a forma dos requisitos. Abriu a issue #136 e a branch `docs/reestrutura-requisitos` com o PR pendente de revisão pra `dev`.
+
+- **Gabriel e Daniel**: escreveram e publicaram a Release Note da Release 1 no GitHub (tag `Release_1`), cobrindo as Sprints 0 a 3: as duas fontes entregues (disciplinas do SIGAA e cardápio do RU), coletadas por scrapers agendados via Celery/Redis e expostas pela API `/v1` documentada em OpenAPI/Swagger; o frontend em Next.js com as telas de disciplinas, cardápio, professores e salas; os bugs críticos corrigidos ao longo da release (import quebrado que impedia a gravação de disciplinas, código de horário estourando a coluna, dado de docente malformado quebrando o parser, Chromium faltando na imagem Docker); e as limitações conhecidas registradas pra próxima iteração (parser do cardápio falhando em alguns layouts de PDF, duplicidade de professor/sala, busca de professor sem normalização, logs de execução não consultáveis pela API).
+
+- **João Paulo**: organizou o repositório e limpou as branches remotas — removeu dezenas de branches já mergeadas ou obsoletas (features antigas, estudos, fixes e PRs já fechados), deixando só as branches realmente ativas no remoto.
+
+---
+
+### Segunda-feira, 19/10 — Review da Sprint 5
+
+**Presentes:** Vitor, Arthur, Gabriel, Daniel, João Paulo
+
+**Progresso:**
+
+- **Vitor**: na branch `R2-vitor`, corrigiu a duplicidade de professor — o SIGAA embute a carga horária da disciplina no nome do docente (ex: `"FULANO (60h)"`), e como essa carga varia por disciplina pro mesmo professor, ele acabava virando um registro por carga horária distinta; a normalização agora corta esse sufixo antes do get-or-create. Corrigiu também a duplicidade de sala — o SIGAA usa separador `-`/`/` inconsistente e caixa inconsistente pro mesmo espaço físico (ex: `"Mocap"` vs `"MOCAP"`); a normalização passou a unificar prédio e nome em maiúsculas, mantendo as turmas distinguidas pelo próprio horário e dia. Implementou o RF04 (busca de docente por nome normalizado, `GET /v1/professores?nome=`, sem diferenciar acento/caixa, palavra a palavra). Abriu o PR #140 pra `dev` com revisão do Gabriel; um teste de integração contra Postgres real quebrou no CI por ainda codificar o comportamento antigo (pré-correção) — corrigido e confirmado verde.
+
+- **Arthur**: terminou o log de execução (RF16) — os scrapers agora diferenciam falha de fonte de falha interna, toda execução é gravada no banco (`execucao_logs`), e o endpoint `GET /v1/execucoes` expõe esse histórico, com testes cobrindo a classificação fonte/interna e o endpoint. Também fez o desenho do cache (RNF02).
+
+- **Gabriel**: corrigiu o parser do RU pros PDFs em layout novo, com testes (#145, mergeado), e preparou o deploy — `REDIS_URL` e `docs/DEPLOY.md`. As variáveis de ambiente no Railway ficaram pra Sprint 6.
+
+- **Daniel**: fez os protótipos das novas telas no Figma — agenda do professor e tela de salas vazias — e ligou todas as telas num único protótipo navegável, com o menu lateral completo incluindo o novo item "Salas vazias". Também fez o wireframe do portal do desenvolvedor: topo, apresentação com a URL base, tabela de endpoints, exemplos de uso e espaço reservado pro Swagger UI.
+
+- **João Paulo**: atualizou as actions do pipeline e o workflow pra Node 24. Mediu a cobertura de testes do backend e definiu os módulos críticos, parte do RNF09, registrado na especificação do requisito.
+
+**Observação:** o Ítalo não participa mais das reuniões — saiu do projeto no início da Release 2. RF08 (eventos) e RF09 (editais), que eram dele, saíram do escopo; os demais itens que ele tocava (parser do RU, cardápio semanal, CLI) já têm novos responsáveis, registrados em `specs/README.md` e no planejamento de sprints.
 
 ---

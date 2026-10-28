@@ -1,0 +1,18 @@
+# RF16 · Registrar log de sucesso/falha de cada execução
+
+| Release | Responsável | Issue |
+|---|---|---|
+| R1 | Arthur | [#46](https://github.com/unb-mds/2026-2-Cerradinho-API/issues/46) |
+
+**Critérios de aceitação**
+- Toda execução agendada (sucesso ou falha) gera um registro identificável — pessoa fazendo triagem de incidente consegue saber se o scraper rodou e o que aconteceu.
+- O log diferencia falha da fonte (SIGAA/RU fora do ar) de falha do nosso código (exceção no parser).
+
+**Regra de negócio**
+- O log é por execução de task, não por turma/item individual — granularidade fina demais tornaria o log inútil pra triagem.
+
+## Rastreabilidade
+
+- **PRs:** [#96](https://github.com/unb-mds/2026-2-Cerradinho-API/pull/96)
+- **Testes:** `tests/tasks/test_loggin_signals.py` (classificação fonte/interna nos signal handlers), `tests/routers/test_execucoes_router.py` (endpoint, ordenação pela mais recente), `tests/tasks/test_log_das_tasks.py` (as tasks reais rodando pelo Celery geram o log, e o worker grava o log sem importar os signals na mão), `tests/contract/` (formato de `/v1/execucoes`, com `criado_em` sempre em UTC)
+- **Observação:** O log grava em `execucao_logs` via signal handlers (`app/tasks/logging_signals.py`) e é consultável em `GET /v1/execucoes` (`app/routers/execucoes.py`).
