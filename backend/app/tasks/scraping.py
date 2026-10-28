@@ -3,7 +3,7 @@ import logging
 
 from celery import shared_task
 
-from app.core.cache import invalidar
+from app.core.cache import invalidar, invalidar_prefixo
 from app.core.database import SessionLocal
 from app.domain.disciplinas import persistir_turmas
 from app.scrapers.disciplinas import raspar_disciplinas_varias_unidades
@@ -45,7 +45,8 @@ def scrape_disciplinas_task(
                 logger.exception("Falha ao persistir a unidade %s, pulando", unidade)
         invalidar("cache:v1:disciplinas")
         invalidar("cache:v1:professores")
-        invalidar("cache:v1:salas")
+        # prefixo, pra levar junto as chaves de salas vazias por dia e horário
+        invalidar_prefixo("cache:v1:salas")
         return total
     finally:
         db.close()

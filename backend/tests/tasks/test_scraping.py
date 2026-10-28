@@ -2,6 +2,7 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import Session
 
 import app.tasks.scraping as scraping_task
+from app.core import cache
 from app.domain.disciplinas import persistir_turmas
 from app.models import Base, Turma
 from app.schemas.disciplina import Horario, Professor, Sala
@@ -93,3 +94,17 @@ def test_scrape_disciplinas_task_varre_todas_as_unidades_por_padrao(monkeypatch)
     scraping_task.scrape_disciplinas_task.run(nivel="G", ano="2026", periodo="2")
 
     assert unidades_recebidas["valor"] is None
+
+
+def test_scrape_disciplinas_task_limpa_o_cache_de_salas_vazias(monkeypatch):
+    """Regressão: a task apagava só a chave exata "cache:v1:salas", e as
+    chaves de salas vazias por dia e horário ficavam até 7 dias com as
+    salas da raspagem anterior."""
+    session = _in_memory_session()
+    monkeypatch.setattr(scraping_task, "SessionLocal", lambda: session)
+    monkeypatch.setattr(scraping_task, "raspar_disciplinas_varias_unidades", _raspagem_falsa)
+    cache._cliente.dados = {"cache:v1:salas": "[]", "cache:v1:salas:vazias:sexta:14:00": "[]"}
+
+    scraping_task.scrape_disciplinas_task.run(nivel="G", ano="2026", periodo="2")
+
+    assert cache._cliente.dados == {}
