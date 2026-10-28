@@ -28,4 +28,9 @@ class Settings(BaseSettings):
         base, _, _ = self.redis_url.rpartition("/")
         return f"{base}/2" 
 
+    @property
+    def redis_rate_limit_url(self) -> str:
+        base, _, _ = self.redis_url.rpartition("/")
+        return f"{base}/3"
+    
 settings = Settings()
