@@ -71,6 +71,25 @@ def test_normalizar_sala_ignora_ponto_depois_de_lab():
     assert normalizar_sala("FCTE / LAB. NIT/LDS") == ("FCTE", "LAB NIT/LDS")
 
 
+def test_normalizar_sala_reconhece_predio_do_darcy_sem_separador():
+    """Achado real do Darcy: "PAT AT 125" e "ICC ANF.16" não usam "-" nem
+    "/" entre prédio e sala, só espaço."""
+    assert normalizar_sala("PAT AT 125") == ("PAT", "AT 125")
+    assert normalizar_sala("ICC ANF.16") == ("ICC", "ANF.16")
+
+
+def test_normalizar_sala_prefixo_desconhecido_sem_separador_fica_so_nome():
+    """Sem saber se é prédio, não arrisca separar — igual ao comportamento
+    de sempre pra texto sem separador."""
+    assert normalizar_sala("XYZ 123") == ("", "XYZ 123")
+
+
+def test_normalizar_sala_nao_promove_andar_a_predio():
+    """Achado real do Darcy: "TÉRREO"/"SUBSOLO" são andar, não prédio - o
+    separador "/" fazia "TÉRREO/SUBSOLO" virar prédio "TÉRREO" errado."""
+    assert normalizar_sala("TÉRREO/SUBSOLO") == ("", "TÉRREO SUBSOLO")
+
+
 def test_normalizar_salas_separa_com_barra_espacada():
     """Turma com sala diferente por dia: "FCTE - S1 / MOCAP" é segunda na
     S1 e quarta na MOCAP (achado real do Vitor)."""

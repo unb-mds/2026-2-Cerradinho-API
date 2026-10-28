@@ -35,6 +35,16 @@ _SEPARADOR_MULTISSALA_ESPACADO = " / "
 _PADRAO_DIA_ENTRE_PARENTESES = re.compile(
     r"\((?:domingo|segunda|ter[çc]a|quarta|quinta|sexta|s[áa]bado)(?:-feira)?\)\s*$", re.IGNORECASE
 )
+# O Darcy usa espaço simples (sem "-" nem "/") entre prédio e sala em vários
+# casos ("PAT AT 125", "ICC ANF.16"). Só reconhece como prédio quando o
+# primeiro token é um desses, confirmados contra turma real do Darcy -
+# outro prefixo desconhecido fica tudo como nome, igual antes.
+_PREDIOS_SEM_SEPARADOR = {"ICC", "PAT", "BSA", "FCTE"}
+# "TÉRREO"/"SUBSOLO" são andar, não prédio - o SIGAA às vezes escreve só
+# isso antes da sala (ex. "TÉRREO/SUBSOLO"), e o separador "/" fazia virar
+# prédio errado. Sem saber o prédio de verdade nesses casos, mantém vazio
+# em vez de promover o andar a prédio.
+_PALAVRAS_DE_ANDAR = {"TERREO", "TÉRREO", "SUBSOLO"}
 # Código de horário do SIGAA: um ou mais dígitos de dia (2=segunda ... 7=sábado),
 # um turno (M/T/N) e um ou mais dígitos de aula, ex. "246T23" (seg/qua/sex, tarde,
 # aulas 2 e 3). Dia "1" (domingo) nunca aparece — não há aula nesse dia. Pode
@@ -62,11 +72,26 @@ def normalizar_salas(descricao: str) -> list[tuple[str, str]]:
     descricao = descricao.strip()
     match = _SEPARADOR_SALA.search(descricao)
     if not match:
-        predio, nome_completo = "", descricao
+        predio, nome_completo = _separar_predio_sem_separador(descricao)
     else:
         predio = descricao[: match.start()].strip().upper()
         nome_completo = descricao[match.end() :].strip()
+        if predio in _PALAVRAS_DE_ANDAR:
+            # "andar" (TÉRREO/SUBSOLO) não é prédio - junta de volta ao nome
+            # em vez de gravar um prédio errado.
+            predio, nome_completo = "", f"{predio} {nome_completo}".strip()
     return [(predio, _normalizar_nome_sala(nome)) for nome in _dividir_nome_em_varias_salas(nome_completo)]
+
+
+def _separar_predio_sem_separador(descricao: str) -> tuple[str, str]:
+    """O Darcy também usa espaço simples, sem "-" nem "/", entre prédio e
+    sala ("PAT AT 125", "ICC ANF.16"). Só separa quando o primeiro token é
+    um prédio conhecido - um prefixo desconhecido fica tudo como nome,
+    como antes dessa checagem existir."""
+    primeiro_token, _, resto = descricao.partition(" ")
+    if primeiro_token.upper() in _PREDIOS_SEM_SEPARADOR and resto.strip():
+        return primeiro_token.upper(), resto.strip()
+    return "", descricao
 
 
 def _dividir_nome_em_varias_salas(nome: str) -> list[str]:
