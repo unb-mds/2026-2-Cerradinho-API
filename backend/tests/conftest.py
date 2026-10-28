@@ -1,6 +1,7 @@
 import pytest
 
 from app.core import cache
+from app.core.rate_limit import limiter as rate_limiter
 
 
 @pytest.fixture(autouse=True)
@@ -26,3 +27,7 @@ def cache_falso(monkeypatch):
             return [c for c in self.dados if c.startswith(prefixo)]
 
     monkeypatch.setattr(cache, "_cliente", _RedisFalso())
+
+@pytest.fixture(autouse=True)
+def rate_limit_desligado(monkeypatch):
+    monkeypatch.setattr(rate_limiter, "enabled", False)
