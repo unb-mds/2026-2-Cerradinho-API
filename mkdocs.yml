@@ -75,6 +75,7 @@ nav:
           - 0007 — Cache e rate limit na API: adr/0007-cache-e-rate-limit-na-api.md
           - 0008 — Bandit como SAST: adr/0008-bandit-como-sast.md
           - 0009 — Railway para hospedagem: adr/0009-railway-para-deploy.md
+          - 0010 — Sala por horário, não por turma: adr/0010-sala-por-horario-nao-por-turma.md
           - Template de ADR: adr/template.md
       - Fontes de dado:
           - SIGAA — Disciplinas: fontes/sigaa-disciplinas.md
@@ -88,6 +89,8 @@ nav:
       - Retrospectivas de sprint: scrum/retrospectivas.md
       - Atas de reunião: scrum/atas.md
       - Checklist Release 1: scrum/checklist-release-1.md
+      - Release notes:
+          - v1.2: releases/v1.2.md
   - Estudos:
       - Git e GitHub: estudos/estudo-git-github.md
       - Web scraping: estudos/estudo-web-scraping.md
