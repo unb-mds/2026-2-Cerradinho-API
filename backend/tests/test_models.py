@@ -40,18 +40,23 @@ def test_turma_associa_disciplina_sala_professores_e_horarios():
             vagas_ofertadas=40,
             vagas_ocupadas=38,
             disciplina=Disciplina(codigo="FGA0242", nome="Métodos de Desenvolvimento de Software"),
-            sala=Sala(nome="I9/I10", predio="FCTE"),
             professores=[Professor(nome="Ana Souza"), Professor(nome="Bruno Lima")],
-            horarios=[Horario(codigo="6T2345", descricao="Sexta-feira 14:00 às 17:50")],
+            horarios=[
+                Horario(
+                    codigo="6T2345",
+                    descricao="Sexta-feira 14:00 às 17:50",
+                    sala=Sala(nome="I9/I10", predio="FCTE"),
+                )
+            ],
         )
         session.add(turma)
         session.commit()
 
         salva = session.query(Turma).one()
         assert salva.disciplina.codigo == "FGA0242"
-        assert salva.sala.predio == "FCTE"
         assert {p.nome for p in salva.professores} == {"Ana Souza", "Bruno Lima"}
         assert salva.horarios[0].codigo == "6T2345"
+        assert salva.horarios[0].sala.predio == "FCTE"
 
 
 def test_turma_permite_sala_nula():
@@ -67,14 +72,14 @@ def test_turma_permite_sala_nula():
                 vagas_ofertadas=30,
                 vagas_ocupadas=0,
                 disciplina=Disciplina(codigo="FGA9999", nome="Tópicos Especiais"),
+                horarios=[Horario(codigo="6T2345", descricao="Sexta-feira 14:00 às 17:50")],
             )
         )
         session.commit()
 
         salva = session.query(Turma).one()
-        assert salva.sala is None
         assert salva.professores == []
-        assert salva.horarios == []
+        assert salva.horarios[0].sala is None
 
 
 def test_turma_nao_permite_numero_duplicado_na_mesma_disciplina_e_periodo():

@@ -5,7 +5,6 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.models.base import Base
 from app.models.disciplina import Disciplina
-from app.models.sala import Sala
 
 if TYPE_CHECKING:
     from app.models.horario import Horario
@@ -31,11 +30,11 @@ class Turma(Base):
     vagas_ocupadas: Mapped[int] = mapped_column(Integer, nullable=False)
 
     disciplina_id: Mapped[int] = mapped_column(ForeignKey("disciplinas.id"), nullable=False)
-    sala_id: Mapped[int | None] = mapped_column(ForeignKey("salas.id"))
 
     disciplina: Mapped[Disciplina] = relationship(back_populates="turmas")
-    sala: Mapped[Sala | None] = relationship(back_populates="turmas")
     professores: Mapped[list["Professor"]] = relationship(
         secondary=turma_professores, back_populates="turmas"
     )
+    # Sala mora no Horario (não na Turma): o SIGAA pode usar salas diferentes
+    # em dias diferentes da mesma turma (ver app/domain/disciplinas.py).
     horarios: Mapped[list["Horario"]] = relationship(back_populates="turma")

@@ -48,6 +48,7 @@ def listar_espacos_vazios(
     ),
     db: Session = Depends(get_db),
 ) -> list[Espaco]:
-    return resposta_cacheada(
-        "cache:v1:salas:vazias", TTL_SEMANAL, lambda: 
-        listar_salas_vazias(db, dia.value, horario), list[Espaco])
+    # dia/horario são obrigatórios e mudam o resultado - sem entrar na chave,
+    # a primeira consulta ficava em cache pra qualquer dia/horário seguinte.
+    chave = f"cache:v1:salas:vazias:{dia.value}:{horario}"
+    return resposta_cacheada(chave, TTL_SEMANAL, lambda: listar_salas_vazias(db, dia.value, horario), list[Espaco])

@@ -4,20 +4,11 @@ Não existe fonte própria de salas: a tabela é preenchida por
 `app/domain/disciplinas.py` a partir da sala de cada turma capturada.
 """
 
-import logging
-import re
-
 from sqlalchemy.orm import Session
 
-from app.models import Horario, Sala, Turma
+from app.domain.disciplinas import decompor_codigo_horario
+from app.models import Horario, Sala
 from app.schemas.api.sala import Espaco
-
-logger = logging.getLogger(__name__)
-
-# Código de horário do SIGAA: um ou mais dígitos de dia (2=segunda ... 7=sábado),
-# um turno (M/T/N) e um ou mais dígitos de aula, ex. "246T23" (seg/qua/sex, tarde,
-# aulas 2 e 3). Dia "1" (domingo) nunca aparece — não há aula nesse dia.
-_PADRAO_CODIGO_HORARIO = re.compile(r"^([2-7]+)([MTN])([0-9]+)$")
 
 DIA_PARA_DIGITO = {
     "domingo": "1",
@@ -49,14 +40,6 @@ def _localizar_turno_aula(horario: str) -> tuple[str, str] | None:
     return _TURNO_AULA_POR_HORARIO.get(horario)
 
 
-def _decompor_codigo_horario(codigo: str) -> tuple[set[str], str, set[str]] | None:
-    match = _PADRAO_CODIGO_HORARIO.match(codigo)
-    if match is None:
-        return None
-    dias, turno, aulas = match.groups()
-    return set(dias), turno, set(aulas)
-
-
 def listar_salas(session: Session) -> list[Espaco]:
     salas = session.query(Sala).order_by(Sala.predio, Sala.nome).all()
     return [Espaco(id=sala.id, nome=sala.nome, predio=sala.predio) for sala in salas]
@@ -74,19 +57,15 @@ def listar_salas_vazias(session: Session, dia: str, horario: str) -> list[Espaco
     if dia_digito is not None and turno_aula is not None:
         turno, aula = turno_aula
         linhas = (
-            session.query(Horario.codigo, Turma.sala_id)
-            .join(Turma, Horario.turma_id == Turma.id)
-            .filter(Turma.sala_id.isnot(None))
+            session.query(Horario.codigo, Horario.sala_id)
+            .filter(Horario.sala_id.isnot(None))
             .all()
         )
         for codigo, sala_id in linhas:
-            decomposto = _decompor_codigo_horario(codigo)
-            if decomposto is None:
-                logger.warning("Código de horário fora do padrão esperado, ignorado: %r", codigo)
-                continue
-            dias, turno_codigo, aulas = decomposto
-            if turno_codigo == turno and dia_digito in dias and aula in aulas:
-                ocupadas.add(sala_id)
+            for dias, turno_codigo, aulas in decompor_codigo_horario(codigo):
+                if turno_codigo == turno and dia_digito in dias and aula in aulas:
+                    ocupadas.add(sala_id)
+                    break
 
     salas = (
         session.query(Sala)
