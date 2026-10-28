@@ -3,7 +3,7 @@ from pathlib import Path
 import pytest
 from sqlalchemy.exc import DataError
 
-from app.domain.disciplinas import normalizar_nome_professor, normalizar_sala, persistir_turma, persistir_turmas
+from app.domain.disciplinas import normalizar_nome_professor, normalizar_salas, persistir_turma, persistir_turmas
 from app.models import Disciplina, Horario, Professor, Sala, Turma
 from app.schemas.disciplina import Horario as HorarioCapturado
 from app.scrapers.disciplinas.parser import parse_turmas
@@ -27,9 +27,11 @@ def test_pipeline_grava_todas_as_turmas_da_fixture_no_postgres(sessao_postgres):
         {normalizar_nome_professor(p.nome) for t in turmas for p in t.professores}
     )
     assert sessao_postgres.query(Sala).count() == len(
-        {normalizar_sala(t.sala.descricao) for t in turmas if t.sala.descricao.strip()}
+        {sala for t in turmas if t.sala.descricao.strip() for sala in normalizar_salas(t.sala.descricao)}
     )
-    assert sessao_postgres.query(Horario).count() == sum(len(t.horarios) for t in turmas)
+    # não checa a contagem exata de Horario aqui: uma turma com sala por dia
+    # (ver RF05/RF17) pode desdobrar um único horário capturado em vários,
+    # um por dia - a contagem exata é coberta por tests/domain/test_disciplinas.py.
 
 
 def test_pipeline_grava_os_valores_extraidos_do_sigaa(sessao_postgres):
@@ -46,7 +48,7 @@ def test_pipeline_grava_os_valores_extraidos_do_sigaa(sessao_postgres):
     assert turma.ano_periodo == "2026.2"
     assert turma.unidade == "FCTE"
     assert (turma.vagas_ofertadas, turma.vagas_ocupadas) == (80, 77)
-    assert (turma.sala.predio, turma.sala.nome) == ("FCTE", "I9/I10")
+    assert (turma.horarios[0].sala.predio, turma.horarios[0].sala.nome) == ("FCTE", "I9/I10")
     # sem o sufixo de carga horária: "(60h)" é cortado na normalização (dedup de professor)
     assert [p.nome for p in turma.professores] == ["EDSON ALVES DA COSTA JUNIOR"]
     # só o código, sem o intervalo de datas que o SIGAA junta no mesmo texto
@@ -58,11 +60,15 @@ def test_pipeline_rodado_duas_vezes_nao_duplica_turmas(sessao_postgres):
     turmas = _turmas_da_fixture()
 
     persistir_turmas(sessao_postgres, turmas, unidade="FCTE")
+    sessao_postgres.flush()
+    turmas_na_primeira_vez = sessao_postgres.query(Turma).count()
+    horarios_na_primeira_vez = sessao_postgres.query(Horario).count()
+
     persistir_turmas(sessao_postgres, turmas, unidade="FCTE")
     sessao_postgres.flush()
 
-    assert sessao_postgres.query(Turma).count() == len(turmas)
-    assert sessao_postgres.query(Horario).count() == sum(len(t.horarios) for t in turmas)
+    assert sessao_postgres.query(Turma).count() == turmas_na_primeira_vez == len(turmas)
+    assert sessao_postgres.query(Horario).count() == horarios_na_primeira_vez
 
 
 def test_postgres_aceita_codigo_de_horario_com_varios_segmentos(sessao_postgres):

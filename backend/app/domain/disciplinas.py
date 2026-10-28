@@ -11,6 +11,7 @@ from __future__ import annotations
 
 import logging
 import re
+from collections import defaultdict
 
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import Session
@@ -25,6 +26,21 @@ _SEPARADOR_SALA = re.compile(r"\s*[-/]\s*")
 # O SIGAA também não é consistente em pôr ponto depois de "LAB" ("LAB NIT/LDS"
 # vs "LAB. NIT/LDS" pra mesma sala) - sem normalizar, isso também duplica.
 _PADRAO_LAB_COM_PONTO = re.compile(r"\bLAB\.\s*")
+# Mais de uma sala no mesmo campo, quando a turma usa salas diferentes em
+# dias diferentes: com espaço ao redor da barra ("S1 / MOCAP") é sempre
+# separador de sala; sem espaço ("LAB NIT/LDS") só é separador quando os dois
+# lados já vêm marcados com o dia da semana ("LDS(SEGUNDA)/I1(SEXTA)") -
+# senão é o nome de uma sala só, que por acaso tem barra.
+_SEPARADOR_MULTISSALA_ESPACADO = " / "
+_PADRAO_DIA_ENTRE_PARENTESES = re.compile(
+    r"\((?:domingo|segunda|ter[çc]a|quarta|quinta|sexta|s[áa]bado)(?:-feira)?\)\s*$", re.IGNORECASE
+)
+# Código de horário do SIGAA: um ou mais dígitos de dia (2=segunda ... 7=sábado),
+# um turno (M/T/N) e um ou mais dígitos de aula, ex. "246T23" (seg/qua/sex, tarde,
+# aulas 2 e 3). Dia "1" (domingo) nunca aparece — não há aula nesse dia. Pode
+# ter mais de um segmento colado com espaço, quando a turma tem aula em
+# turnos diferentes (ex. "35M5 35T1").
+_PADRAO_CODIGO_HORARIO = re.compile(r"^([2-7]+)([MTN])([0-9]+)$")
 
 logger = logging.getLogger(__name__)
 
@@ -36,17 +52,62 @@ def normalizar_sala(descricao: str) -> tuple[str, str]:
     "FCTE / I2", "FCTE- LAB NEI 2" são a mesma sala) nem maiúsculas/minúsculas
     consistentes pro mesmo espaço físico ("Mocap" vs "MOCAP"). Sem
     normalizar os dois, a mesma sala vira várias linhas distintas."""
+    return normalizar_salas(descricao)[0]
+
+
+def normalizar_salas(descricao: str) -> list[tuple[str, str]]:
+    """Como `normalizar_sala`, mas separa em mais de uma sala quando o SIGAA
+    junta salas diferentes no mesmo campo (ver `_dividir_nome_em_varias_salas`).
+    Sempre devolve pelo menos um item."""
     descricao = descricao.strip()
     match = _SEPARADOR_SALA.search(descricao)
     if not match:
-        return "", _normalizar_nome_sala(descricao)
-    predio = descricao[: match.start()].strip()
-    nome = descricao[match.end() :].strip()
-    return predio.upper(), _normalizar_nome_sala(nome)
+        predio, nome_completo = "", descricao
+    else:
+        predio = descricao[: match.start()].strip().upper()
+        nome_completo = descricao[match.end() :].strip()
+    return [(predio, _normalizar_nome_sala(nome)) for nome in _dividir_nome_em_varias_salas(nome_completo)]
+
+
+def _dividir_nome_em_varias_salas(nome: str) -> list[str]:
+    if _SEPARADOR_MULTISSALA_ESPACADO in nome:
+        partes = nome.split(_SEPARADOR_MULTISSALA_ESPACADO)
+    else:
+        partes = nome.split("/")
+        if len(partes) < 2 or not all(_PADRAO_DIA_ENTRE_PARENTESES.search(p.strip()) for p in partes):
+            return [nome]
+    return [parte.strip() for parte in partes if parte.strip()]
 
 
 def _normalizar_nome_sala(nome: str) -> str:
     return _PADRAO_LAB_COM_PONTO.sub("LAB ", nome.upper()).strip()
+
+
+def _decompor_segmento_horario(segmento: str) -> tuple[set[str], str, set[str]] | None:
+    match = _PADRAO_CODIGO_HORARIO.match(segmento)
+    if match is None:
+        return None
+    dias, turno, aulas = match.groups()
+    return set(dias), turno, set(aulas)
+
+
+def decompor_codigo_horario(codigo: str) -> list[tuple[set[str], str, set[str]]]:
+    """Um código pode ter mais de um segmento dia+turno+aula colado com
+    espaço, quando a turma tem aula em turnos diferentes (ex. "35M5 35T1").
+    Segmentos que não casam o padrão são ignorados (com warning) sem
+    descartar os outros segmentos válidos do mesmo código."""
+    segmentos = []
+    for parte in codigo.split():
+        decomposto = _decompor_segmento_horario(parte)
+        if decomposto is None:
+            logger.warning(
+                "Segmento de horário fora do padrão esperado, ignorado: %r (código completo: %r)",
+                parte,
+                codigo,
+            )
+            continue
+        segmentos.append(decomposto)
+    return segmentos
 
 
 def _get_ou_cria_disciplina(session: Session, codigo: str, nome: str) -> Disciplina:
@@ -79,18 +140,60 @@ def _get_ou_cria_professor(session: Session, nome: str) -> Professor:
     return professor
 
 
-def _get_ou_cria_sala(session: Session, descricao: str) -> Sala | None:
+def _get_ou_cria_salas(session: Session, descricao: str) -> list[Sala]:
     descricao = descricao.strip()
     if not descricao:
-        return None
+        return []
 
-    predio, nome = normalizar_sala(descricao)
-    sala = session.query(Sala).filter_by(predio=predio, nome=nome).one_or_none()
-    if sala is None:
-        sala = Sala(predio=predio, nome=nome)
-        session.add(sala)
-        session.flush()
-    return sala
+    salas = []
+    for predio, nome in normalizar_salas(descricao):
+        sala = session.query(Sala).filter_by(predio=predio, nome=nome).one_or_none()
+        if sala is None:
+            sala = Sala(predio=predio, nome=nome)
+            session.add(sala)
+            session.flush()
+        salas.append(sala)
+    return salas
+
+
+def _montar_horarios(horarios: list[HorarioCapturado], salas: list[Sala]) -> list[Horario]:
+    """Associa cada horário à sala correspondente. Com uma sala só (o caso
+    comum) ou nenhuma, todo horário usa a mesma. Com mais de uma, o SIGAA as
+    lista na mesma ordem dos dias da turma (ex. "FCTE - S1 / MOCAP" é
+    segunda na S1, quarta na MOCAP) — por isso a correspondência é por
+    posição, em ordem crescente de dia. Quando o número de salas não bate
+    com o de dias distintos, não arrisca casar errado: cada sala fica
+    associada a todos os horários, em vez de só ao dia que calhou de casar."""
+    if len(salas) <= 1:
+        sala_id = salas[0].id if salas else None
+        return [Horario(codigo=h.codigo, descricao=h.descricao, sala_id=sala_id) for h in horarios]
+
+    aulas_por_dia: dict[str, dict[str, set[str]]] = defaultdict(lambda: defaultdict(set))
+    descricao_por_dia: dict[str, str] = {}
+    for horario in horarios:
+        for dias, turno, aulas in decompor_codigo_horario(horario.codigo):
+            for dia in dias:
+                aulas_por_dia[dia][turno] |= aulas
+                descricao_por_dia.setdefault(dia, horario.descricao)
+
+    dias_ordenados = sorted(aulas_por_dia, key=int)
+    if len(dias_ordenados) != len(salas):
+        logger.warning(
+            "Turma com %d salas mas %d dias distintos no horário - não dá pra casar sala por dia com segurança",
+            len(salas),
+            len(dias_ordenados),
+        )
+        return [
+            Horario(codigo=h.codigo, descricao=h.descricao, sala_id=sala.id) for sala in salas for h in horarios
+        ]
+
+    novos_horarios = []
+    for dia, sala in zip(dias_ordenados, salas):
+        codigo_do_dia = " ".join(
+            f"{dia}{turno}{''.join(sorted(aulas))}" for turno, aulas in sorted(aulas_por_dia[dia].items())
+        )
+        novos_horarios.append(Horario(codigo=codigo_do_dia, descricao=descricao_por_dia[dia], sala_id=sala.id))
+    return novos_horarios
 
 
 def persistir_turma(session: Session, turma: TurmaCapturada, unidade: str) -> Turma:
@@ -102,7 +205,7 @@ def persistir_turma(session: Session, turma: TurmaCapturada, unidade: str) -> Tu
     atualizados, nunca virar uma linha duplicada.
     """
     disciplina = _get_ou_cria_disciplina(session, turma.disciplina_codigo, turma.disciplina_nome)
-    sala = _get_ou_cria_sala(session, turma.sala.descricao)
+    salas = _get_ou_cria_salas(session, turma.sala.descricao)
     professores = [_get_ou_cria_professor(session, p.nome) for p in turma.professores]
 
     turma_existente = (
@@ -117,7 +220,6 @@ def persistir_turma(session: Session, turma: TurmaCapturada, unidade: str) -> Tu
     turma_existente.unidade = unidade
     turma_existente.vagas_ofertadas = turma.vagas_ofertadas
     turma_existente.vagas_ocupadas = turma.vagas_ocupadas
-    turma_existente.sala = sala
     turma_existente.professores = professores
 
     # Horario.turma_id não aceita nulo, então reassociar a lista sem excluir
@@ -125,7 +227,7 @@ def persistir_turma(session: Session, turma: TurmaCapturada, unidade: str) -> Tu
     for horario_antigo in list(turma_existente.horarios):
         session.delete(horario_antigo)
     session.flush()
-    turma_existente.horarios = [Horario(codigo=h.codigo, descricao=h.descricao) for h in turma.horarios]
+    turma_existente.horarios = _montar_horarios(turma.horarios, salas)
 
     return turma_existente
 
@@ -150,12 +252,22 @@ def persistir_turmas(session: Session, turmas: list[TurmaCapturada], unidade: st
     return persistidas
 
 
-def _descricao_sala(sala: Sala | None) -> str:
-    if sala is None:
+def _descricao_salas(turma: Turma) -> str:
+    """Reconstrói a descrição original de sala a partir dos horários — o
+    contrato público (`GET /v1/disciplinas`) continua expondo uma sala só
+    por turma, mesmo com a sala agora vivendo por horário no banco."""
+    salas_na_ordem: list[Sala] = []
+    vistas: set[int] = set()
+    for horario in turma.horarios:
+        if horario.sala is not None and horario.sala.id not in vistas:
+            vistas.add(horario.sala.id)
+            salas_na_ordem.append(horario.sala)
+
+    if not salas_na_ordem:
         return ""
-    if sala.predio:
-        return f"{sala.predio} - {sala.nome}"
-    return sala.nome
+    nomes = " / ".join(sala.nome for sala in salas_na_ordem)
+    predio = salas_na_ordem[0].predio
+    return f"{predio} - {nomes}" if predio else nomes
 
 
 def _turma_para_contrato(turma: Turma) -> TurmaCapturada:
@@ -166,7 +278,7 @@ def _turma_para_contrato(turma: Turma) -> TurmaCapturada:
         ano_periodo=turma.ano_periodo,
         professores=[ProfessorCapturado(nome=p.nome) for p in turma.professores],
         horarios=[HorarioCapturado(codigo=h.codigo, descricao=h.descricao) for h in turma.horarios],
-        sala=SalaCapturada(descricao=_descricao_sala(turma.sala)),
+        sala=SalaCapturada(descricao=_descricao_salas(turma)),
         vagas_ofertadas=turma.vagas_ofertadas,
         vagas_ocupadas=turma.vagas_ocupadas,
     )
