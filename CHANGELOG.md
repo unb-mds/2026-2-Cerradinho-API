@@ -4,13 +4,30 @@ Mudanças relevantes do Cerradinho, por release. O formato segue o [Keep a Chang
 
 ## [Não lançado]
 
+## [1.2] - 2026-10-28
+
+Sprint 6 e início da Sprint 7 da Release 2 (18/10 a 28/10/2026).
+
 ### Adicionado
 
+- Salas vazias por dia e horário em `GET /v1/salas/vazias` (RF17, #149) e a página de salas vazias no frontend (#228).
 - Cardápio da semana agrupado por dia e refeição em `GET /v1/cardapio/semana`, sempre com os 7 dias e os dias sem cardápio marcados como não publicados (RF19, #51).
+- Cache em Redis nas rotas de leitura, limpo a cada nova coleta (RNF02, #150).
+- Rate limit de 60 requisições por minuto por IP com slowapi (RNF01, #229).
+- Página de desenvolvedores no frontend com a documentação interativa da API (RF14, #148).
+- Navegação por semana e filtro por dia na página de cardápio (#148).
+- ADR 0010, que move a sala da turma para o horário.
+
+### Alterado
+
+- `GET /v1/cardapio/semana` passa a devolver `data_inicio`, `data_fim` e a lista `dias`, no lugar de uma lista solta de itens (RF19).
 
 ### Corrigido
 
-- Coleta do cardápio do RU, que falhava quando a página consultada ficava parada numa semana antiga. O scraper agora consulta as duas páginas onde o RU publica o PDF.
+- Coleta do cardápio do RU, que falhava quando a página consultada ficava parada numa semana antiga. O scraper agora consulta as duas páginas onde o RU publica o PDF (#226).
+- Prédio do Darcy escrito sem separador (`"PAT AT 125"`) e andar (`"TÉRREO"`) gravado como se fosse prédio (RF05).
+- `criado_em` de `GET /v1/execucoes` sem fuso horário (RF16).
+- Página de cardápio mostrando dado da semana anterior (#148).
 - Gravação de turmas do Darcy, que falhava com `StringDataRightTruncation` em código de horário com vários segmentos (`"6M123 7M12345 7T1234 4N12"`); coluna alargada pra 100 caracteres (RF01).
 - `GET /v1/salas/vazias` não contava código de horário com mais de um segmento (`"35M5 35T1"`), e mostrava sala com aula marcada como vazia num dos turnos (RF17).
 - Uma turma com dado fora do esperado derrubava a gravação da unidade inteira, e uma unidade com erro derrubava a raspagem completa; agora cada turma tem sua própria transação e o commit é por unidade (RF01).
