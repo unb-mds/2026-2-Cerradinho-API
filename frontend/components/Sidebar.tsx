@@ -8,6 +8,7 @@ import {
   BuildingIcon,
   CerradinhoFlower,
   ChevronRightIcon,
+  DoorOpenIcon,
   UserIcon,
 } from "@/components/Icons";
 
@@ -16,6 +17,7 @@ const NAV_ITEMS = [
   { href: "/cardapio", label: "Cardápio", Icon: BowlIcon },
   { href: "/professores", label: "Professores", Icon: UserIcon },
   { href: "/salas", label: "Salas", Icon: BuildingIcon },
+  { href: "/salas/vazias", label: "Salas Vazias", Icon: DoorOpenIcon },
 ] as const;
 
 export default function Sidebar() {

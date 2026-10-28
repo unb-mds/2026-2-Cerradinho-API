@@ -61,16 +61,18 @@ def test_parse_turmas_mantem_todos_os_dias_de_turma_com_varios_horarios():
 
 
 def test_parse_turmas_codigo_de_horario_cabe_na_coluna_do_banco():
-    """Regressão do bug do Vitor: nenhum código de horário pode passar de
-    20 caracteres (String(20) em Horario.codigo), senão a gravação falha
-    com StringDataRightTruncation."""
+    """Regressão do bug do Vitor: código de horário não pode passar do
+    String(100) de Horario.codigo, senão a gravação falha com
+    StringDataRightTruncation. Turma com aula em vários turnos junta os
+    segmentos num só código ("35M5 35T1"), e algumas unidades (Darcy)
+    chegam a 4+ segmentos - por isso o limite não é mais 20."""
     html = FIXTURE.read_text(encoding="utf-8")
 
     turmas = parse_turmas(html)
 
     for turma in turmas:
         for horario in turma.horarios:
-            assert len(horario.codigo) <= 20, f"código {horario.codigo!r} estoura String(20)"
+            assert len(horario.codigo) <= 100, f"código {horario.codigo!r} estoura String(100)"
 
 
 def test_parse_turmas_com_docente_a_definir_trata_vagas_em_branco_como_zero():

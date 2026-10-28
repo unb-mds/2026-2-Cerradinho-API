@@ -11,8 +11,6 @@ from app.models import Base
 
 @pytest.fixture
 def db_session() -> Session:
-    # sem isso os testes quebram com "no such table" - o TestClient chama o
-    # endpoint em outra thread e o sqlite em memória cria um banco vazio novo
     engine = create_engine(
         "sqlite:///:memory:", connect_args={"check_same_thread": False}, poolclass=StaticPool
     )

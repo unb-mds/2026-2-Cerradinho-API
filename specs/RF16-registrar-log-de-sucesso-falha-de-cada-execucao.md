@@ -14,5 +14,5 @@
 ## Rastreabilidade
 
 - **PRs:** [#96](https://github.com/unb-mds/2026-2-Cerradinho-API/pull/96)
-- **Testes:** `tests/tasks/test_loggin_signals.py` (classificação fonte/interna nos signal handlers), `tests/routers/test_execucoes_router.py` (endpoint, ordenação pela mais recente)
+- **Testes:** `tests/tasks/test_loggin_signals.py` (classificação fonte/interna nos signal handlers), `tests/routers/test_execucoes_router.py` (endpoint, ordenação pela mais recente), `tests/tasks/test_log_das_tasks.py` (as tasks reais rodando pelo Celery geram o log, e o worker grava o log sem importar os signals na mão), `tests/contract/` (formato de `/v1/execucoes`, com `criado_em` sempre em UTC)
 - **Observação:** O log grava em `execucao_logs` via signal handlers (`app/tasks/logging_signals.py`) e é consultável em `GET /v1/execucoes` (`app/routers/execucoes.py`).

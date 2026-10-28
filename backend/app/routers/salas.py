@@ -3,6 +3,7 @@ from enum import Enum
 from fastapi import APIRouter, Depends, Query
 from sqlalchemy.orm import Session
 
+from app.core.cache import TTL_SEMANAL, resposta_cacheada
 from app.core.database import get_db
 from app.domain.salas import DIA_PARA_DIGITO, listar_salas, listar_salas_vazias
 from app.schemas.api.sala import Espaco
@@ -24,7 +25,7 @@ DiaSemana = Enum("DiaSemana", {dia: dia for dia in DIA_PARA_DIGITO})
     ),
 )
 def listar_espacos(db: Session = Depends(get_db)) -> list[Espaco]:
-    return listar_salas(db)
+    return resposta_cacheada("cache:v1:salas", TTL_SEMANAL, lambda: listar_salas(db), list[Espaco])
 
 
 @router.get(
@@ -47,4 +48,7 @@ def listar_espacos_vazios(
     ),
     db: Session = Depends(get_db),
 ) -> list[Espaco]:
-    return listar_salas_vazias(db, dia.value, horario)
+    # dia/horario são obrigatórios e mudam o resultado - sem entrar na chave,
+    # a primeira consulta ficava em cache pra qualquer dia/horário seguinte.
+    chave = f"cache:v1:salas:vazias:{dia.value}:{horario}"
+    return resposta_cacheada(chave, TTL_SEMANAL, lambda: listar_salas_vazias(db, dia.value, horario), list[Espaco])

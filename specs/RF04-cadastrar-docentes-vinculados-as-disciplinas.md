@@ -13,6 +13,7 @@
 **Regra de negócio**
 - O cadastro de professor nasce exclusivamente do RF01/RF02 — não existe endpoint de criação direta de professor.
 - A busca por nome compara palavra a palavra, normalizadas (sem acento, sem diferenciar caixa) — cada termo buscado precisa aparecer em algum lugar do nome, em qualquer ordem.
+- Professores gravados antes da normalização de carga horária existir (ainda com o "(XXh)" no nome) foram fundidos numa migration de dados ([`0004`](https://github.com/unb-mds/2026-2-Cerradinho-API/blob/dev/backend/alembic/versions/0004_funde_salas_e_professores_duplicados.py)) — não é algo que se repete em raspagens novas.
 
 ## Rastreabilidade
 

@@ -1,7 +1,11 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from slowapi import _rate_limit_exceeded_handler
+from slowapi.errors import RateLimitExceeded
+from slowapi.middleware import SlowAPIASGIMiddleware
 
 from app.core.config import settings
+from app.core.rate_limit import limiter
 from app.routers import cardapio, disciplinas, execucoes, professores, salas
 
 DESCRICAO = """
@@ -26,6 +30,10 @@ TAGS = [
 ]
 
 app = FastAPI(title="Cerradinho API", version="1.0.0", description=DESCRICAO, openapi_tags=TAGS)
+
+app.state.limiter = limiter
+app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
+app.add_middleware(SlowAPIASGIMiddleware)
 
 app.add_middleware(
     CORSMiddleware,

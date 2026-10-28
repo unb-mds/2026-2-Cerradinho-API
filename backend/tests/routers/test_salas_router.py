@@ -144,6 +144,42 @@ def test_listar_salas_vazias_horario_bem_formatado_mas_fora_da_grade_devolve_tod
     assert [s["nome"] for s in response.json()] == ["I9/I10"]
 
 
+def test_listar_salas_vazias_exclui_sala_de_codigo_com_varios_segmentos(client, db_session):
+    persistir_turma(
+        db_session,
+        _turma_capturada(horarios=[Horario(codigo="46M5  46T1", descricao="Quarta e sexta, 12:00 e 12:55")]),
+        unidade="FCTE",
+    )
+    db_session.commit()
+
+    quarta_meio_dia = client.get("/v1/salas/vazias", params={"dia": "quarta", "horario": "12:00"})
+    sexta_doze_e_cinquenta_e_cinco = client.get("/v1/salas/vazias", params={"dia": "sexta", "horario": "12:55"})
+
+    assert quarta_meio_dia.json() == []
+    assert sexta_doze_e_cinquenta_e_cinco.json() == []
+
+
+def test_listar_salas_vazias_turma_com_sala_por_dia_ocupa_so_o_dia_certo(client, db_session):
+    """Achado real: "24M5 24T1" com "FCTE - S1 / MOCAP" é segunda na S1 e
+    quarta na MOCAP - a S1 não pode aparecer ocupada na quarta, nem a MOCAP
+    na segunda."""
+    persistir_turma(
+        db_session,
+        _turma_capturada(
+            horarios=[Horario(codigo="24M5 24T1", descricao="Segunda e quarta, 12:00 às 13:50")],
+            sala=Sala(descricao="FCTE - S1 / MOCAP"),
+        ),
+        unidade="FCTE",
+    )
+    db_session.commit()
+
+    segunda_meio_dia = client.get("/v1/salas/vazias", params={"dia": "segunda", "horario": "12:00"})
+    quarta_meio_dia = client.get("/v1/salas/vazias", params={"dia": "quarta", "horario": "12:00"})
+
+    assert [s["nome"] for s in segunda_meio_dia.json()] == ["MOCAP"]
+    assert [s["nome"] for s in quarta_meio_dia.json()] == ["S1"]
+
+
 def test_listar_salas_vazias_horario_mal_formatado_e_422(client):
     response = client.get("/v1/salas/vazias", params={"dia": "sexta", "horario": "14h"})
 
