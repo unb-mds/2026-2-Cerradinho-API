@@ -4,6 +4,7 @@ from sqlalchemy import ForeignKey, String
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.models.base import Base
+from app.models.sala import Sala
 
 if TYPE_CHECKING:
     from app.models.turma import Turma
@@ -21,5 +22,10 @@ class Horario(Base):
     descricao: Mapped[str] = mapped_column(String(200), nullable=False)
 
     turma_id: Mapped[int] = mapped_column(ForeignKey("turmas.id"), nullable=False)
+    # Sala por horário (não por turma): o SIGAA pode usar salas diferentes em
+    # dias diferentes da mesma turma, ex. "FCTE - S1 / MOCAP" (segunda na S1,
+    # quarta na MOCAP) - ver app/domain/disciplinas.py.
+    sala_id: Mapped[int | None] = mapped_column(ForeignKey("salas.id"))
 
     turma: Mapped["Turma"] = relationship(back_populates="horarios")
+    sala: Mapped[Sala | None] = relationship(back_populates="horarios")
