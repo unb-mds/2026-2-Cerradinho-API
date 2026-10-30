@@ -5,7 +5,6 @@ import { usePathname } from "next/navigation";
 import {
   BookIcon,
   BowlIcon,
-  BuildingIcon,
   CerradinhoFlower,
   ChevronRightIcon,
   DoorOpenIcon,
@@ -16,7 +15,6 @@ const NAV_ITEMS = [
   { href: "/disciplinas", label: "Disciplinas", Icon: BookIcon },
   { href: "/cardapio", label: "Cardápio", Icon: BowlIcon },
   { href: "/professores", label: "Professores", Icon: UserIcon },
-  { href: "/salas", label: "Salas", Icon: BuildingIcon },
   { href: "/salas/vazias", label: "Salas Vazias", Icon: DoorOpenIcon },
 ] as const;
 

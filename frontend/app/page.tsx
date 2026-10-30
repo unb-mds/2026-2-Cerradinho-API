@@ -8,7 +8,7 @@ import StatCard from "@/components/StatCard";
 import Badge from "@/components/Badge";
 import SeatBar from "@/components/SeatBar";
 import ApiStatus from "@/components/ApiStatus";
-import { BookIcon, BowlIcon, BuildingIcon, ChevronRightIcon, UserIcon } from "@/components/Icons";
+import { BookIcon, BowlIcon, DoorOpenIcon, ChevronRightIcon, UserIcon } from "@/components/Icons";
 
 export default function Home() {
   const { disciplinas, loading: carregandoDisciplinas, error: erroDisciplinas } = useDisciplinas();
@@ -49,11 +49,11 @@ export default function Home() {
           href="/professores"
         />
         <StatCard
-          icon={<BuildingIcon className="h-[18px] w-[18px]" />}
-          label="Salas"
+          icon={<DoorOpenIcon className="h-[18px] w-[18px]" />}
+          label="Salas Vazias"
           stat={numero(salas.length)}
-          sub="espaços cadastrados"
-          href="/salas"
+          sub="espaços vazios por hora"
+          href="/salas/vazias"
         />
       </div>
 
