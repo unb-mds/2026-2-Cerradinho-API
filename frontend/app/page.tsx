@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useDisciplinas } from "@/hooks/useDisciplinas";
 import { useProfessores } from "@/hooks/useProfessores";
-import { useSalas } from "@/hooks/useSalas";
+import { useSalasVaziasAgora } from "@/hooks/useSalasVazias";
 import StatCard from "@/components/StatCard";
 import Badge from "@/components/Badge";
 import SeatBar from "@/components/SeatBar";
@@ -13,7 +13,7 @@ import { BookIcon, BowlIcon, DoorOpenIcon, ChevronRightIcon, UserIcon } from "@/
 export default function Home() {
   const { disciplinas, loading: carregandoDisciplinas, error: erroDisciplinas } = useDisciplinas();
   const { professores, loading: carregandoProfessores, error: erroProfessores } = useProfessores();
-  const { salas, loading: carregandoSalas, error: erroSalas } = useSalas();
+  const { quantidade, horario, foraDoHorario, loading: carregandoSalas, error: erroSalas } = useSalasVaziasAgora();
   const loading = carregandoDisciplinas || carregandoProfessores || carregandoSalas;
   const error = erroDisciplinas ?? erroProfessores ?? erroSalas;
   const numero = (n: number) => (loading || error ? "-" : String(n));
@@ -27,7 +27,7 @@ export default function Home() {
       <ApiStatus loading={loading} error={error} />
       <div className="flex flex-wrap gap-3.5">
         <StatCard
-          icon={<BookIcon className="h-[18px] w-[18px]" />}
+          icon={<BookIcon className="h-4.5 w-4.5" />}
           label="Disciplinas"
           stat={numero(disciplinas.length)}
           sub="turmas ofertadas"
@@ -35,24 +35,24 @@ export default function Home() {
           active
         />
         <StatCard
-          icon={<BowlIcon className="h-[18px] w-[18px]" />}
+          icon={<BowlIcon className="h-4.5 w-4.5" />}
           label="Cardápio"
           stat="RU"
           sub="cardápio da semana"
           href="/cardapio"
         />
         <StatCard
-          icon={<UserIcon className="h-[18px] w-[18px]" />}
+          icon={<UserIcon className="h-4.5 w-4.5" />}
           label="Professores"
           stat={numero(professores.length)}
           sub="docentes ativos"
           href="/professores"
         />
         <StatCard
-          icon={<DoorOpenIcon className="h-[18px] w-[18px]" />}
+          icon={<DoorOpenIcon className="h-4.5 w-4.5" />}
           label="Salas Vazias"
-          stat={numero(salas.length)}
-          sub="espaços vazios por hora"
+          stat={foraDoHorario ? "-" : numero(quantidade)}
+          sub={foraDoHorario ? "fora do horário de aula" : `agora, aula das ${horario}`}
           href="/salas/vazias"
         />
       </div>
