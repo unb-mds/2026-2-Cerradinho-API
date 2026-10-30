@@ -9,7 +9,7 @@ import Badge from "@/components/Badge";
 import SeatBar from "@/components/SeatBar";
 
 const DIAS = ["Todos", "Seg", "Ter", "Qua", "Qui", "Sex", "Sáb"];
-const HORARIOS = ["Todos", "08:00", "10:00", "12:00", "14:00", "16:00", "18:00", "20:00"];
+const HORARIOS = ["Todos", "08:00", "10:00", "12:00", "14:00", "16:00", "18:00", "19:00", "20:50"];
 
 export default function DisciplinasPage() {
   const { disciplinas, loading, error } = useDisciplinas();
