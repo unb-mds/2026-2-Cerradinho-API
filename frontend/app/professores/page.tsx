@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { slugDoProfessor, useProfessores } from "@/hooks/useProfessores";
+import { useProfessores } from "@/hooks/useProfessores";
 import ApiStatus from "@/components/ApiStatus";
 import PageHeader from "@/components/PageHeader";
 import { FilterBar, FilterSelect, SearchInput } from "@/components/Filters";
@@ -75,7 +75,7 @@ export default function ProfessoresPage() {
                           {iniciais(p.nome)}
                         </span>
                         <Link
-                          href={`/professores/${slugDoProfessor(p.nome)}`}
+                          href={`/professores/${p.id}`}
                           className="font-semibold text-foreground hover:text-brand hover:underLine"
                         >
                           {p.nome}
