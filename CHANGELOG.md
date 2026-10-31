@@ -4,6 +4,14 @@ Mudanças relevantes do Cerradinho, por release. O formato segue o [Keep a Chang
 
 ## [Não lançado]
 
+### Adicionado
+
+- Agenda semanal do professor em `GET /v1/professores/{id}/agenda`, com o horário decomposto em dia/início/fim e a sala de cada bloco (RF18, #50).
+
+### Corrigido
+
+- Grade noturna de horário (RF17/RF18) com os horários errados e faltando a N4; agora confirmada contra turma real (aulas de 50 min, não 55, com 5 min de intervalo entre T6 e N1).
+
 ## [1.2] - 2026-10-28
 
 Sprint 6 e início da Sprint 7 da Release 2 (18/10 a 28/10/2026).

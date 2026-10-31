@@ -10,7 +10,7 @@
 
 **Regra de negócio**
 - "Vazia" significa só "sem aula cadastrada via RF01" — não reflete reserva informal, evento ou uso fora da grade de disciplinas. É uma leitura otimista, não uma garantia de disponibilidade real.
-- `horario` é o início de uma aula ("HH:MM"), na grade de 55 minutos do SIGAA derivada das descrições reais de horário (ex.: `"6T2345"` = sexta-feira 14:00 às 17:50). Dia ou horário fora dessa grade — sem turma possível — devolve todas as salas, em vez de erro.
+- `horario` é o início de uma aula ("HH:MM"), na grade do SIGAA derivada de turma real: manhã/tarde com aulas de 55 min, noite com aulas de 50 min (ex.: `"6T2345"` = sexta-feira 14:00 às 17:50; `"6N1234"` = sexta-feira 19:00 às 22:30). Dia ou horário fora dessa grade — sem turma possível — devolve todas as salas, em vez de erro.
 - Um código de horário pode ter mais de um segmento dia+turno+aula colado com espaço, quando a turma tem aula em turnos diferentes (ex.: `"35M5 35T1"`); todos os segmentos contam pra ocupação, não só o primeiro.
 - Turma com sala por dia (ver RF05) ocupa só a sala do dia certo — não todas as salas listadas em todos os dias (ver [ADR 0010](https://github.com/unb-mds/2026-2-Cerradinho-API/blob/dev/docs/adr/0010-sala-por-horario-nao-por-turma.md)).
 
