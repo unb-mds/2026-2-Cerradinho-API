@@ -20,6 +20,19 @@ function mapProfessor(p: ProfessorAPI): Professor {
   return { ...p, unidades };
 }
 
+export function slugDoProfessor(nome: string): string {
+  return nome
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase()
+    .trim()
+    .replace(/\s+/g, "-");
+}
+
+export function nomeDoSlug(slug: string): string {
+  return slug.replace(/-/g, " ");
+}
+
 export function useProfessores() {
   const { data, loading, error } = useApiResource<ProfessorAPI[]>("/professores", []);
   return { professores: data.map(mapProfessor), loading, error };

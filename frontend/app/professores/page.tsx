@@ -1,11 +1,12 @@
 "use client";
 
 import { useState } from "react";
-import { useProfessores } from "@/hooks/useProfessores";
+import { slugDoProfessor, useProfessores } from "@/hooks/useProfessores";
 import ApiStatus from "@/components/ApiStatus";
 import PageHeader from "@/components/PageHeader";
 import { FilterBar, FilterSelect, SearchInput } from "@/components/Filters";
 import Badge from "@/components/Badge";
+import Link from "next/link";
 
 function iniciais(nome: string) {
   return nome
@@ -73,7 +74,12 @@ export default function ProfessoresPage() {
                         <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-muted-bg text-xs font-bold text-brand">
                           {iniciais(p.nome)}
                         </span>
-                        <span className="font-semibold text-foreground">{p.nome}</span>
+                        <Link
+                          href={`/professores/${slugDoProfessor(p.nome)}`}
+                          className="font-semibold text-foreground hover:text-brand hover:underLine"
+                        >
+                          {p.nome}
+                        </Link>
                       </div>
                     </td>
                     <td className="px-4 py-3.5">
