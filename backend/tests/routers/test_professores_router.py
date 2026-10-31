@@ -97,3 +97,80 @@ def test_listar_professores_busca_sem_match_retorna_lista_vazia(client, db_sessi
     response = client.get("/v1/professores", params={"nome": "zzz"})
 
     assert response.json() == []
+
+
+def test_obter_agenda_professor_inexistente_e_404(client):
+    response = client.get("/v1/professores/999/agenda")
+
+    assert response.status_code == 404
+
+
+def test_obter_agenda_decompoe_horario_em_dia_inicio_fim_com_sala(client, db_session):
+    persistir_turma(db_session, _turma_capturada(), unidade="FCTE")
+    db_session.commit()
+    professor_id = client.get("/v1/professores").json()[0]["id"]
+
+    response = client.get(f"/v1/professores/{professor_id}/agenda")
+
+    assert response.status_code == 200
+    body = response.json()
+    assert body["nome"] == "Ana Souza"
+    assert len(body["turmas"]) == 1
+    turma = body["turmas"][0]
+    assert turma["disciplina_codigo"] == "FGA0242"
+    assert turma["numero"] == "01"
+    assert len(turma["horarios"]) == 1
+    bloco = turma["horarios"][0]
+    assert (bloco["dia"], bloco["inicio"], bloco["fim"]) == ("sexta", "14:00", "17:50")
+    assert isinstance(bloco["sala"]["id"], int)
+    assert (bloco["sala"]["predio"], bloco["sala"]["nome"]) == ("FCTE", "I9/I10")
+
+
+def test_obter_agenda_turma_sem_sala_vem_com_sala_nula(client, db_session):
+    persistir_turma(db_session, _turma_capturada(sala=Sala(descricao="")), unidade="FCTE")
+    db_session.commit()
+    professor_id = client.get("/v1/professores").json()[0]["id"]
+
+    response = client.get(f"/v1/professores/{professor_id}/agenda")
+
+    assert response.json()["turmas"][0]["horarios"][0]["sala"] is None
+
+
+def test_obter_agenda_junta_aulas_consecutivas_num_bloco_so(client, db_session):
+    persistir_turma(
+        db_session,
+        _turma_capturada(horarios=[Horario(codigo="2M12", descricao="Segunda-feira 08:00 às 09:50")]),
+        unidade="FCTE",
+    )
+    db_session.commit()
+    professor_id = client.get("/v1/professores").json()[0]["id"]
+
+    response = client.get(f"/v1/professores/{professor_id}/agenda")
+
+    blocos = response.json()["turmas"][0]["horarios"]
+    assert len(blocos) == 1
+    assert blocos[0]["dia"] == "segunda"
+    assert blocos[0]["inicio"] == "08:00"
+    assert blocos[0]["fim"] == "09:50"
+
+
+def test_obter_agenda_turma_com_sala_por_dia_mostra_a_sala_certa_em_cada_bloco(client, db_session):
+    """Achado real do Vitor (RF17/ADR 0010): "24M5 24T1" com "FCTE - S1 /
+    MOCAP" é segunda na S1 e quarta na MOCAP - a agenda do professor
+    precisa mostrar a sala certa em cada dia, não a mesma nos dois."""
+    persistir_turma(
+        db_session,
+        _turma_capturada(
+            horarios=[Horario(codigo="24M5 24T1", descricao="Segunda e quarta, 12:00 às 13:50")],
+            sala=Sala(descricao="FCTE - S1 / MOCAP"),
+        ),
+        unidade="FCTE",
+    )
+    db_session.commit()
+    professor_id = client.get("/v1/professores").json()[0]["id"]
+
+    response = client.get(f"/v1/professores/{professor_id}/agenda")
+
+    blocos = response.json()["turmas"][0]["horarios"]
+    salas_por_dia = {b["dia"]: b["sala"]["nome"] for b in blocos}
+    assert salas_por_dia == {"segunda": "S1", "quarta": "MOCAP"}
