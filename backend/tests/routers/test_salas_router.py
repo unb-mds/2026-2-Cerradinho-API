@@ -180,6 +180,38 @@ def test_listar_salas_vazias_turma_com_sala_por_dia_ocupa_so_o_dia_certo(client,
     assert [s["nome"] for s in quarta_meio_dia.json()] == ["S1"]
 
 
+def test_listar_salas_vazias_exclui_sala_ocupada_a_noite(client, db_session):
+    """Achado do Daniel: a grade noturna estava com os horários errados -
+    confirmado contra turma real ("2N1234" ocupa de 19:00 às 22:30)."""
+    persistir_turma(
+        db_session,
+        _turma_capturada(horarios=[Horario(codigo="2N1234", descricao="Segunda-feira 19:00 às 22:30")]),
+        unidade="FCTE",
+    )
+    db_session.commit()
+
+    response = client.get("/v1/salas/vazias", params={"dia": "segunda", "horario": "19:00"})
+
+    assert response.json() == []
+
+
+def test_listar_salas_vazias_turma_so_com_n3_e_n4_nao_ocupa_o_horario_da_n2(client, db_session):
+    """"2N34" só ocupa a partir das 20:50 - não pode aparecer ocupada às
+    19:50 (início da N2, que essa turma não usa)."""
+    persistir_turma(
+        db_session,
+        _turma_capturada(horarios=[Horario(codigo="2N34", descricao="Segunda-feira 20:50 às 22:30")]),
+        unidade="FCTE",
+    )
+    db_session.commit()
+
+    as_19_50 = client.get("/v1/salas/vazias", params={"dia": "segunda", "horario": "19:50"})
+    as_20_50 = client.get("/v1/salas/vazias", params={"dia": "segunda", "horario": "20:50"})
+
+    assert [s["nome"] for s in as_19_50.json()] == ["I9/I10"]
+    assert as_20_50.json() == []
+
+
 def test_listar_salas_vazias_horario_mal_formatado_e_422(client):
     response = client.get("/v1/salas/vazias", params={"dia": "sexta", "horario": "14h"})
 

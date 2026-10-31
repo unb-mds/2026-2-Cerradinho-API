@@ -13,7 +13,7 @@
 - A rota usa o `id` do professor (o mesmo de `GET /v1/professores`), não o nome — nome vira slug sem acento no front, e comparar isso com o nome exato do SIGAA não acha o professor; `id` também resolve homônimos.
 - `dia`/`início`/`fim` reaproveitam a grade de horário do RF17 (`app/domain/salas.py`) — aulas consecutivas da grade juntam num bloco só (ex. `"6T2345"` é um bloco de 14:00 às 17:50, não 4 blocos separados).
 - A sala vem dentro de cada bloco de horário, não da turma — uma turma pode ter salas diferentes por dia (RF05, ADR 0010), e cada bloco mostra a sala do dia certo.
-- Os horários N2/N3 (20:00 e 20:55) seguem o mesmo padrão de intervalo das outras aulas, mas não têm uma descrição real na fixture pra confirmar, diferente do resto da grade.
+- A grade noturna (N) tem aulas de 50 min (não 55 como manhã/tarde), com N1 às 19:00 e 5 min de intervalo entre T6 e N1 — confirmado contra turma real (achado do Daniel).
 
 ## Rastreabilidade
 

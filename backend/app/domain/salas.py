@@ -23,19 +23,20 @@ DIA_PARA_DIGITO = {
 }
 
 # Início de cada aula, extraído das descrições reais de horário do SIGAA
-# (ex. "6T2345" -> "Sexta-feira 14:00 às 17:50"): aulas de 55 min, com 10 min
-# de intervalo entre a 2ª e a 3ª aula de cada turno — exceto na virada de
-# turno (M5->T1 e T6->N1), que é direto, sem intervalo.
-# N1 (18:55) está confirmado por descrição real ("35T6 35N1" ->
-# "18:00 às 19:50", i.e. T6 55min + N1 55min direto). N2 e N3 seguem o mesmo
-# padrão de intervalo das outras aulas, mas nenhuma turma real na fixture
-# tem N2/N3 pra confirmar - se achar uma descrição real com N2 ou N3, vale
-# checar contra esses dois valores.
+# (ex. "6T2345" -> "Sexta-feira 14:00 às 17:50"): aulas de manhã/tarde com
+# 55 min e aulas de noite com 50 min (ver _DURACAO_AULA_MINUTOS), com 10 min
+# de intervalo entre a 2ª e a 3ª aula de cada turno — exceto na virada
+# M5->T1, que é direto, sem intervalo. T6->N1 tem 5 min de intervalo.
+# Confirmado contra turma real (Administração, Contábeis, Computação,
+# Direito, Educação, 2026.2): "24N12" -> 19:00 às 20:40, "24N34" ->
+# 20:50 às 22:30, "6N1234" -> 19:00 às 22:30. Só o início de N2 (19:50) foi
+# deduzido do fim de N1 (nenhuma turma observada começa nela).
 _INICIO_AULA: dict[str, dict[str, str]] = {
     "M": {"1": "08:00", "2": "08:55", "3": "10:00", "4": "10:55", "5": "12:00"},
     "T": {"1": "12:55", "2": "14:00", "3": "14:55", "4": "16:00", "5": "16:55", "6": "18:00"},
-    "N": {"1": "18:55", "2": "20:00", "3": "20:55"},
+    "N": {"1": "19:00", "2": "19:50", "3": "20:50", "4": "21:40"},
 }
+_DURACAO_AULA_MINUTOS: dict[str, int] = {"M": 55, "T": 55, "N": 50}
 
 
 _TURNO_AULA_POR_HORARIO: dict[str, tuple[str, str]] = {
@@ -49,16 +50,15 @@ _ORDEM_AULAS: list[tuple[str, str]] = [
     (turno, aula) for turno in ("M", "T", "N") for aula in sorted(_INICIO_AULA[turno], key=int)
 ]
 _POSICAO_AULA: dict[tuple[str, str], int] = {par: i for i, par in enumerate(_ORDEM_AULAS)}
-_DURACAO_AULA_MINUTOS = 55
 
 
 def _localizar_turno_aula(horario: str) -> tuple[str, str] | None:
     return _TURNO_AULA_POR_HORARIO.get(horario)
 
 
-def _fim_aula(inicio: str) -> str:
+def _fim_aula(turno: str, inicio: str) -> str:
     horas, minutos = (int(parte) for parte in inicio.split(":"))
-    total = horas * 60 + minutos + _DURACAO_AULA_MINUTOS
+    total = horas * 60 + minutos + _DURACAO_AULA_MINUTOS[turno]
     return f"{total // 60:02d}:{total % 60:02d}"
 
 
@@ -86,7 +86,7 @@ def _intervalos_do_dia(pares_turno_aula: set[tuple[str, str]]) -> list[tuple[str
         turno_inicio, aula_inicio = _ORDEM_AULAS[posicao_inicio]
         turno_fim, aula_fim = _ORDEM_AULAS[posicao_fim]
         inicio = _INICIO_AULA[turno_inicio][aula_inicio]
-        fim = _fim_aula(_INICIO_AULA[turno_fim][aula_fim])
+        fim = _fim_aula(turno_fim, _INICIO_AULA[turno_fim][aula_fim])
         intervalos.append((inicio, fim))
     return intervalos
 
