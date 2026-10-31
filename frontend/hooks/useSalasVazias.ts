@@ -4,24 +4,15 @@ import { useApiResource } from "./useApiResource";
 import { useState } from "react";
 import type { Sala } from "./useSalas";
 
-// A grade noturna do backend (domain/salas.py) não bate com o SIGAA: N1, N2 e N3
-// começam às 19:00, 19:50 e 20:50, mas ele as conhece como 18:55, 20:00 e 20:55.
-// Remover este mapa quando a grade for corrigida lá.
-const HORARIO_NO_BACKEND: Record<string, string> = {
-    "19:00": "18:55",
-    "19:50": "20:00",
-    "20:50": "20:55",
-};
-
 export const HORARIOS = [
     "08:00", "08:55", "10:00", "10:55", "12:00", "12:55", "14:00",
-    "14:55", "16:00", "16:55", "18:00", "19:00", "19:50", "20:50",
+    "14:55", "16:00", "16:55", "18:00", "19:00", "19:50", "20:50", "21:40",
 ];
 
 const DIAS_API = [null, "segunda", "terca", "quarta", "quinta", "sexta", "sabado"];
 
 function caminhoSalasVazias(dia: string, horario: string) {
-    return `/salas/vazias?dia=${dia}&horario=${HORARIO_NO_BACKEND[horario] ?? horario}`;
+    return `/salas/vazias?dia=${dia}&horario=${horario}`;
 }
 
 function minutosDoInicio(horario: string) {
