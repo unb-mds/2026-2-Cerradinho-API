@@ -25,8 +25,14 @@ export interface Agenda {
 }
 
 export function useAgendaProfessor(id: string) {
-  const { data, loading, error } = useApiResource<Agenda | null>(`/professores/${id}/agenda`, null);
-  return { agenda: data, loading, error };
+  const { data, loading, error, status } = useApiResource<Agenda | null>(`/professores/${id}/agenda`, null);
+  // 404 é id inexistente; 422, id que nem é número (ex. /professores/abc).
+  const naoEncontrado = status === 404 || status === 422;
+  return { agenda: data, loading, error: naoEncontrado ? "Professor não encontrado." : error };
+}
+
+export function turmasSemHorario(agenda: Agenda): TurmaAgenda[] {
+  return agenda.turmas.filter((turma) => turma.horarios.length === 0);
 }
 
 export interface BlocoDaGrade {

@@ -8,13 +8,15 @@ import { unidadesDasDisciplinas } from "@/hooks/useProfessores";
 import ProfessorAvatar from "@/components/ProfessorAvatar";
 import Badge from "@/components/Badge";
 import GradeSemanal from "@/components/GradeSemanal";
-import { blocosDaAgenda } from "@/hooks/useAgendaProfessor";
+import { blocosDaAgenda, turmasSemHorario } from "@/hooks/useAgendaProfessor";
 
 export default function AgendaProfessorPage() {
     const { id } = useParams<{ id: string }>();
     const { agenda, loading, error } = useAgendaProfessor(id);
     const unidades = agenda ? unidadesDasDisciplinas(agenda.turmas.map((t) => t.disciplina_codigo)) : [];
     const periodo = agenda?.turmas[0]?.ano_periodo ?? null;
+    const blocos = agenda ? blocosDaAgenda(agenda) : [];
+    const semHorario = agenda ? turmasSemHorario(agenda) : [];
 
     return (
         <main className="flex flex-1 flex-col px-10 py-9">
@@ -43,8 +45,32 @@ export default function AgendaProfessorPage() {
                     </div>
 
                     <div className="mt-6">
-                        <GradeSemanal blocos={blocosDaAgenda(agenda)} />
+                        {blocos.length > 0 ? (
+                            <GradeSemanal blocos={blocos} />
+                        ) : (
+                            <p className="rounded-xl border border-border bg-surface px-6 py-12 text-center text-sm text-muted">
+                                Nenhum horário cadastrado para este professor.
+                            </p>
+                        )}
                     </div>
+
+                    {semHorario.length > 0 && (
+                        <section className="mt-6">
+                            <h2 className="text-sm font-semibold text-foreground">Turmas sem horário definido</h2>
+                            <ul className="mt-2 overflow-hidden rounded-xl border border-border bg-surface text-sm">
+                                {semHorario.map((t) => (
+                                    <li
+                                        key={`${t.disciplina_codigo}-${t.numero}-${t.ano_periodo}`}
+                                        className="border-t border-border px-4 py-3 first:border-t-0"
+                                    >
+                                        <span className="font-mono text-xs font-semibold text-brand">{t.disciplina_codigo}</span>
+                                        <span className="ml-3 text-foreground">{t.disciplina_nome}</span>
+                                        <span className="ml-2 text-xs text-muted">Turma {t.numero}</span>
+                                    </li>
+                                ))}
+                            </ul>
+                        </section>
+                    )}
                 </>
             )}
         </main>
