@@ -5,7 +5,7 @@ import PageHeader from "@/components/PageHeader";
 import { FilterBar, FilterPills, FilterSelect } from "@/components/Filters";
 import { useSalasVazias, HORARIOS } from "@/hooks/useSalasVazias";
 
-const DIAS: Record<string, string> = {
+export const DIAS: Record<string, string> = {
     Segunda: "segunda",
     Terça: "terca",
     Quarta: "quarta",

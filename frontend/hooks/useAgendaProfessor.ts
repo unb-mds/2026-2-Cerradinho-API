@@ -28,3 +28,49 @@ export function useAgendaProfessor(id: string) {
   const { data, loading, error } = useApiResource<Agenda | null>(`/professores/${id}/agenda`, null);
   return { agenda: data, loading, error };
 }
+
+export interface BlocoDaGrade {
+  codigo: string;
+  numero: string;
+  dia: string;
+  inicio: string;
+  fim: string;
+  sala: string | null;
+}
+
+export function chaveDoBloco(b: Pick<BlocoDaGrade, "codigo" | "numero" | "dia" | "inicio" | "fim">): string {
+  return `${b.codigo}-${b.numero}-${b.dia}-${b.inicio}-${b.fim}`;
+}
+
+function rotuloDaSala(sala: Sala | null): string | null {
+  if (!sala) return null;
+  return sala.predio ? `${sala.predio}-${sala.nome}` : sala.nome;
+}
+
+// A API devolve um bloco por sala: turma com duas salas no mesmo horário vira um bloco só.
+export function blocosDaAgenda(agenda: Agenda): BlocoDaGrade[] {
+  const blocos = new Map<string, BlocoDaGrade>();
+
+  for (const turma of agenda.turmas) {
+    for (const h of turma.horarios) {
+      const chave = chaveDoBloco({ codigo: turma.disciplina_codigo, numero: turma.numero, ...h });
+      const sala = rotuloDaSala(h.sala);
+      const existente = blocos.get(chave);
+
+      if (!existente) {
+        blocos.set(chave, {
+          codigo: turma.disciplina_codigo,
+          numero: turma.numero,
+          dia: h.dia,
+          inicio: h.inicio,
+          fim: h.fim,
+          sala,
+        });
+      } else if (sala && !existente.sala?.split(" / ").includes(sala)) {
+        existente.sala = existente.sala ? `${existente.sala} / ${sala}` : sala;
+      }
+    }
+  }
+
+  return [...blocos.values()];
+}

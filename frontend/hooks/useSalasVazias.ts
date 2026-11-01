@@ -15,7 +15,7 @@ function caminhoSalasVazias(dia: string, horario: string) {
     return `/salas/vazias?dia=${dia}&horario=${horario}`;
 }
 
-function minutosDoInicio(horario: string) {
+export function minutosDoInicio(horario: string) {
     const [hora, min] = horario.split(":").map(Number);
     return hora * 60 + min;
 }

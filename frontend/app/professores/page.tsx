@@ -7,14 +7,7 @@ import PageHeader from "@/components/PageHeader";
 import { FilterBar, FilterSelect, SearchInput } from "@/components/Filters";
 import Badge from "@/components/Badge";
 import Link from "next/link";
-
-function iniciais(nome: string) {
-  return nome
-    .split(" ")
-    .slice(0, 2)
-    .map((parte) => parte[0])
-    .join("");
-}
+import ProfessorAvatar from "@/components/ProfessorAvatar";
 
 export default function ProfessoresPage() {
   const { professores, loading, error } = useProfessores();
@@ -71,9 +64,7 @@ export default function ProfessoresPage() {
                   <tr key={p.id} className="border-t border-border">
                     <td className="px-4 py-3.5">
                       <div className="flex items-center gap-3">
-                        <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-muted-bg text-xs font-bold text-brand">
-                          {iniciais(p.nome)}
-                        </span>
+                        <ProfessorAvatar nome={p.nome} />
                         <Link
                           href={`/professores/${p.id}`}
                           className="font-semibold text-foreground hover:text-brand hover:underLine"
