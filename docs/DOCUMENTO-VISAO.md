@@ -79,14 +79,14 @@ O Cerradinho é um sistema novo, autocontido (monorepo), que não substitui nenh
 
 - Assume-se que o SIGAA público, o site do RU e o portal de notícias permanecerão acessíveis sem login durante todo o projeto (nenhum é garantido contratualmente).
 - Assume-se throttling suficiente para não sobrecarregar os servidores da UnB nem disparar bloqueio de IP.
-- O projeto depende de hospedagem em nuvem (Railway) que precisa suportar Postgres, Redis e ao menos dois serviços (API e worker) dentro de um orçamento compatível com um projeto acadêmico sem patrocínio.
+- O projeto depende de hospedagem em nuvem (AWS Lightsail, ver ADR 0011) que precisa suportar Postgres, Redis e ao menos dois serviços (API e worker) dentro de um orçamento compatível com um projeto acadêmico sem patrocínio.
 
 ## 5. Restrições
 
 - **Prazo fixo**: entrega final em 25/11, sem possibilidade de extensão (calendário acadêmico da disciplina). O calendário das sprints está no [planejamento](scrum/sprint-planning.md).
 - **Equipe fixa de 6 pessoas**, com dedicação parcial (paralela a outras disciplinas do curso).
 - **Fontes de dado fora do controle do time**: qualquer mudança de layout no SIGAA, RU ou portal de notícias exige manutenção reativa, não planejada.
-- **Sem orçamento** para ferramentas pagas de infraestrutura, observabilidade ou segurança além de planos gratuitos/educacionais (ex: Railway free tier, UptimeRobot free).
+- **Sem orçamento** para ferramentas pagas de infraestrutura, observabilidade ou segurança além de planos gratuitos/educacionais (ex: créditos de conta nova da AWS, UptimeRobot free).
 - **Stack tecnológica fixada em ADR** (Python 3.12, SQLAlchemy síncrono, FastAPI, Next.js, Celery/Redis), mudanças de stack no meio do projeto teriam custo alto.
 - **Avaliação acadêmica**: o processo (ADRs, sprints documentadas, PRs revisados) é tão avaliado quanto o produto final, o que impõe overhead de documentação além do desenvolvimento em si.
 
