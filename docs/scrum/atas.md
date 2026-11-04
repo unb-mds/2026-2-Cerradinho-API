@@ -160,3 +160,21 @@ Registro das reuniões do time: presença, o que foi feito e o que ficou combina
 **Observação:** a `dev` foi mergeada na `main` nesta sprint (PR #236) — a primeira desde a `Release_1` — com a release note da v1.2 publicada no GitHub.
 
 ---
+
+### Segunda-feira, 02/11 — Review da Sprint 7
+
+**Presentes:** Vitor, Arthur, Gabriel, Daniel, João Paulo
+
+**Progresso:**
+
+- **Vitor**: implementou o RF18 (agenda semanal do professor), `GET /v1/professores/{id}/agenda`, com o horário decomposto em dia/início/fim — reaproveitando a grade do RF17 em vez de duplicá-la no front — e a sala de cada bloco, já preparada pra turma com sala diferente por dia (ADR 0010). A rota usa `id` em vez de nome, combinado com o Daniel, pra não depender de slug sem acento e resolver homônimos. No meio do caminho, o Daniel achou um bug real na grade noturna (faltava a N4, e os horários de N1 a N3 estavam errados); corrigido e confirmado contra turma real de várias unidades, no mesmo PR #237.
+
+- **Daniel**: entregou a tela da agenda do professor, consumindo o RF18, e removeu do front o remendo que tinha feito pra contornar a grade noturna errada (`HORARIO_NO_BACKEND`), agora que o Vitor corrigiu isso no backend — PR #238.
+
+- **Arthur**: implementou o rate limit de 60 requisições por minuto por IP com slowapi (RNF01), PR #229.
+
+- **Gabriel**: trocou o destino do deploy — Railway (ADR 0009) pela AWS Lightsail (ADR 0011). O período de teste do Railway acaba antes da entrega (18/11), e contas novas da AWS dão crédito de 6 meses; uma instância Lightsail de 2 GB roda Postgres, Redis, API, worker e frontend em Docker Compose, com Caddy na frente fazendo HTTPS automático via sslip.io, sem precisar comprar domínio. Atualizou `docs/DEPLOY.md`, o Documento de Visão, a arquitetura e o planejamento de sprints de acordo — PR #240.
+
+- **João Paulo**: adicionou `GET /v1/saude` (checagem do banco, sem schema público) pro UptimeRobot monitorar, com os estudos de teste de mutação e de UptimeRobot documentados em `docs/estudos/`. Fechou o contrato da agenda do professor, confirmando a cobertura de `tests/contract/test_openapi_contract.py` pro RF18 — PR #239.
+
+---
