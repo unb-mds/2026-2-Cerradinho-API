@@ -1,0 +1,92 @@
+# producao na aws lightsail ver docs/DEPLOY.md
+
+services:
+  db:
+    image: postgres:16-alpine
+    env_file:
+      - ./backend/.env
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+
+  migrate:
+    build:
+      context: ./backend
+    env_file:
+      - ./backend/.env
+    environment:
+      POSTGRES_HOST: db
+    depends_on:
+      db:
+        condition: service_healthy
+
+  api:
+    build:
+      context: ./backend
+    # ip real do cliente vem do caddy pro rate limit
+    command: ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000", "--forwarded-allow-ips", "*"]
+    env_file:
+      - ./backend/.env
+    environment:
+      POSTGRES_HOST: db
+      CORS_ORIGINS: '["https://${DOMINIO:?defina DOMINIO no .env da raiz}"]'
+    depends_on:
+      migrate:
+        condition: service_completed_successfully
+      redis:
+        condition: service_started
+    restart: unless-stopped
+
+  redis:
+    image: redis:7
+    restart: unless-stopped
+
+  worker:
+    build:
+      context: ./backend
+    # beat junto do worker so pode ter um worker
+    command: ["celery", "-A", "app.celery_app", "worker", "-B", "--loglevel=info", "--concurrency=1"]
+    env_file:
+      - ./backend/.env
+    environment:
+      POSTGRES_HOST: db
+    depends_on:
+      migrate:
+        condition: service_completed_successfully
+      redis:
+        condition: service_started
+    restart: unless-stopped
+
+  frontend:
+    build:
+      context: ./frontend
+      args:
+        # next grava a url da api no build
+        NEXT_PUBLIC_API_URL: https://api.${DOMINIO}/v1
+    restart: unless-stopped
+
+  caddy:
+    image: caddy:2
+    ports:
+      - "80:80"
+      - "443:443"
+    environment:
+      DOMINIO: ${DOMINIO}
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+    depends_on:
+      - api
+      - frontend
+    restart: unless-stopped
+
+volumes:
+  postgres_data:
+  caddy_data:
+  caddy_config:

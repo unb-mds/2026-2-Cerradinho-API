@@ -1,0 +1,9 @@
+# https automatico pros dois enderecos
+
+{$DOMINIO} {
+	reverse_proxy frontend:3000
+}
+
+api.{$DOMINIO} {
+	reverse_proxy api:8000
+}
