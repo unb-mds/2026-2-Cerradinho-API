@@ -15,8 +15,12 @@ export interface Professor {
   disciplinas: string[];
 }
 
+export function unidadesDasDisciplinas(codigos: string[]): string[] {
+  return [...new Set(codigos.map((codigo) => codigo.replace(/\d.*$/, "")))];
+}
+
 function mapProfessor(p: ProfessorAPI): Professor {
-  const unidades = [... new Set(p.disciplinas.map((codigo) => codigo.replace(/\d.*$/, "")))];
+  const unidades = unidadesDasDisciplinas(p.disciplinas);
   return { ...p, unidades };
 }
 

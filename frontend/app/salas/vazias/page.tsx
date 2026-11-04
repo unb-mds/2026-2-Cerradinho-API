@@ -1,11 +1,11 @@
 "use client";
 
-import { useSalasVazias } from "@/hooks/useSalasVazias";
 import ApiStatus from "@/components/ApiStatus";
 import PageHeader from "@/components/PageHeader";
 import { FilterBar, FilterPills, FilterSelect } from "@/components/Filters";
+import { useSalasVazias, HORARIOS } from "@/hooks/useSalasVazias";
 
-const DIAS: Record<string, string> = {
+export const DIAS: Record<string, string> = {
     Segunda: "segunda",
     Terça: "terca",
     Quarta: "quarta",
@@ -14,10 +14,6 @@ const DIAS: Record<string, string> = {
     Sábado: "sabado",
 };
 
-const HORARIOS = [
-    "08:00", "08:55", "10:00", "10:55", "12:00", "12:55", "14:00",
-    "14:55", "16:00", "16:55", "18:00", "18:55", "20:00", "20:55",
-];
 
 export default function SalasVaziasPage() {
     const { salas, loading, error, dia, horario, setDia, setHorario } = useSalasVazias();

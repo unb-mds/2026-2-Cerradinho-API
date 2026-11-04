@@ -39,16 +39,6 @@ export function UserIcon(props: IconProps) {
   );
 }
 
-export function BuildingIcon(props: IconProps) {
-  return (
-    <svg {...base} {...props}>
-      <rect x="5" y="3" width="14" height="18" rx="1" />
-      <path d="M9 7h1M14 7h1M9 11h1M14 11h1M9 15h1M14 15h1" />
-      <path d="M10 21v-3h4v3" />
-    </svg>
-  );
-}
-
 export function FilterIcon(props: IconProps) {
   return (
     <svg {...base} {...props}>
