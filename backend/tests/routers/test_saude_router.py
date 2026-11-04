@@ -22,3 +22,7 @@ def test_health_responde_503_sem_banco(client):
 
     assert response.status_code == 503
     assert response.json()["banco"] == "indisponivel"
+
+
+def test_health_fica_fora_da_documentacao_publica(client):
+    assert "/health" not in client.get("/openapi.json").json()["paths"]
