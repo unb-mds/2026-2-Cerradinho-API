@@ -6,7 +6,7 @@ from slowapi.middleware import SlowAPIASGIMiddleware
 
 from app.core.config import settings
 from app.core.rate_limit import limiter
-from app.routers import cardapio, disciplinas, execucoes, professores, salas
+from app.routers import cardapio, disciplinas, execucoes, professores, salas, saude
 
 DESCRICAO = """
 API pública que reúne dados institucionais da UnB hoje espalhados em vários sistemas:
@@ -47,3 +47,4 @@ app.include_router(cardapio.router, prefix="/v1")
 app.include_router(professores.router, prefix="/v1")
 app.include_router(salas.router, prefix="/v1")
 app.include_router(execucoes.router, prefix="/v1")
+app.include_router(saude.router)
