@@ -51,6 +51,24 @@ def _popular_banco(db_session: Session) -> None:
         unidade="FCTE",
     )
 
+    # turma noturna sem sala e com dois professores: na agenda (RF18) a Ana fica com
+    # duas turmas e aparece um bloco com sala nula
+    persistir_turma(
+        db_session,
+        Turma(
+            disciplina_codigo="FGA0315",
+            disciplina_nome="Qualidade de Software",
+            numero="01",
+            ano_periodo="2026.2",
+            professores=[Professor(nome="Ana Souza"), Professor(nome="Beatriz Rocha")],
+            horarios=[Horario(codigo="24N12", descricao="Segunda-feira 19:00 às 20:40 Quarta-feira 19:00 às 20:40")],
+            sala=Sala(descricao=""),
+            vagas_ofertadas=30,
+            vagas_ocupadas=12,
+        ),
+        unidade="FCTE",
+    )
+
     agora = datetime.now(timezone.utc)
     db_session.add_all(
         [
