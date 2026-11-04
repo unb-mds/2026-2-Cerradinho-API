@@ -6,7 +6,7 @@ Como o time se organiza: papéis, ritos do Scrum, critérios de pronto e registr
 
 | Pessoa | Papel | Área | Tecnologias |
 |---|---|---|---|
-| Gabriel | Product Owner | Banco, Docker, deploy, release notes e cardápio do RU; prioriza o backlog e define critérios de aceitação | PostgreSQL, SQLAlchemy, Alembic, Docker, Railway, pdfplumber |
+| Gabriel | Product Owner | Banco, Docker, deploy, release notes e cardápio do RU; prioriza o backlog e define critérios de aceitação | PostgreSQL, SQLAlchemy, Alembic, Docker, AWS Lightsail, pdfplumber |
 | Vitor | Scrum Master | Scraping de Disciplinas/Professores/Salas, salas vazias, agenda do professor e SDK; facilita os ritos e o board | Playwright, FastAPI, SQLAlchemy |
 | Daniel | Desenvolvedor | Frontend e portal do desenvolvedor | Next.js, Axios, Swagger UI |
 | Arthur | Desenvolvedor | Agendamento, cache e rate limit | Celery, Redis, slowapi |

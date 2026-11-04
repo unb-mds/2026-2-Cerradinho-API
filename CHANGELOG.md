@@ -6,11 +6,16 @@ Mudanças relevantes do Cerradinho, por release. O formato segue o [Keep a Chang
 
 ### Adicionado
 
+- `docker-compose.prod.yml`, `Caddyfile` e `frontend/Dockerfile` para rodar a produção numa máquina só, com HTTPS automático e só as portas 80 e 443 expostas (RNF06).
 - Agenda semanal do professor em `GET /v1/professores/{id}/agenda`, com o horário decomposto em dia/início/fim e a sala de cada bloco (RF18, #50).
 
 ### Corrigido
 
 - Grade noturna de horário (RF17/RF18) com os horários errados e faltando a N4; agora confirmada contra turma real (aulas de 50 min, não 55, com 5 min de intervalo entre T6 e N1).
+
+### Alterado
+
+- A hospedagem passa do Railway para a AWS Lightsail, porque o período de teste do Railway acaba antes da entrega da R2 ([ADR 0011](docs/adr/0011-aws-lightsail-para-deploy.md)). O `docs/DEPLOY.md` foi reescrito para a AWS.
 
 ## [1.2] - 2026-10-28
 

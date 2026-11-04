@@ -12,8 +12,7 @@ class Settings(BaseSettings):
     postgres_host: str = "localhost"
     postgres_port: int = 5432
 
-    # Broker e backend de resultados do Celery. O padrão usa o nome do serviço
-    # no docker compose; em produção o Railway passa o REDIS_URL do serviço Redis.
+    # broker e backend do celery
     redis_url: str = "redis://redis:6379/0"
 
     # Origens que o navegador pode usar pra chamar a API (o front Next.js roda em outra porta)

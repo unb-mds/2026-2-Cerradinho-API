@@ -14,4 +14,4 @@
 
 - **PRs:** [#145](https://github.com/unb-mds/2026-2-Cerradinho-API/pull/145) (variáveis de ambiente e guia de deploy em [`docs/DEPLOY.md`](https://github.com/unb-mds/2026-2-Cerradinho-API/blob/dev/docs/DEPLOY.md))
 - **Testes:** [`tests/tasks/test_celery_app.py`](https://github.com/unb-mds/2026-2-Cerradinho-API/blob/dev/backend/tests/tasks/test_celery_app.py) (endereço do Redis lido do `REDIS_URL`)
-- **Decisões:** [ADR 0009](https://github.com/unb-mds/2026-2-Cerradinho-API/blob/dev/docs/adr/0009-railway-para-deploy.md)
+- **Decisões:** [ADR 0011](https://github.com/unb-mds/2026-2-Cerradinho-API/blob/dev/docs/adr/0011-aws-lightsail-para-deploy.md), que substitui o [ADR 0009](https://github.com/unb-mds/2026-2-Cerradinho-API/blob/dev/docs/adr/0009-railway-para-deploy.md)
