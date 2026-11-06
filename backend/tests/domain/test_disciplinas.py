@@ -4,6 +4,7 @@ from sqlalchemy.orm import Session
 
 import app.domain.disciplinas as disciplinas
 from app.domain.disciplinas import (
+    _extrair_pares_codigo_sala,
     listar_turmas,
     normalizar_nome_professor,
     normalizar_sala,
@@ -91,6 +92,34 @@ def test_normalizar_sala_nao_promove_andar_a_predio():
     assert normalizar_sala("TÉRREO/SUBSOLO") == ("", "TÉRREO SUBSOLO")
 
 
+def test_normalizar_sala_prefixo_conhecido_com_separador_dentro_do_codigo():
+    """Achado real do Darcy: o separador que `_SEPARADOR_SALA` casa pode
+    estar dentro do próprio código da sala ("BSA S B1 34 - 10",
+    "ICC AT 114 - 092"), não entre prédio e sala - sem isso, o prédio
+    virava "BSA S B1 34" e o código ficava cortado pela metade."""
+    assert normalizar_sala("BSA S B1 34 - 10") == ("BSA", "S B1 34 - 10")
+    assert normalizar_sala("ICC AT 114 - 092") == ("ICC", "AT 114 - 092")
+    assert normalizar_sala("BSA S B1 11/10") == ("BSA", "S B1 11/10")
+
+
+def test_normalizar_sala_bsa_sul_com_nome_completo_nao_confunde_com_bsa_s():
+    """"BSA SUL" é o nome completo do prédio (2 palavras, separador de
+    verdade antes da sala) - não pode confundir com "BSA S" (sigla de
+    ala) seguido de código de sala, que é o caso coberto pelo teste
+    anterior."""
+    assert normalizar_sala("BSA SUL - A1") == ("BSA SUL", "A1")
+
+
+def test_normalizar_sala_bsas_colado_funde_com_bsa_s():
+    """Achado real: "BSAS" é "BSA S" (BSA Sul) sem o espaço nessa unidade -
+    tem que virar a mesma sala, não uma terceira entidade."""
+    assert normalizar_sala("BSAS B2 28/14") == normalizar_sala("BSA S B2 28/14")
+
+
+def test_normalizar_sala_reconhece_pjc():
+    assert normalizar_sala("PJC BT 012") == ("PJC", "BT 012")
+
+
 def test_normalizar_salas_separa_com_barra_espacada():
     """Turma com sala diferente por dia: "FCTE - S1 / MOCAP" é segunda na
     S1 e quarta na MOCAP (achado real do Vitor)."""
@@ -158,6 +187,46 @@ def test_persistir_turma_com_salas_e_dias_que_nao_casam_associa_tudo_a_todas():
     assert len(turma_salva.horarios) == 2
     assert {h.sala.nome for h in turma_salva.horarios} == {"S1", "MOCAP"}
     assert {h.codigo for h in turma_salva.horarios} == {"246T1"}
+
+
+def test_extrair_pares_codigo_sala_do_campo_de_sala():
+    """Achado real do Darcy: o SIGAA junta o código do horário com a sala
+    daquele dia no próprio campo de sala, um par por dia (segunda na
+    ANF.15, quarta na ANF.16)."""
+    assert _extrair_pares_codigo_sala("2N12(ICC ANF.15) 4N12(ICC ANF.16)") == [
+        ("2N12", "ICC ANF.15"),
+        ("4N12", "ICC ANF.16"),
+    ]
+
+
+def test_extrair_pares_codigo_sala_recusa_texto_truncado_ou_incompleto():
+    """Achado real do Darcy: o SIGAA às vezes trunca o campo ou deixa um
+    segmento sem sala - não arrisca separar parte da informação."""
+    assert _extrair_pares_codigo_sala("2N12(ICC ANF.12) 53N3 35N4(ICC ANF. 6)") is None
+    assert _extrair_pares_codigo_sala("FCTE - I9/I10") is None
+
+
+def test_persistir_turma_com_sala_por_dia_explicita_no_campo_de_sala():
+    """Achado real do Darcy: quando o código já vem casado com a sala no
+    próprio campo (ver `_extrair_pares_codigo_sala`), usa esse pareamento
+    direto, sem precisar adivinhar pela ordem dos dias."""
+    session = _in_memory_session()
+
+    turma_salva = persistir_turma(
+        session,
+        _turma_capturada(
+            horarios=[HorarioCapturado(codigo="24N12", descricao="Segunda e quarta, 19:00 às 20:40")],
+            sala=SalaCapturada(descricao="2N12(ICC ANF.15) 4N12(ICC ANF.16)"),
+        ),
+        unidade="FCTE",
+    )
+    session.commit()
+
+    horarios_por_codigo = {h.codigo: (h.sala.predio, h.sala.nome) for h in turma_salva.horarios}
+    assert horarios_por_codigo == {
+        "2N12": ("ICC", "ANF.15"),
+        "4N12": ("ICC", "ANF.16"),
+    }
 
 
 def test_listar_turmas_nao_repete_horario_gravado_uma_vez_por_sala():
