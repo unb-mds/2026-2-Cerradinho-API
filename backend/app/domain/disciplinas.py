@@ -38,8 +38,17 @@ _PADRAO_DIA_ENTRE_PARENTESES = re.compile(
 # O Darcy usa espaço simples (sem "-" nem "/") entre prédio e sala em vários
 # casos ("PAT AT 125", "ICC ANF.16"). Só reconhece como prédio quando o
 # primeiro token é um desses, confirmados contra turma real do Darcy -
-# outro prefixo desconhecido fica tudo como nome, igual antes.
-_PREDIOS_SEM_SEPARADOR = {"ICC", "PAT", "BSA", "FCTE"}
+# outro prefixo desconhecido fica tudo como nome, igual antes. Valor é
+# (prédio real, prefixo a devolver pro nome) - "BSAS" é "BSA S" (BSA Sul)
+# colado sem espaço nessa unidade, achado real também.
+_PREDIOS_SEM_SEPARADOR: dict[str, tuple[str, str]] = {
+    "ICC": ("ICC", ""),
+    "PAT": ("PAT", ""),
+    "BSA": ("BSA", ""),
+    "FCTE": ("FCTE", ""),
+    "PJC": ("PJC", ""),
+    "BSAS": ("BSA", "S "),
+}
 # "TÉRREO"/"SUBSOLO" são andar, não prédio - o SIGAA às vezes escreve só
 # isso antes da sala (ex. "TÉRREO/SUBSOLO"), e o separador "/" fazia virar
 # prédio errado. Sem saber o prédio de verdade nesses casos, mantém vazio
@@ -51,6 +60,12 @@ _PALAVRAS_DE_ANDAR = {"TERREO", "TÉRREO", "SUBSOLO"}
 # ter mais de um segmento colado com espaço, quando a turma tem aula em
 # turnos diferentes (ex. "35M5 35T1").
 _PADRAO_CODIGO_HORARIO = re.compile(r"^([2-7]+)([MTN])([0-9]+)$")
+# Achado real do Darcy: o SIGAA também junta o código de horário com a sala
+# daquele dia no próprio campo de sala, um par por dia (ex.
+# "2N12(ICC ANF.15) 4N12(ICC ANF.16)" - segunda na ANF.15, quarta na
+# ANF.16). Diferente de `_montar_horarios`, aqui o dia já vem casado com a
+# sala certa, sem precisar adivinhar pela ordem.
+_PADRAO_PAR_CODIGO_SALA = re.compile(r"([2-7]+[MTN][0-9]+)\(([^)]+)\)")
 
 logger = logging.getLogger(__name__)
 
@@ -76,10 +91,23 @@ def normalizar_salas(descricao: str) -> list[tuple[str, str]]:
     else:
         predio = descricao[: match.start()].strip().upper()
         nome_completo = descricao[match.end() :].strip()
+        primeiro_token = predio.split(" ", 1)[0]
+        segundo_token = predio[len(primeiro_token) :].strip().split(" ", 1)[0]
         if predio in _PALAVRAS_DE_ANDAR:
             # "andar" (TÉRREO/SUBSOLO) não é prédio - junta de volta ao nome
             # em vez de gravar um prédio errado.
             predio, nome_completo = "", f"{predio} {nome_completo}".strip()
+        elif predio != primeiro_token and primeiro_token in _PREDIOS_SEM_SEPARADOR and len(segundo_token) <= 2:
+            # achado real do Darcy: o separador que o regex casou tá dentro
+            # do código da sala, não entre prédio e sala (ex. "BSA S B1 34 -
+            # 10", "ICC AT 114 - 092") - distingue de "BSA SUL - A1" (prédio
+            # de verdade, nome completo) pelo token logo depois do prédio
+            # ser curto (sigla de ala/bloco: "S", "N", "AT"), não uma
+            # palavra. O prédio de verdade é só o primeiro token, e o
+            # código da sala fica inteiro, sem cortar no meio.
+            predio_real, prefixo = _PREDIOS_SEM_SEPARADOR[primeiro_token]
+            resto = re.sub(r"^[-/]\s*", "", descricao[len(primeiro_token) :].strip())
+            predio, nome_completo = predio_real, f"{prefixo}{resto}"
     return [(predio, _normalizar_nome_sala(nome)) for nome in _dividir_nome_em_varias_salas(nome_completo)]
 
 
@@ -89,8 +117,10 @@ def _separar_predio_sem_separador(descricao: str) -> tuple[str, str]:
     um prédio conhecido - um prefixo desconhecido fica tudo como nome,
     como antes dessa checagem existir."""
     primeiro_token, _, resto = descricao.partition(" ")
-    if primeiro_token.upper() in _PREDIOS_SEM_SEPARADOR and resto.strip():
-        return primeiro_token.upper(), resto.strip()
+    alias = _PREDIOS_SEM_SEPARADOR.get(primeiro_token.upper())
+    if alias is not None and resto.strip():
+        predio, prefixo = alias
+        return predio, f"{prefixo}{resto.strip()}"
     return "", descricao
 
 
@@ -181,6 +211,34 @@ def _get_ou_cria_salas(session: Session, descricao: str) -> list[Sala]:
     return salas
 
 
+def _extrair_pares_codigo_sala(descricao: str) -> list[tuple[str, str]] | None:
+    """Quando o campo de sala é feito só de pares "código(sala)" colados com
+    espaço, devolve cada par; senão, `None` (ex. texto truncado pelo SIGAA,
+    ou um segmento sem sala junto - achados reais do Darcy). Só aceita
+    quando o texto inteiro é coberto pelos pares, pra não arriscar perder
+    parte da informação de um formato que não bate exatamente."""
+    descricao = descricao.strip()
+    pares = _PADRAO_PAR_CODIGO_SALA.findall(descricao)
+    if not pares:
+        return None
+    reconstruido = " ".join(f"{codigo}({sala})" for codigo, sala in pares)
+    if reconstruido != descricao:
+        return None
+    return pares
+
+
+def _montar_horarios_com_sala_explicita(
+    session: Session, horarios: list[HorarioCapturado], pares_codigo_sala: list[tuple[str, str]]
+) -> list[Horario]:
+    descricao = horarios[0].descricao if horarios else ""
+    novos_horarios = []
+    for codigo, sala_texto in pares_codigo_sala:
+        salas = _get_ou_cria_salas(session, sala_texto)
+        sala_id = salas[0].id if salas else None
+        novos_horarios.append(Horario(codigo=codigo, descricao=descricao, sala_id=sala_id))
+    return novos_horarios
+
+
 def _montar_horarios(horarios: list[HorarioCapturado], salas: list[Sala]) -> list[Horario]:
     """Associa cada horário à sala correspondente. Com uma sala só (o caso
     comum) ou nenhuma, todo horário usa a mesma. Com mais de uma, o SIGAA as
@@ -230,7 +288,8 @@ def persistir_turma(session: Session, turma: TurmaCapturada, unidade: str) -> Tu
     atualizados, nunca virar uma linha duplicada.
     """
     disciplina = _get_ou_cria_disciplina(session, turma.disciplina_codigo, turma.disciplina_nome)
-    salas = _get_ou_cria_salas(session, turma.sala.descricao)
+    pares_codigo_sala = _extrair_pares_codigo_sala(turma.sala.descricao)
+    salas = [] if pares_codigo_sala is not None else _get_ou_cria_salas(session, turma.sala.descricao)
     professores = [_get_ou_cria_professor(session, p.nome) for p in turma.professores]
 
     turma_existente = (
@@ -252,7 +311,10 @@ def persistir_turma(session: Session, turma: TurmaCapturada, unidade: str) -> Tu
     for horario_antigo in list(turma_existente.horarios):
         session.delete(horario_antigo)
     session.flush()
-    turma_existente.horarios = _montar_horarios(turma.horarios, salas)
+    if pares_codigo_sala is not None:
+        turma_existente.horarios = _montar_horarios_com_sala_explicita(session, turma.horarios, pares_codigo_sala)
+    else:
+        turma_existente.horarios = _montar_horarios(turma.horarios, salas)
 
     return turma_existente
 
