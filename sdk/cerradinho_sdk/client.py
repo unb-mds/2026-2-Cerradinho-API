@@ -41,8 +41,6 @@ from ._gerado.models import (
 )
 from ._gerado.types import UNSET
 
-URL_BASE_PADRAO = "https://api.cerradinho.sslip.io"
-
 
 class ProfessorNaoEncontrado(Exception):
     """Nenhum professor com esse id (RF18)."""
@@ -58,9 +56,7 @@ class RespostaInesperada(Exception):
     ainda não conhece (RF12)."""
 
     def __init__(self, status_code: int | None, corpo: object) -> None:
-        super().__init__(
-            f"Resposta inesperada da API (status={status_code}): {corpo!r}"
-        )
+        super().__init__(f"Resposta inesperada da API (status={status_code}): {corpo!r}")
         self.status_code = status_code
         self.corpo = corpo
 
@@ -68,20 +64,17 @@ class RespostaInesperada(Exception):
 class CerradinhoClient:
     """Cliente pra API pública da Cerradinho (`/v1/`, RF10).
 
-    >>> with CerradinhoClient() as cerradinho:
+    >>> with CerradinhoClient("https://api.<ip>.sslip.io") as cerradinho:
     ...     cerradinho.listar_salas_vazias(dia="segunda", horario="14:00")
 
-    `base_url` default aponta pro deploy em produção (ver ADR 0011); passe
-    outro valor pra testar contra um ambiente local, ex.
-    `CerradinhoClient("http://localhost:8000")`.
+    `base_url` é obrigatório e não tem um padrão de produção embutido: o
+    deploy (ADR 0011) usa `https://api.<ip>.sslip.io`, com o IP real da
+    instância (ver `docs/DEPLOY.md`), que muda a cada deploy e ainda não é
+    fixo — um valor fixo aqui resolveria DNS errado silenciosamente.
     """
 
-    def __init__(
-        self, base_url: str = URL_BASE_PADRAO, *, timeout: float = 10.0
-    ) -> None:
-        self._cliente = _ClienteGerado(
-            base_url=base_url, timeout=httpx.Timeout(timeout)
-        )
+    def __init__(self, base_url: str, *, timeout: float = 10.0) -> None:
+        self._cliente = _ClienteGerado(base_url=base_url, timeout=httpx.Timeout(timeout))
 
     def __enter__(self) -> Self:
         self._cliente.__enter__()
@@ -107,9 +100,7 @@ class CerradinhoClient:
         """Docentes do período, com as disciplinas que lecionam (RF04).
 
         `nome` filtra por busca parcial, sem diferenciar acento ou caixa."""
-        resultado = _professores.sync(
-            client=self._cliente, nome=nome if nome is not None else UNSET
-        )
+        resultado = _professores.sync(client=self._cliente, nome=nome if nome is not None else UNSET)
         return resultado if isinstance(resultado, list) else []
 
     def obter_agenda(self, professor_id: int) -> Agenda:
@@ -133,14 +124,10 @@ class CerradinhoClient:
 
         `dia` é um dos nomes de `DiaSemana` ("segunda", "terca", ...); `horario`
         é o início de uma aula, no formato "HH:MM" (ex. "14:00")."""
-        resultado = _salas_vazias.sync(
-            client=self._cliente, dia=DiaSemana(dia), horario=horario
-        )
+        resultado = _salas_vazias.sync(client=self._cliente, dia=DiaSemana(dia), horario=horario)
         return resultado if isinstance(resultado, list) else []
 
-    def obter_cardapio_semana(
-        self, data_inicio: datetime.date | None = None
-    ) -> CardapioSemana:
+    def obter_cardapio_semana(self, data_inicio: datetime.date | None = None) -> CardapioSemana:
         """Cardápio do RU (Darcy) dos 7 dias a partir de `data_inicio` (hoje, se
         omitido), agrupado por dia e refeição, sempre com os 7 dias (RF19)."""
         resultado = _cardapio.sync(

@@ -1,7 +1,7 @@
 """SDK Python pra Cerradinho API (RF13).
 
 >>> from cerradinho_sdk import CerradinhoClient
->>> with CerradinhoClient() as cerradinho:
+>>> with CerradinhoClient("https://api.<ip>.sslip.io") as cerradinho:
 ...     cerradinho.listar_disciplinas()
 """
 

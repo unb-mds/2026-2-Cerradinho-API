@@ -15,7 +15,7 @@ Ainda não publicado no PyPI (ver `specs/RF13-*.md` pra critérios de aceitaçã
 ```python
 from cerradinho_sdk import CerradinhoClient, ProfessorNaoEncontrado
 
-with CerradinhoClient() as cerradinho:
+with CerradinhoClient("https://api.<ip>.sslip.io") as cerradinho:
     turmas = cerradinho.listar_disciplinas()
     salas_vazias = cerradinho.listar_salas_vazias(dia="segunda", horario="14:00")
     cardapio = cerradinho.obter_cardapio_semana()
@@ -26,7 +26,7 @@ with CerradinhoClient() as cerradinho:
         ...
 ```
 
-Por padrão aponta pro deploy em produção. Pra testar contra um ambiente local:
+`base_url` é obrigatório — não tem um padrão de produção embutido (o IP da instância ainda não é fixo, ver `docs/DEPLOY.md`). Pra testar contra um ambiente local:
 
 ```python
 CerradinhoClient("http://localhost:8000")

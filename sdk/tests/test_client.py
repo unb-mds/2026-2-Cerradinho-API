@@ -4,6 +4,7 @@ nunca contra a API em produção, nem contra o backend rodando."""
 import httpx
 import pytest
 import respx
+
 from cerradinho_sdk import CerradinhoClient, ProfessorNaoEncontrado, RespostaInesperada
 
 BASE_URL = "https://api.cerradinho.teste"
@@ -28,9 +29,7 @@ def test_listar_disciplinas(cerradinho):
         "vagas_ofertadas": 40,
         "vagas_ocupadas": 38,
     }
-    respx.get(f"{BASE_URL}/v1/disciplinas").mock(
-        return_value=httpx.Response(200, json=[turma])
-    )
+    respx.get(f"{BASE_URL}/v1/disciplinas").mock(return_value=httpx.Response(200, json=[turma]))
 
     turmas = cerradinho.listar_disciplinas()
 
@@ -42,9 +41,7 @@ def test_listar_disciplinas(cerradinho):
 @respx.mock
 def test_listar_professores_filtra_por_nome(cerradinho):
     rota = respx.get(f"{BASE_URL}/v1/professores").mock(
-        return_value=httpx.Response(
-            200, json=[{"id": 1, "nome": "Ana Souza", "disciplinas": ["FGA0242"]}]
-        )
+        return_value=httpx.Response(200, json=[{"id": 1, "nome": "Ana Souza", "disciplinas": ["FGA0242"]}])
     )
 
     professores = cerradinho.listar_professores(nome="ana")
@@ -75,9 +72,7 @@ def test_obter_agenda(cerradinho):
             }
         ],
     }
-    respx.get(f"{BASE_URL}/v1/professores/12/agenda").mock(
-        return_value=httpx.Response(200, json=agenda)
-    )
+    respx.get(f"{BASE_URL}/v1/professores/12/agenda").mock(return_value=httpx.Response(200, json=agenda))
 
     resposta = cerradinho.obter_agenda(12)
 
@@ -93,9 +88,7 @@ def test_obter_agenda(cerradinho):
 
 @respx.mock
 def test_obter_agenda_professor_inexistente_levanta_erro(cerradinho):
-    respx.get(f"{BASE_URL}/v1/professores/999/agenda").mock(
-        return_value=httpx.Response(404)
-    )
+    respx.get(f"{BASE_URL}/v1/professores/999/agenda").mock(return_value=httpx.Response(404))
 
     with pytest.raises(ProfessorNaoEncontrado):
         cerradinho.obter_agenda(999)
@@ -105,9 +98,7 @@ def test_obter_agenda_professor_inexistente_levanta_erro(cerradinho):
 def test_obter_agenda_resposta_fora_do_contrato_levanta_erro(cerradinho):
     """Status inesperado (não documentado pro endpoint) - ex. uma mudança de
     contrato que esta versão do SDK ainda não conhece (RF12)."""
-    respx.get(f"{BASE_URL}/v1/professores/1/agenda").mock(
-        return_value=httpx.Response(500)
-    )
+    respx.get(f"{BASE_URL}/v1/professores/1/agenda").mock(return_value=httpx.Response(500))
 
     with pytest.raises(RespostaInesperada):
         cerradinho.obter_agenda(1)
@@ -116,9 +107,7 @@ def test_obter_agenda_resposta_fora_do_contrato_levanta_erro(cerradinho):
 @respx.mock
 def test_listar_salas(cerradinho):
     respx.get(f"{BASE_URL}/v1/salas").mock(
-        return_value=httpx.Response(
-            200, json=[{"id": 1, "nome": "I9/I10", "predio": "FCTE"}]
-        )
+        return_value=httpx.Response(200, json=[{"id": 1, "nome": "I9/I10", "predio": "FCTE"}])
     )
 
     salas = cerradinho.listar_salas()
@@ -129,9 +118,7 @@ def test_listar_salas(cerradinho):
 @respx.mock
 def test_listar_salas_vazias(cerradinho):
     rota = respx.get(f"{BASE_URL}/v1/salas/vazias").mock(
-        return_value=httpx.Response(
-            200, json=[{"id": 1, "nome": "MOCAP", "predio": "FCTE"}]
-        )
+        return_value=httpx.Response(200, json=[{"id": 1, "nome": "MOCAP", "predio": "FCTE"}])
     )
 
     vazias = cerradinho.listar_salas_vazias(dia="segunda", horario="14:00")
@@ -175,9 +162,7 @@ def test_obter_cardapio_semana(cerradinho):
             }
         ],
     }
-    respx.get(f"{BASE_URL}/v1/cardapio/semana").mock(
-        return_value=httpx.Response(200, json=semana)
-    )
+    respx.get(f"{BASE_URL}/v1/cardapio/semana").mock(return_value=httpx.Response(200, json=semana))
 
     cardapio = cerradinho.obter_cardapio_semana()
 
@@ -187,9 +172,7 @@ def test_obter_cardapio_semana(cerradinho):
 
 @respx.mock
 def test_listar_execucoes_usa_o_limite_informado(cerradinho):
-    rota = respx.get(f"{BASE_URL}/v1/execucoes").mock(
-        return_value=httpx.Response(200, json=[])
-    )
+    rota = respx.get(f"{BASE_URL}/v1/execucoes").mock(return_value=httpx.Response(200, json=[]))
 
     cerradinho.listar_execucoes(limite=10)
 

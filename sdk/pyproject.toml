@@ -22,6 +22,8 @@ dev = [
     "pytest>=8",
     "respx>=0.21",
     "openapi-python-client>=0.29",
+    "ruff==0.16.7",
+    "bandit==1.9.4",
 ]
 
 [tool.setuptools.packages.find]
