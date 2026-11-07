@@ -4,6 +4,13 @@ API pública que reúne, num só lugar, dados institucionais da UnB hoje espalha
 
 Projeto da disciplina de Métodos de Desenvolvimento de Software (MDS), UnB FCTE, 2026/2.
 
+## Em produção
+
+- Site: [https://3-147-228-104.sslip.io](https://3-147-228-104.sslip.io)
+- API: [https://api.3-147-228-104.sslip.io/v1](https://api.3-147-228-104.sslip.io/docs), com a documentação interativa em [`/docs`](https://api.3-147-228-104.sslip.io/docs)
+
+Como a produção sobe está em [`docs/DEPLOY.md`](docs/DEPLOY.md).
+
 ## Para quem é
 
 - **Estudantes**, que consultam turmas, salas e cardápio pelo site, sem abrir o SIGAA e o site do RU.
