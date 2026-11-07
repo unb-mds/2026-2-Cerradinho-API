@@ -7,6 +7,7 @@ import PageHeader from "@/components/PageHeader";
 import { FilterBar, FilterPills, FilterSelect, SearchInput } from "@/components/Filters";
 import Badge from "@/components/Badge";
 import SeatBar from "@/components/SeatBar";
+import { casaBusca } from "@/lib/busca";
 
 const DIAS = ["Todos", "Seg", "Ter", "Qua", "Qui", "Sex", "Sáb"];
 const HORARIOS = ["Todos", "08:00", "10:00", "12:00", "14:00", "16:00", "18:00", "19:00", "20:50"];
@@ -23,12 +24,7 @@ export default function DisciplinasPage() {
     const matchDepartamento = departamento === "Todos" || d.departamento === departamento;
     const matchDia = dia === "Todos" || d.dias.includes(dia);
     const matchHorario = horario === "Todos" || d.horario.startsWith(horario);
-    const termo = busca.toLowerCase();
-    const matchBusca =
-      busca === "" ||
-      d.nome.toLowerCase().includes(termo) ||
-      d.codigo.toLowerCase().includes(termo) ||
-      d.professor.toLowerCase().includes(termo);
+    const matchBusca = casaBusca(busca, d.nome, d.codigo, d.professor);
     return matchDepartamento && matchDia && matchHorario && matchBusca;
   });
 

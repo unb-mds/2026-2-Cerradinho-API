@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useProfessores } from "@/hooks/useProfessores";
+import { casaBusca } from "@/lib/busca";
 import ApiStatus from "@/components/ApiStatus";
 import PageHeader from "@/components/PageHeader";
 import { FilterBar, FilterSelect, SearchInput } from "@/components/Filters";
@@ -17,9 +18,7 @@ export default function ProfessoresPage() {
 
   const filtrados = professores.filter((p) => {
     const matchDepartamento = departamento === "Todos" || p.unidades.includes(departamento);
-    const termo = busca.toLowerCase();
-    const matchBusca =
-      busca === "" || p.nome.toLowerCase().includes(termo) || p.disciplinas.some((c) => c.toLowerCase().includes(termo));
+    const matchBusca = casaBusca(busca, p.nome, ...p.disciplinas);
     return matchDepartamento && matchBusca;
   });
 
