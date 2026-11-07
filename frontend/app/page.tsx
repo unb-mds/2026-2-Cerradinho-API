@@ -10,6 +10,10 @@ import SeatBar from "@/components/SeatBar";
 import ApiStatus from "@/components/ApiStatus";
 import { BookIcon, BowlIcon, DoorOpenIcon, ChevronRightIcon, UserIcon } from "@/components/Icons";
 
+// A API devolve todas as turmas do período (milhares); renderizar todas aqui
+// travava a página. O dashboard mostra só uma amostra, o resto fica em /disciplinas.
+const AMOSTRA_DISCIPLINAS = 10;
+
 export default function Home() {
   const { disciplinas, loading: carregandoDisciplinas, error: erroDisciplinas } = useDisciplinas();
   const { professores, loading: carregandoProfessores, error: erroProfessores } = useProfessores();
@@ -83,7 +87,7 @@ export default function Home() {
               </tr>
             </thead>
             <tbody>
-              {disciplinas.map((d) => (
+              {disciplinas.slice(0, AMOSTRA_DISCIPLINAS).map((d) => (
                 <tr key={d.codigo + d.turma} className="border-t border-border">
                   <td className="whitespace-nowrap px-4 py-3 font-mono text-xs font-medium text-brand">
                     {d.codigo}
