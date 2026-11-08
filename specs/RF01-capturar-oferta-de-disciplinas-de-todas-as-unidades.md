@@ -9,6 +9,7 @@
 - Sem unidade específica informada, o scraper varre todas as unidades listadas no formulário público do SIGAA, uma a uma.
 - Rodar o scraper duas vezes seguidas para a mesma turma atualiza os dados existentes (vagas, sala, horário), sem criar linha duplicada.
 - Uma unidade que falhar (sessão expirada, erro de rede) não derruba a raspagem das demais unidades.
+- `GET /v1/disciplinas?busca=` filtra por código/nome da disciplina ou nome de professor, sem diferenciar acento/caixa; `?departamento=` filtra pelo prefixo do código (ex. `"FGA"`). Ver RF10 pra paginação e `X-Total-Count`.
 
 **Regra de negócio**
 - A chave natural de uma turma é (disciplina, número, ano/período) — é o que o SIGAA considera uma oferta única; é por essa chave que o upsert decide atualizar em vez de duplicar.
@@ -20,6 +21,6 @@
 
 ## Rastreabilidade
 
-- **PRs:** [#75](https://github.com/unb-mds/2026-2-Cerradinho-API/pull/75), [#81](https://github.com/unb-mds/2026-2-Cerradinho-API/pull/81), [#88](https://github.com/unb-mds/2026-2-Cerradinho-API/pull/88), [#118](https://github.com/unb-mds/2026-2-Cerradinho-API/pull/118)
+- **PRs:** [#75](https://github.com/unb-mds/2026-2-Cerradinho-API/pull/75), [#81](https://github.com/unb-mds/2026-2-Cerradinho-API/pull/81), [#88](https://github.com/unb-mds/2026-2-Cerradinho-API/pull/88), [#118](https://github.com/unb-mds/2026-2-Cerradinho-API/pull/118), [#241](https://github.com/unb-mds/2026-2-Cerradinho-API/pull/241)
 - **Testes:** [`tests/scrapers/test_disciplinas_parser.py`](https://github.com/unb-mds/2026-2-Cerradinho-API/blob/dev/backend/tests/scrapers/test_disciplinas_parser.py), [`tests/domain/test_disciplinas.py`](https://github.com/unb-mds/2026-2-Cerradinho-API/blob/dev/backend/tests/domain/test_disciplinas.py), [`tests/tasks/test_scraping.py`](https://github.com/unb-mds/2026-2-Cerradinho-API/blob/dev/backend/tests/tasks/test_scraping.py), [`tests/integration/test_pipeline_disciplinas_postgres.py`](https://github.com/unb-mds/2026-2-Cerradinho-API/blob/dev/backend/tests/integration/test_pipeline_disciplinas_postgres.py)
 - **Decisões:** [ADR 0002](https://github.com/unb-mds/2026-2-Cerradinho-API/blob/dev/docs/adr/0002-ferramentas-de-scraping.md)

@@ -8,10 +8,14 @@ Mudanças relevantes do Cerradinho, por release. O formato segue o [Keep a Chang
 
 - `docker-compose.prod.yml`, `Caddyfile` e `frontend/Dockerfile` para rodar a produção numa máquina só, com HTTPS automático e só as portas 80 e 443 expostas (RNF06).
 - Agenda semanal do professor em `GET /v1/professores/{id}/agenda`, com o horário decomposto em dia/início/fim e a sala de cada bloco (RF18, #50).
+- `GET /v1/resumo`, com as contagens de turmas, disciplinas, professores e salas, sem a lista inteira de cada domínio (RF20).
+- Paginação (`limite`/`offset`, com `X-Total-Count`) em `GET /v1/disciplinas` e `GET /v1/professores`, e busca/filtro (`busca`, `departamento`) em `GET /v1/disciplinas` (RF01, RF04, RF10). Sem parâmetro, continua devolvendo tudo como antes.
+- Estrutura inicial do SDK Python (`sdk/`), cliente HTTP gerado a partir do OpenAPI do backend, com uma interface ergonômica por cima (RF13).
 
 ### Corrigido
 
 - Grade noturna de horário (RF17/RF18) com os horários errados e faltando a N4; agora confirmada contra turma real (aulas de 50 min, não 55, com 5 min de intervalo entre T6 e N1).
+- Sala do Darcy com o código de horário embutido no próprio campo de sala (ex. `"2N12(ICC ANF.15) 4N12(ICC ANF.16)"`), que antes virava uma sala só sem separar os prédios/salas; e prédio cortado errado quando o separador caía dentro do código da sala (`"BSA S B1 34 - 10"`, `"ICC AT 114 - 092"`) em vez de entre prédio e sala (RF05).
 
 ### Alterado
 
