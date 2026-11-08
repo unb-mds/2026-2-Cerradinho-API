@@ -4,6 +4,8 @@ import ApiStatus from "@/components/ApiStatus";
 import PageHeader from "@/components/PageHeader";
 import { FilterBar, FilterPills, FilterSelect } from "@/components/Filters";
 import { useSalasVazias, HORARIOS } from "@/hooks/useSalasVazias";
+import { useMostrarMais } from "@/hooks/useMostrarMais";
+import MostrarMais from "@/components/MostrarMais";
 
 export const DIAS: Record<string, string> = {
     Segunda: "segunda",
@@ -17,6 +19,7 @@ export const DIAS: Record<string, string> = {
 
 export default function SalasVaziasPage() {
     const { salas, loading, error, dia, horario, setDia, setHorario } = useSalasVazias();
+    const { visiveis, restantes, mostrarMais } = useMostrarMais(salas, `${dia}|${horario}`);
     const rotuloDia = Object.keys(DIAS).find((rotulo) => DIAS[rotulo] === dia) ?? "Segunda";
 
 
@@ -51,7 +54,7 @@ export default function SalasVaziasPage() {
                             {loading || error ? "" : "Nenhuma sala vazia nesse horário."}
                         </li>
                     ) : (
-                        salas.map((s) => (
+                        visiveis.map((s) => (
                             <li key={s.id} className="flex items-center justify-between gap-3 px-4 py-3">
                                 <span className="font-mono text-sm font-semibold text-brand">{s.nome}</span>
                                 <span className="text-sm text-foreground">{s.predio || "-"}</span>
@@ -75,7 +78,7 @@ export default function SalasVaziasPage() {
                                     </td>
                                 </tr>
                             ) : (
-                                salas.map((s) => (
+                                visiveis.map((s) => (
                                     <tr key={s.id} className="border-t border-border">
                                         <td className="whitespace-nowrap px-4 py-3.5 font-mono text-sm font-semibold text-brand">
                                             {s.nome}
@@ -87,6 +90,7 @@ export default function SalasVaziasPage() {
                         </tbody>
                     </table>
                 </div>
+                <MostrarMais restantes={restantes} onClick={mostrarMais} />
             </div>
         </main>
     );

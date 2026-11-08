@@ -9,6 +9,19 @@ import SwaggerViewer from "./SwaggerViewer";
 const REPO_URL = "https://github.com/unb-mds/2026-2-Cerradinho-API";
 const DOCS_URL = `${REPO_URL}/tree/main/docs`;
 
+// O SDK ainda não está no PyPI nem na main: instala direto da pasta sdk/ da
+// dev. Quando a release 2 entrar na main, trocar pra "main".
+const BRANCH_SDK = "dev";
+const SDK_URL = `${REPO_URL}/tree/${BRANCH_SDK}/sdk`;
+const SDK_INSTALACAO = `pip install "git+${REPO_URL}.git@${BRANCH_SDK}#subdirectory=sdk"`;
+
+// O SDK recebe a URL sem o /v1 (ele monta os caminhos de /v1/ sozinho).
+const SDK_EXEMPLO = `from cerradinho_sdk import CerradinhoClient
+
+with CerradinhoClient("${API_URL.replace(/\/v1$/, "")}") as cerradinho:
+    salas = cerradinho.listar_salas_vazias(dia="segunda", horario="08:00")
+    cardapio = cerradinho.obter_cardapio_semana()`;
+
 // Espelha os routers de backend/app/routers. Ao criar/mudar rota lá, atualizar aqui.
 const ENDPOINTS = [
   {
@@ -37,6 +50,11 @@ const ENDPOINTS = [
   {
     caminho: "/execucoes",
     descricao: "Histórico das coletas automáticas dos dados",
+  },
+  {
+    caminho: "/resumo",
+    descricao:
+      "Totais de turmas, disciplinas, professores e salas, sem baixar as listas",
   },
 ];
 
@@ -149,22 +167,26 @@ function Tabela({
 function CartaoFerramenta({
   titulo,
   descricao,
-  comando,
+  emBreve = false,
+  link,
+  children,
 }: {
   titulo: string;
   descricao: string;
-  comando: string;
+  emBreve?: boolean;
+  link: string;
+  children: ReactNode;
 }) {
   return (
-    <div className="flex flex-1 flex-col gap-3 rounded-xl border border-border bg-surface p-6">
+    <div className="flex min-w-0 flex-1 flex-col gap-3 rounded-xl border border-border bg-surface p-6">
       <div className="flex items-center gap-2">
         <h3 className="text-lg font-bold text-foreground">{titulo}</h3>
-        <Badge>em breve</Badge>
+        {emBreve && <Badge>em breve</Badge>}
       </div>
       <p className="text-sm text-muted">{descricao}</p>
-      <CodeBlock code={comando} />
+      {children}
       <a
-        href={REPO_URL}
+        href={link}
         target="_blank"
         rel="noreferrer"
         className="text-sm font-semibold text-foreground underline underline-offset-2 hover:text-brand"
@@ -307,14 +329,20 @@ export default function PortalDesenvolvedorPage() {
           <div className="flex flex-col gap-6 md:flex-row">
             <CartaoFerramenta
               titulo="SDK"
-              descricao="Biblioteca Python para usar a API direto no seu código."
-              comando="pip install <nome-do-sdk>"
-            />
+              descricao="Biblioteca Python (3.11+) para usar a API direto no seu código, com os mesmos tipos que a API devolve."
+              link={SDK_URL}
+            >
+              <CodeBlock code={SDK_INSTALACAO} />
+              <CodeBlock code={SDK_EXEMPLO} />
+            </CartaoFerramenta>
             <CartaoFerramenta
               titulo="CLI"
-              descricao="Consulte a API pelo terminal."
-              comando="<comando-cli> salas vazias --dia segunda --horario 08:00"
-            />
+              descricao="Consulte a API pelo terminal, em cima do SDK."
+              emBreve
+              link={REPO_URL}
+            >
+              <CodeBlock code="<comando-cli> salas vazias --dia segunda --horario 08:00" />
+            </CartaoFerramenta>
           </div>
         </Secao>
       </main>

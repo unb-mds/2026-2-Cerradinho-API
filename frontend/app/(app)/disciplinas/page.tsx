@@ -9,6 +9,8 @@ import Badge from "@/components/Badge";
 import SeatBar from "@/components/SeatBar";
 import DisciplinaCard from "@/components/DisciplinaCard";
 import { casaBusca } from "@/lib/busca";
+import { useMostrarMais } from "@/hooks/useMostrarMais";
+import MostrarMais from "@/components/MostrarMais";
 
 const DIAS = ["Todos", "Seg", "Ter", "Qua", "Qui", "Sex", "Sáb"];
 const HORARIOS = ["Todos", "08:00", "10:00", "12:00", "14:00", "16:00", "18:00", "19:00", "20:50"];
@@ -28,6 +30,8 @@ export default function DisciplinasPage() {
     const matchBusca = casaBusca(busca, d.nome, d.codigo, d.professor);
     return matchDepartamento && matchDia && matchHorario && matchBusca;
   });
+
+  const { visiveis, restantes, mostrarMais } = useMostrarMais(filtradas, [departamento, dia, horario, busca].join("|"));
 
   const hasFilters = departamento !== "Todos" || dia !== "Todos" || horario !== "Todos" || busca !== "";
   const limparFiltros = () => {
@@ -59,7 +63,7 @@ export default function DisciplinasPage() {
               {loading || error ? "" : "Nenhuma disciplina encontrada."}
             </li>
           ) : (
-            filtradas.map((d) => (
+            visiveis.map((d) => (
               <li key={d.codigo + d.turma}>
                 <DisciplinaCard disciplina={d} mostrarStatus />
               </li>
@@ -88,7 +92,7 @@ export default function DisciplinasPage() {
                   </td>
                 </tr>
               ) : (
-                filtradas.map((d) => {
+                visiveis.map((d) => {
                   const lotada = d.vagasOcupadas >= d.vagas;
                   return (
                     <tr key={d.codigo + d.turma} className="border-t border-border">
@@ -122,6 +126,7 @@ export default function DisciplinasPage() {
             </tbody>
           </table>
         </div>
+        <MostrarMais restantes={restantes} onClick={mostrarMais} />
       </div>
     </main>
   );

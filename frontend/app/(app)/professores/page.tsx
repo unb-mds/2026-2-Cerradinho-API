@@ -3,6 +3,8 @@
 import { useState } from "react";
 import { useProfessores } from "@/hooks/useProfessores";
 import { casaBusca } from "@/lib/busca";
+import { useMostrarMais } from "@/hooks/useMostrarMais";
+import MostrarMais from "@/components/MostrarMais";
 import ApiStatus from "@/components/ApiStatus";
 import PageHeader from "@/components/PageHeader";
 import { FilterBar, FilterSelect, SearchInput } from "@/components/Filters";
@@ -21,6 +23,8 @@ export default function ProfessoresPage() {
     const matchBusca = casaBusca(busca, p.nome, ...p.disciplinas);
     return matchDepartamento && matchBusca;
   });
+
+  const { visiveis, restantes, mostrarMais } = useMostrarMais(filtrados, [departamento, busca].join("|"));
 
   const hasFilters = departamento !== "Todos" || busca !== "";
   const limparFiltros = () => {
@@ -48,7 +52,7 @@ export default function ProfessoresPage() {
               {loading || error ? "" : "Nenhum professor encontrado."}
             </li>
           ) : (
-            filtrados.map((p) => (
+            visiveis.map((p) => (
               <li key={p.id} className="flex flex-col gap-2.5 px-4 py-3.5">
                 <div className="flex items-center gap-3">
                   <ProfessorAvatar nome={p.nome} />
@@ -87,7 +91,7 @@ export default function ProfessoresPage() {
                   </td>
                 </tr>
               ) : (
-                filtrados.map((p) => (
+                visiveis.map((p) => (
                   <tr key={p.id} className="border-t border-border">
                     <td className="px-4 py-3.5">
                       <div className="flex items-center gap-3">
@@ -122,6 +126,7 @@ export default function ProfessoresPage() {
             </tbody>
           </table>
         </div>
+        <MostrarMais restantes={restantes} onClick={mostrarMais} />
       </div>
     </main>
   );
