@@ -174,3 +174,52 @@ def test_obter_agenda_turma_com_sala_por_dia_mostra_a_sala_certa_em_cada_bloco(c
     blocos = response.json()["turmas"][0]["horarios"]
     salas_por_dia = {b["dia"]: b["sala"]["nome"] for b in blocos}
     assert salas_por_dia == {"segunda": "S1", "quarta": "MOCAP"}
+
+
+def test_listar_professores_sem_parametro_devolve_tudo_sem_x_total_count(client, db_session):
+    """Sem limite/offset/nome, continua devolvendo tudo como antes - não
+    quebra quem já consome a rota sem esses parâmetros novos."""
+    persistir_turma(
+        db_session,
+        _turma_capturada(professores=[Professor(nome="Ana Souza"), Professor(nome="Bruno Lima")]),
+        unidade="FCTE",
+    )
+    db_session.commit()
+
+    response = client.get("/v1/professores")
+
+    assert len(response.json()) == 2
+    assert "X-Total-Count" not in response.headers
+
+
+def test_listar_professores_limite_e_offset_paginam_com_total_no_cabecalho(client, db_session):
+    persistir_turma(
+        db_session,
+        _turma_capturada(
+            professores=[Professor(nome="Ana Souza"), Professor(nome="Bruno Lima"), Professor(nome="Carlos Dias")]
+        ),
+        unidade="FCTE",
+    )
+    db_session.commit()
+
+    primeira_pagina = client.get("/v1/professores", params={"limite": 2, "offset": 0})
+    segunda_pagina = client.get("/v1/professores", params={"limite": 2, "offset": 2})
+
+    assert [p["nome"] for p in primeira_pagina.json()] == ["Ana Souza", "Bruno Lima"]
+    assert primeira_pagina.headers["X-Total-Count"] == "3"
+    assert [p["nome"] for p in segunda_pagina.json()] == ["Carlos Dias"]
+    assert segunda_pagina.headers["X-Total-Count"] == "3"
+
+
+def test_listar_professores_total_no_cabecalho_reflete_o_filtro_por_nome(client, db_session):
+    persistir_turma(
+        db_session,
+        _turma_capturada(professores=[Professor(nome="Ana Souza"), Professor(nome="Ana Lima")]),
+        unidade="FCTE",
+    )
+    db_session.commit()
+
+    response = client.get("/v1/professores", params={"nome": "ana", "limite": 1})
+
+    assert len(response.json()) == 1
+    assert response.headers["X-Total-Count"] == "2"

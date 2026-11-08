@@ -16,6 +16,7 @@ from collections import defaultdict
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import Session
 
+from app.core.busca import normalizar_busca
 from app.models import Disciplina, Horario, Professor, Sala, Turma
 from app.schemas.disciplina import Horario as HorarioCapturado
 from app.schemas.disciplina import Professor as ProfessorCapturado
@@ -452,3 +453,57 @@ def _turma_para_contrato(turma: Turma) -> TurmaCapturada:
 
 def listar_turmas(session: Session) -> list[TurmaCapturada]:
     return [_turma_para_contrato(turma) for turma in session.query(Turma).all()]
+
+
+_PADRAO_DEPARTAMENTO = re.compile(r"^[A-Za-zÀ-ÿ]+")
+
+
+def _departamento_do_codigo(disciplina_codigo: str) -> str:
+    """"FGA0242" -> "FGA" - as letras antes do primeiro dígito, mesma regra
+    que o frontend já usa (`useDisciplinas.ts`, `extrairDepartamento`)."""
+    match = _PADRAO_DEPARTAMENTO.match(disciplina_codigo)
+    return match.group().upper() if match else disciplina_codigo.upper()
+
+
+def listar_turmas_filtradas(
+    session: Session,
+    *,
+    busca: str | None = None,
+    departamento: str | None = None,
+    limite: int | None = None,
+    offset: int = 0,
+) -> tuple[list[TurmaCapturada], int]:
+    """Como `listar_turmas`, com filtro e paginação (RF01).
+
+    `busca` casa palavra a palavra, normalizada (sem acento/caixa), contra
+    o código e o nome da disciplina e o nome de qualquer professor da
+    turma - mesma convenção de busca do RF04. `departamento` casa contra o
+    prefixo de letras do código da disciplina. Filtra em Python, não em
+    SQL, pela mesma razão de `app.domain.professores.listar_professores`
+    (acento/caixa não são portáveis entre SQLite e Postgres sem extensão).
+
+    Devolve (página, total) - `total` é a contagem depois do filtro, antes
+    de `limite`/`offset`, pro cabeçalho `X-Total-Count`."""
+    turmas = [_turma_para_contrato(turma) for turma in session.query(Turma).all()]
+
+    if departamento:
+        departamento_norm = departamento.strip().upper()
+        turmas = [t for t in turmas if _departamento_do_codigo(t.disciplina_codigo) == departamento_norm]
+
+    if busca:
+        termos = normalizar_busca(busca).split()
+
+        def bate_na_busca(turma: TurmaCapturada) -> bool:
+            campo = normalizar_busca(
+                " ".join([turma.disciplina_codigo, turma.disciplina_nome, *(p.nome for p in turma.professores)])
+            )
+            return all(termo in campo for termo in termos)
+
+        turmas = [t for t in turmas if bate_na_busca(t)]
+
+    total = len(turmas)
+    if limite is not None:
+        turmas = turmas[offset : offset + limite]
+    elif offset:
+        turmas = turmas[offset:]
+    return turmas, total
