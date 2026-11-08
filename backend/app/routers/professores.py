@@ -26,7 +26,7 @@ router = APIRouter(prefix="/professores", tags=["professores"])
 def listar_docentes(
     response: Response,
     nome: str | None = Query(default=None, description="Busca parcial por nome, normalizada"),
-    limite: int | None = Query(default=None, ge=1, le=1000, description="Máximo de docentes a devolver"),
+    limite: int = Query(default=None, ge=1, le=1000, description="Máximo de docentes a devolver"),
     offset: int = Query(default=0, ge=0, description="Quantos docentes pular, pra paginar"),
     db: Session = Depends(get_db),
 ) -> list[Docente] | Response:

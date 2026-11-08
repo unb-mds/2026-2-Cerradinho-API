@@ -26,7 +26,7 @@ def listar_disciplinas(
     response: Response,
     busca: str | None = Query(default=None, description="Busca parcial por código, disciplina ou professor"),
     departamento: str | None = Query(default=None, description='Prefixo do código da disciplina, ex. "FGA"'),
-    limite: int | None = Query(default=None, ge=1, le=1000, description="Máximo de turmas a devolver"),
+    limite: int = Query(default=None, ge=1, le=1000, description="Máximo de turmas a devolver"),
     offset: int = Query(default=0, ge=0, description="Quantas turmas pular, pra paginar"),
     db: Session = Depends(get_db),
 ) -> list[Turma] | Response:
