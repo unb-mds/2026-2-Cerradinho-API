@@ -17,17 +17,24 @@ router = APIRouter(prefix="/professores", tags=["professores"])
     description=(
         "Lista os docentes que dão aula no período, em ordem alfabética, com os códigos "
         "das disciplinas de cada um. Aceita busca parcial por nome em `nome`, sem diferenciar "
-        "maiúsculas/minúsculas ou acentos. Os dados vêm das turmas do SIGAA público, "
+        "maiúsculas/minúsculas ou acentos, e paginação com `limite`/`offset` (o total depois "
+        "do filtro de nome vem no cabeçalho `X-Total-Count`). Sem nenhum parâmetro, devolve "
+        "todos os docentes, como sempre. Os dados vêm das turmas do SIGAA público, "
         "atualizadas semanalmente, aos domingos."
     ),
 )
 def listar_docentes(
+    response: Response,
     nome: str | None = Query(default=None, description="Busca parcial por nome, normalizada"),
+    limite: int = Query(default=None, ge=1, le=1000, description="Máximo de docentes a devolver"),
+    offset: int = Query(default=0, ge=0, description="Quantos docentes pular, pra paginar"),
     db: Session = Depends(get_db),
 ) -> list[Docente] | Response:
-    if nome:
-        return listar_professores(db, nome)
-    return resposta_cacheada("cache:v1:professores", TTL_SEMANAL, lambda: listar_professores(db), list[Docente])
+    if nome or limite is not None or offset:
+        docentes, total = listar_professores(db, nome, limite=limite, offset=offset)
+        response.headers["X-Total-Count"] = str(total)
+        return docentes
+    return resposta_cacheada("cache:v1:professores", TTL_SEMANAL, lambda: listar_professores(db)[0], list[Docente])
 
 
 @router.get(

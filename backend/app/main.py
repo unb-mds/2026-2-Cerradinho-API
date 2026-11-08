@@ -6,7 +6,7 @@ from slowapi.middleware import SlowAPIASGIMiddleware
 
 from app.core.config import settings
 from app.core.rate_limit import limiter
-from app.routers import cardapio, disciplinas, execucoes, professores, salas, saude
+from app.routers import cardapio, disciplinas, execucoes, professores, resumo, salas, saude
 
 DESCRICAO = """
 API pública que reúne dados institucionais da UnB hoje espalhados em vários sistemas:
@@ -27,6 +27,7 @@ TAGS = [
     {"name": "cardapio", "description": "Cardápio do Restaurante Universitário (campus Darcy Ribeiro)."},
     {"name": "professores", "description": "Docentes que dão aula no período e as disciplinas de cada um."},
     {"name": "salas", "description": "Salas e prédios onde há aula, derivados das turmas do SIGAA."},
+    {"name": "resumo", "description": "Contagens agregadas, sem baixar a lista inteira de cada domínio."},
 ]
 
 app = FastAPI(title="Cerradinho API", version="1.0.0", description=DESCRICAO, openapi_tags=TAGS)
@@ -47,4 +48,5 @@ app.include_router(cardapio.router, prefix="/v1")
 app.include_router(professores.router, prefix="/v1")
 app.include_router(salas.router, prefix="/v1")
 app.include_router(execucoes.router, prefix="/v1")
+app.include_router(resumo.router, prefix="/v1")
 app.include_router(saude.router)

@@ -35,6 +35,7 @@ O objetivo do produto, as fontes de dados e o contexto estão no [`docs/REQUISIT
 | [RF17 · Calcular salas vazias por dia e horário](RF17-calcular-salas-vazias-por-dia-e-horario.md) | R2 | Vitor | [#53](https://github.com/unb-mds/2026-2-Cerradinho-API/issues/53) |
 | [RF18 · Listar agenda de turmas por professor](RF18-listar-agenda-de-turmas-por-professor.md) | R2 | Vitor | [#50](https://github.com/unb-mds/2026-2-Cerradinho-API/issues/50) |
 | [RF19 · Agrupar cardápio semanal](RF19-agrupar-cardapio-semanal.md) | R2 | Gabriel | [#51](https://github.com/unb-mds/2026-2-Cerradinho-API/issues/51) |
+| [RF20 · Resumir contagens agregadas](RF20-resumir-contagens-agregadas.md) | R2 | Vitor | pendente |
 
 As features derivadas (RF17 a RF19) são calculadas em cima do que RF01 a RF07 já capturam, sem fonte nem scraper próprio.
 
