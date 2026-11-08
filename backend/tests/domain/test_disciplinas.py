@@ -229,6 +229,104 @@ def test_persistir_turma_com_sala_por_dia_explicita_no_campo_de_sala():
     }
 
 
+def test_persistir_turma_com_sala_por_dia_explicita_cada_horario_tem_sua_descricao():
+    """Achado da revisão do Gabriel: cada par código(sala) herda a
+    descrição do horário real que ele representa, não sempre a do
+    primeiro horário capturado."""
+    session = _in_memory_session()
+
+    turma_salva = persistir_turma(
+        session,
+        _turma_capturada(
+            horarios=[
+                HorarioCapturado(codigo="2N12", descricao="Segunda 19:00 às 20:40"),
+                HorarioCapturado(codigo="4N12", descricao="Quarta 19:00 às 20:40"),
+            ],
+            sala=SalaCapturada(descricao="2N12(ICC ANF.15) 4N12(ICC ANF.16)"),
+        ),
+        unidade="FCTE",
+    )
+    session.commit()
+
+    descricoes_por_codigo = {h.codigo: h.descricao for h in turma_salva.horarios}
+    assert descricoes_por_codigo == {
+        "2N12": "Segunda 19:00 às 20:40",
+        "4N12": "Quarta 19:00 às 20:40",
+    }
+
+
+def test_persistir_turma_com_sala_por_dia_explicita_nao_descarta_aula_nao_coberta():
+    """Achado da revisão do Gabriel: se o campo de sala não cobre todos os
+    horários reais da turma (código divergente ou aula faltando), não usa
+    o formato explícito - senão a aula não coberta desaparecia."""
+    session = _in_memory_session()
+
+    turma_salva = persistir_turma(
+        session,
+        _turma_capturada(
+            horarios=[HorarioCapturado(codigo="24N12 6T23", descricao="Segunda, quarta e sexta")],
+            # só cobre "24N12" - "6T23" não aparece em nenhum par
+            sala=SalaCapturada(descricao="2N12(ICC ANF.15) 4N12(ICC ANF.16)"),
+        ),
+        unidade="FCTE",
+    )
+    session.commit()
+
+    assert [h.codigo for h in turma_salva.horarios] == ["24N12 6T23"]
+
+
+def test_persistir_turma_com_sala_por_dia_explicita_nao_descarta_sala_extra_no_mesmo_par():
+    """Achado da revisão do Gabriel: se o texto dentro do parêntese junta
+    mais de uma sala (ex. "FCTE - S1 / MOCAP"), nenhuma pode ser
+    descartada - uma linha de horário por sala, todas com o mesmo código."""
+    session = _in_memory_session()
+
+    turma_salva = persistir_turma(
+        session,
+        _turma_capturada(
+            horarios=[HorarioCapturado(codigo="2N12", descricao="Segunda 19:00 às 20:40")],
+            sala=SalaCapturada(descricao="2N12(FCTE - S1 / MOCAP)"),
+        ),
+        unidade="FCTE",
+    )
+    session.commit()
+
+    assert {(h.codigo, h.sala.nome) for h in turma_salva.horarios} == {
+        ("2N12", "S1"),
+        ("2N12", "MOCAP"),
+    }
+
+
+def test_listar_turmas_com_sala_por_dia_de_predios_diferentes_mostra_cada_predio():
+    """Achado da revisão do Gabriel: `_descricao_salas` não pode colocar
+    salas de prédios diferentes todas sob o prédio da primeira."""
+    session = _in_memory_session()
+
+    persistir_turma(
+        session,
+        _turma_capturada(
+            horarios=[
+                HorarioCapturado(codigo="2N12", descricao="Segunda 19:00 às 20:40"),
+                HorarioCapturado(codigo="4N12", descricao="Quarta 19:00 às 20:40"),
+            ],
+            sala=SalaCapturada(descricao="2N12(ICC ANF.15) 4N12(BSA S B1 34)"),
+        ),
+        unidade="FCTE",
+    )
+    session.commit()
+
+    turma = listar_turmas(session)[0]
+    assert turma.sala.descricao == "ICC - ANF.15 / BSA - S B1 34"
+
+
+def test_normalizar_sala_bsas_com_separador_tambem_funde_com_bsa_s():
+    """Achado da revisão do Gabriel: o alias "BSAS"->"BSA S" só funcionava
+    sem separador - "BSAS - B2 28/14" e "BSAS/B2" continuavam como prédio
+    "BSAS", recriando a duplicidade que o alias queria evitar."""
+    assert normalizar_sala("BSAS - B2 28/14") == ("BSA", "S B2 28/14")
+    assert normalizar_sala("BSAS/B2") == ("BSA", "S B2")
+
+
 def test_listar_turmas_nao_repete_horario_gravado_uma_vez_por_sala():
     """O horário gravado uma vez para cada sala (caso acima) aparece uma vez
     só em GET /v1/disciplinas."""

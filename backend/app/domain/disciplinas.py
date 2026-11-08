@@ -97,7 +97,13 @@ def normalizar_salas(descricao: str) -> list[tuple[str, str]]:
             # "andar" (TÉRREO/SUBSOLO) não é prédio - junta de volta ao nome
             # em vez de gravar um prédio errado.
             predio, nome_completo = "", f"{predio} {nome_completo}".strip()
-        elif predio != primeiro_token and primeiro_token in _PREDIOS_SEM_SEPARADOR and len(segundo_token) <= 2:
+        elif predio in _PREDIOS_SEM_SEPARADOR:
+            # o candidato a prédio já é exatamente um alias conhecido (ex.
+            # "BSAS - B2 28/14", "BSAS/B2") - sem isso, "BSAS" com separador
+            # não fundia com "BSA S" (achado da revisão do Gabriel).
+            predio_real, prefixo = _PREDIOS_SEM_SEPARADOR[predio]
+            predio, nome_completo = predio_real, f"{prefixo}{nome_completo}"
+        elif primeiro_token in _PREDIOS_SEM_SEPARADOR and len(segundo_token) <= 2:
             # achado real do Darcy: o separador que o regex casou tá dentro
             # do código da sala, não entre prédio e sala (ex. "BSA S B1 34 -
             # 10", "ICC AT 114 - 092") - distingue de "BSA SUL - A1" (prédio
@@ -227,15 +233,56 @@ def _extrair_pares_codigo_sala(descricao: str) -> list[tuple[str, str]] | None:
     return pares
 
 
+def _atomos_do_codigo(codigo: str) -> set[tuple[str, str, str]]:
+    """Achata um código em átomos (dia, turno, aula) individuais, pra
+    comparar cobertura sem depender de como os segmentos foram agrupados."""
+    atomos = set()
+    for dias, turno, aulas in decompor_codigo_horario(codigo):
+        for dia in dias:
+            for aula in aulas:
+                atomos.add((dia, turno, aula))
+    return atomos
+
+
+def _pares_cobrem_horarios(pares_codigo_sala: list[tuple[str, str]], horarios: list[HorarioCapturado]) -> bool:
+    """Confere se os pares código(sala) do campo de sala cobrem exatamente
+    os mesmos dia+turno+aula dos horários reais da turma - sem isso, uma
+    aula que não aparece no campo de sala (ou um código divergente entre os
+    dois campos) desapareceria da turma em vez de só não ter sala."""
+    atomos_esperados = {atomo for h in horarios for atomo in _atomos_do_codigo(h.codigo)}
+    atomos_cobertos = {atomo for codigo, _ in pares_codigo_sala for atomo in _atomos_do_codigo(codigo)}
+    return atomos_esperados == atomos_cobertos
+
+
+def _descricao_do_codigo(horarios: list[HorarioCapturado], codigo: str) -> str:
+    """Acha, entre os horários reais da turma, a descrição de quem contém
+    o átomo desse código - pra cada par código(sala) herdar a descrição do
+    horário que ele representa, não sempre a do primeiro horário."""
+    atomos_do_par = _atomos_do_codigo(codigo)
+    if not atomos_do_par:
+        return ""
+    for horario in horarios:
+        if _atomos_do_codigo(horario.codigo) & atomos_do_par:
+            return horario.descricao
+    return ""
+
+
 def _montar_horarios_com_sala_explicita(
     session: Session, horarios: list[HorarioCapturado], pares_codigo_sala: list[tuple[str, str]]
 ) -> list[Horario]:
-    descricao = horarios[0].descricao if horarios else ""
     novos_horarios = []
     for codigo, sala_texto in pares_codigo_sala:
+        descricao = _descricao_do_codigo(horarios, codigo)
         salas = _get_ou_cria_salas(session, sala_texto)
-        sala_id = salas[0].id if salas else None
-        novos_horarios.append(Horario(codigo=codigo, descricao=descricao, sala_id=sala_id))
+        if not salas:
+            novos_horarios.append(Horario(codigo=codigo, descricao=descricao, sala_id=None))
+            continue
+        # normalmente uma sala só por par - se o texto dentro do parêntese
+        # também junta mais de uma (achado possível, não visto ainda em
+        # produção), nenhuma pode ser descartada: uma linha por sala, todas
+        # com o mesmo código.
+        for sala in salas:
+            novos_horarios.append(Horario(codigo=codigo, descricao=descricao, sala_id=sala.id))
     return novos_horarios
 
 
@@ -289,6 +336,18 @@ def persistir_turma(session: Session, turma: TurmaCapturada, unidade: str) -> Tu
     """
     disciplina = _get_ou_cria_disciplina(session, turma.disciplina_codigo, turma.disciplina_nome)
     pares_codigo_sala = _extrair_pares_codigo_sala(turma.sala.descricao)
+    if pares_codigo_sala is not None and not _pares_cobrem_horarios(pares_codigo_sala, turma.horarios):
+        # os pares do campo de sala não cobrem exatamente os horários reais
+        # da turma (ex. uma aula que só aparece em `turma.horarios`, ou um
+        # código divergente entre os dois campos) - não confia no formato
+        # explícito, pra não perder parte da aula.
+        logger.warning(
+            "Pares código(sala) não cobrem os horários da turma %s/%s - ignorando o formato explícito: %r",
+            turma.disciplina_codigo,
+            turma.numero,
+            turma.sala.descricao,
+        )
+        pares_codigo_sala = None
     salas = [] if pares_codigo_sala is not None else _get_ou_cria_salas(session, turma.sala.descricao)
     professores = [_get_ou_cria_professor(session, p.nome) for p in turma.professores]
 
@@ -352,9 +411,15 @@ def _descricao_salas(turma: Turma) -> str:
 
     if not salas_na_ordem:
         return ""
-    nomes = " / ".join(sala.nome for sala in salas_na_ordem)
-    predio = salas_na_ordem[0].predio
-    return f"{predio} - {nomes}" if predio else nomes
+    predios = {sala.predio for sala in salas_na_ordem}
+    if len(predios) <= 1:
+        nomes = " / ".join(sala.nome for sala in salas_na_ordem)
+        predio = salas_na_ordem[0].predio
+        return f"{predio} - {nomes}" if predio else nomes
+    # prédios diferentes (ex. sala do Darcy com código embutido em dias de
+    # prédios distintos) - cada sala leva o seu, não dá pra assumir todas
+    # do prédio da primeira.
+    return " / ".join(f"{sala.predio} - {sala.nome}" if sala.predio else sala.nome for sala in salas_na_ordem)
 
 
 def _horarios_sem_repeticao(turma: Turma) -> list[HorarioCapturado]:
