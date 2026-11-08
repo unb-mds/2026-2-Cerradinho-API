@@ -1,6 +1,6 @@
 import { chaveDoBloco, type BlocoDaGrade } from "@/hooks/useAgendaProfessor";
 import { minutosDoInicio } from "@/hooks/useSalasVazias";
-import { DIAS } from "@/app/salas/vazias/page";
+import { DIAS } from "@/app/(app)/salas/vazias/page";
 
 const HORAS = [8, 10, 12, 14, 16, 18, 20, 22];
 const ALTURA_LINHA = 78; // altura em px de cada faixa de 2 horas
