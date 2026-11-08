@@ -19,7 +19,7 @@ export default function AgendaProfessorPage() {
     const semHorario = agenda ? turmasSemHorario(agenda) : [];
 
     return (
-        <main className="flex flex-1 flex-col px-10 py-9">
+        <main className="flex flex-1 flex-col px-4 md:px-10 py-9">
             <Link href="/professores"
                 className="self-start rounded-lg border border-border bg-surface px-3.5 py-2 text-sm font-semibold text-brand transition-colors hover:bg-background"
             >

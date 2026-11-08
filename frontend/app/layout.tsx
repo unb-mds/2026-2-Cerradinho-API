@@ -25,9 +25,10 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       lang="pt-Br"
       className={`${dmSans.variable} ${dmMono.variable} h-full antialiased`}
     >
-      <body className="flex min-h-full">
+      <body className="flex min-h-full flex-col md:flex-row">
         <Sidebar />
-        <div className="flex min-w-0 flex-1 flex-col">{children}</div>
+        {/* pb-16: no celular, espaço pra barra de navegação fixa não cobrir o fim da página */}
+        <div className="flex min-w-0 flex-1 flex-col pb-16 md:pb-0">{children}</div>
       </body>
     </html>
   );

@@ -5,7 +5,7 @@ export default function DesenvolvedoresPage() {
     return (
         <main className="flex flex-1 flex-col pb-10">
             <PageHeader title="Desenvolvedores" sub="Documentação interativa da API" />
-            <div className="px-10 pt-5">
+            <div className="px-4 md:px-10 pt-5">
                 <SwaggerViewer />
             </div>
         </main>

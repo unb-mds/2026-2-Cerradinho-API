@@ -7,6 +7,7 @@ import PageHeader from "@/components/PageHeader";
 import { FilterBar, FilterPills, FilterSelect, SearchInput } from "@/components/Filters";
 import Badge from "@/components/Badge";
 import SeatBar from "@/components/SeatBar";
+import DisciplinaCard from "@/components/DisciplinaCard";
 import { casaBusca } from "@/lib/busca";
 
 const DIAS = ["Todos", "Seg", "Ter", "Qua", "Qui", "Sex", "Sáb"];
@@ -40,7 +41,7 @@ export default function DisciplinasPage() {
     <main className="flex flex-1 flex-col pb-10">
       <PageHeader title="Disciplinas" sub={`${filtradas.length} de ${disciplinas.length} turmas · semestre atual`} />
 
-      <div className="px-10 pt-4">
+      <div className="px-4 md:px-10 pt-4">
         <ApiStatus loading={loading} error={error} />
       </div>
 
@@ -51,8 +52,21 @@ export default function DisciplinasPage() {
         <FilterSelect label="Horário" value={horario} onChange={setHorario} options={HORARIOS} />
       </FilterBar>
 
-      <div className="px-10 pt-5">
-        <div className="overflow-x-auto rounded-xl border border-border bg-surface">
+      <div className="px-4 md:px-10 pt-5">
+        <ul className="divide-y divide-border rounded-xl border border-border bg-surface md:hidden">
+          {filtradas.length === 0 ? (
+            <li className="px-4 py-12 text-center text-sm text-muted">
+              {loading || error ? "" : "Nenhuma disciplina encontrada."}
+            </li>
+          ) : (
+            filtradas.map((d) => (
+              <li key={d.codigo + d.turma}>
+                <DisciplinaCard disciplina={d} mostrarStatus />
+              </li>
+            ))
+          )}
+        </ul>
+        <div className="hidden overflow-x-auto rounded-xl border border-border bg-surface md:block">
           <table className="w-full border-collapse text-sm">
             <thead>
               <tr className="border-b border-border bg-background text-left text-[10px] font-bold uppercase tracking-wide text-muted">
