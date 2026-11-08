@@ -9,6 +9,7 @@
 - Sem unidade específica informada, o scraper varre todas as unidades listadas no formulário público do SIGAA, uma a uma.
 - Rodar o scraper duas vezes seguidas para a mesma turma atualiza os dados existentes (vagas, sala, horário), sem criar linha duplicada.
 - Uma unidade que falhar (sessão expirada, erro de rede) não derruba a raspagem das demais unidades.
+- `GET /v1/disciplinas?busca=` filtra por código/nome da disciplina ou nome de professor, sem diferenciar acento/caixa; `?departamento=` filtra pelo prefixo do código (ex. `"FGA"`). Ver RF10 pra paginação e `X-Total-Count`.
 
 **Regra de negócio**
 - A chave natural de uma turma é (disciplina, número, ano/período) — é o que o SIGAA considera uma oferta única; é por essa chave que o upsert decide atualizar em vez de duplicar.
