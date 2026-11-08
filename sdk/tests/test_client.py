@@ -39,6 +39,50 @@ def test_listar_disciplinas(cerradinho):
 
 
 @respx.mock
+def test_listar_disciplinas_passa_busca_departamento_e_paginacao(cerradinho):
+    rota = respx.get(f"{BASE_URL}/v1/disciplinas").mock(return_value=httpx.Response(200, json=[]))
+
+    cerradinho.listar_disciplinas(busca="metodos", departamento="FGA", limite=10, offset=5)
+
+    params = rota.calls.last.request.url.params
+    assert (params["busca"], params["departamento"], params["limite"], params["offset"]) == (
+        "metodos",
+        "FGA",
+        "10",
+        "5",
+    )
+
+
+@respx.mock
+def test_listar_professores_passa_paginacao(cerradinho):
+    rota = respx.get(f"{BASE_URL}/v1/professores").mock(return_value=httpx.Response(200, json=[]))
+
+    cerradinho.listar_professores(limite=10, offset=5)
+
+    params = rota.calls.last.request.url.params
+    assert (params["limite"], params["offset"]) == ("10", "5")
+
+
+@respx.mock
+def test_obter_resumo(cerradinho):
+    respx.get(f"{BASE_URL}/v1/resumo").mock(
+        return_value=httpx.Response(200, json={"turmas": 6571, "disciplinas": 1842, "professores": 2844, "salas": 74})
+    )
+
+    resumo = cerradinho.obter_resumo()
+
+    assert (resumo.turmas, resumo.disciplinas, resumo.professores, resumo.salas) == (6571, 1842, 2844, 74)
+
+
+@respx.mock
+def test_obter_resumo_resposta_fora_do_contrato_levanta_erro(cerradinho):
+    respx.get(f"{BASE_URL}/v1/resumo").mock(return_value=httpx.Response(500))
+
+    with pytest.raises(RespostaInesperada):
+        cerradinho.obter_resumo()
+
+
+@respx.mock
 def test_listar_professores_filtra_por_nome(cerradinho):
     rota = respx.get(f"{BASE_URL}/v1/professores").mock(
         return_value=httpx.Response(200, json=[{"id": 1, "nome": "Ana Souza", "disciplinas": ["FGA0242"]}])

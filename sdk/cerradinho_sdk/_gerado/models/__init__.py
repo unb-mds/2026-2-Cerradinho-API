@@ -12,6 +12,7 @@ from .horario import Horario
 from .http_validation_error import HTTPValidationError
 from .item_refeicao import ItemRefeicao
 from .professor import Professor
+from .resumo import Resumo
 from .sala import Sala
 from .turma import Turma
 from .turma_agenda import TurmaAgenda
@@ -31,6 +32,7 @@ __all__ = (
     "HTTPValidationError",
     "ItemRefeicao",
     "Professor",
+    "Resumo",
     "Sala",
     "Turma",
     "TurmaAgenda",

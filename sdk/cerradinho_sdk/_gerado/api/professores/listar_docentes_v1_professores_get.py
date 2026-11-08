@@ -13,6 +13,8 @@ from ...types import UNSET, Response, Unset
 def _get_kwargs(
     *,
     nome: None | str | Unset = UNSET,
+    limite: int | None | Unset = UNSET,
+    offset: int | Unset = 0,
 ) -> dict[str, Any]:
 
     params: dict[str, Any] = {}
@@ -23,6 +25,15 @@ def _get_kwargs(
     else:
         json_nome = nome
     params["nome"] = json_nome
+
+    json_limite: int | None | Unset
+    if isinstance(limite, Unset):
+        json_limite = UNSET
+    else:
+        json_limite = limite
+    params["limite"] = json_limite
+
+    params["offset"] = offset
 
     params = {k: v for k, v in params.items() if v is not UNSET and v is not None}
 
@@ -74,15 +85,21 @@ def sync_detailed(
     *,
     client: AuthenticatedClient | Client,
     nome: None | str | Unset = UNSET,
+    limite: int | None | Unset = UNSET,
+    offset: int | Unset = 0,
 ) -> Response[HTTPValidationError | list[Docente]]:
     """Listar professores
 
      Lista os docentes que dão aula no período, em ordem alfabética, com os códigos das disciplinas de
-    cada um. Aceita busca parcial por nome em `nome`, sem diferenciar maiúsculas/minúsculas ou acentos.
-    Os dados vêm das turmas do SIGAA público, atualizadas semanalmente, aos domingos.
+    cada um. Aceita busca parcial por nome em `nome`, sem diferenciar maiúsculas/minúsculas ou acentos,
+    e paginação com `limite`/`offset` (o total depois do filtro de nome vem no cabeçalho `X-Total-
+    Count`). Sem nenhum parâmetro, devolve todos os docentes, como sempre. Os dados vêm das turmas do
+    SIGAA público, atualizadas semanalmente, aos domingos.
 
     Args:
         nome (None | str | Unset): Busca parcial por nome, normalizada
+        limite (int | None | Unset): Máximo de docentes a devolver
+        offset (int | Unset): Quantos docentes pular, pra paginar Default: 0.
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -94,6 +111,8 @@ def sync_detailed(
 
     kwargs = _get_kwargs(
         nome=nome,
+        limite=limite,
+        offset=offset,
     )
 
     response = client.get_httpx_client().request(
@@ -107,15 +126,21 @@ def sync(
     *,
     client: AuthenticatedClient | Client,
     nome: None | str | Unset = UNSET,
+    limite: int | None | Unset = UNSET,
+    offset: int | Unset = 0,
 ) -> HTTPValidationError | list[Docente] | None:
     """Listar professores
 
      Lista os docentes que dão aula no período, em ordem alfabética, com os códigos das disciplinas de
-    cada um. Aceita busca parcial por nome em `nome`, sem diferenciar maiúsculas/minúsculas ou acentos.
-    Os dados vêm das turmas do SIGAA público, atualizadas semanalmente, aos domingos.
+    cada um. Aceita busca parcial por nome em `nome`, sem diferenciar maiúsculas/minúsculas ou acentos,
+    e paginação com `limite`/`offset` (o total depois do filtro de nome vem no cabeçalho `X-Total-
+    Count`). Sem nenhum parâmetro, devolve todos os docentes, como sempre. Os dados vêm das turmas do
+    SIGAA público, atualizadas semanalmente, aos domingos.
 
     Args:
         nome (None | str | Unset): Busca parcial por nome, normalizada
+        limite (int | None | Unset): Máximo de docentes a devolver
+        offset (int | Unset): Quantos docentes pular, pra paginar Default: 0.
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -128,6 +153,8 @@ def sync(
     return sync_detailed(
         client=client,
         nome=nome,
+        limite=limite,
+        offset=offset,
     ).parsed
 
 
@@ -135,15 +162,21 @@ async def asyncio_detailed(
     *,
     client: AuthenticatedClient | Client,
     nome: None | str | Unset = UNSET,
+    limite: int | None | Unset = UNSET,
+    offset: int | Unset = 0,
 ) -> Response[HTTPValidationError | list[Docente]]:
     """Listar professores
 
      Lista os docentes que dão aula no período, em ordem alfabética, com os códigos das disciplinas de
-    cada um. Aceita busca parcial por nome em `nome`, sem diferenciar maiúsculas/minúsculas ou acentos.
-    Os dados vêm das turmas do SIGAA público, atualizadas semanalmente, aos domingos.
+    cada um. Aceita busca parcial por nome em `nome`, sem diferenciar maiúsculas/minúsculas ou acentos,
+    e paginação com `limite`/`offset` (o total depois do filtro de nome vem no cabeçalho `X-Total-
+    Count`). Sem nenhum parâmetro, devolve todos os docentes, como sempre. Os dados vêm das turmas do
+    SIGAA público, atualizadas semanalmente, aos domingos.
 
     Args:
         nome (None | str | Unset): Busca parcial por nome, normalizada
+        limite (int | None | Unset): Máximo de docentes a devolver
+        offset (int | Unset): Quantos docentes pular, pra paginar Default: 0.
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -155,6 +188,8 @@ async def asyncio_detailed(
 
     kwargs = _get_kwargs(
         nome=nome,
+        limite=limite,
+        offset=offset,
     )
 
     response = await client.get_async_httpx_client().request(**kwargs)
@@ -166,15 +201,21 @@ async def asyncio(
     *,
     client: AuthenticatedClient | Client,
     nome: None | str | Unset = UNSET,
+    limite: int | None | Unset = UNSET,
+    offset: int | Unset = 0,
 ) -> HTTPValidationError | list[Docente] | None:
     """Listar professores
 
      Lista os docentes que dão aula no período, em ordem alfabética, com os códigos das disciplinas de
-    cada um. Aceita busca parcial por nome em `nome`, sem diferenciar maiúsculas/minúsculas ou acentos.
-    Os dados vêm das turmas do SIGAA público, atualizadas semanalmente, aos domingos.
+    cada um. Aceita busca parcial por nome em `nome`, sem diferenciar maiúsculas/minúsculas ou acentos,
+    e paginação com `limite`/`offset` (o total depois do filtro de nome vem no cabeçalho `X-Total-
+    Count`). Sem nenhum parâmetro, devolve todos os docentes, como sempre. Os dados vêm das turmas do
+    SIGAA público, atualizadas semanalmente, aos domingos.
 
     Args:
         nome (None | str | Unset): Busca parcial por nome, normalizada
+        limite (int | None | Unset): Máximo de docentes a devolver
+        offset (int | Unset): Quantos docentes pular, pra paginar Default: 0.
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -188,5 +229,7 @@ async def asyncio(
         await asyncio_detailed(
             client=client,
             nome=nome,
+            limite=limite,
+            offset=offset,
         )
     ).parsed

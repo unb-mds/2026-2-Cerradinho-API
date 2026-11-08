@@ -26,6 +26,7 @@ from ._gerado.api.professores import listar_docentes_v1_professores_get as _prof
 from ._gerado.api.professores import (
     obter_agenda_v1_professores_professor_id_agenda_get as _agenda,
 )
+from ._gerado.api.resumo import obter_resumo_geral_v1_resumo_get as _resumo
 from ._gerado.api.salas import listar_espacos_v1_salas_get as _salas
 from ._gerado.api.salas import (
     listar_espacos_vazios_v1_salas_vazias_get as _salas_vazias,
@@ -37,6 +38,7 @@ from ._gerado.models import (
     Docente,
     Espaco,
     Execucao,
+    Resumo,
     Turma,
 )
 from ._gerado.types import UNSET
@@ -105,20 +107,49 @@ class CerradinhoClient:
             self._cliente.get_httpx_client().close()
             self._fechado = True
 
-    def listar_disciplinas(self) -> list[Turma]:
-        """Turmas ofertadas no período, com professores, horários, sala e vagas (RF01-05)."""
+    def listar_disciplinas(
+        self,
+        *,
+        busca: str | None = None,
+        departamento: str | None = None,
+        limite: int | None = None,
+        offset: int = 0,
+    ) -> list[Turma]:
+        """Turmas ofertadas no período, com professores, horários, sala e vagas (RF01-05).
+
+        `busca` filtra por código/nome da disciplina ou nome de professor,
+        sem diferenciar acento ou caixa; `departamento` filtra pelo prefixo
+        do código (ex. "FGA"); `limite`/`offset` paginam. Sem nenhum desses,
+        devolve tudo, como antes. O total depois do filtro vem no cabeçalho
+        `X-Total-Count` da resposta, que esta versão do SDK não expõe -
+        pagine conferindo se a página veio mais curta que `limite`."""
         self._verificar_aberto()
-        resposta = _disciplinas.sync_detailed(client=self._cliente)
+        resposta = _disciplinas.sync_detailed(
+            client=self._cliente,
+            busca=busca if busca is not None else UNSET,
+            departamento=departamento if departamento is not None else UNSET,
+            limite=limite if limite is not None else UNSET,
+            offset=offset,
+        )
         if not isinstance(resposta.parsed, list):
             raise RespostaInesperada(resposta.status_code, resposta.parsed)
         return resposta.parsed
 
-    def listar_professores(self, nome: str | None = None) -> list[Docente]:
+    def listar_professores(
+        self, nome: str | None = None, *, limite: int | None = None, offset: int = 0
+    ) -> list[Docente]:
         """Docentes do período, com as disciplinas que lecionam (RF04).
 
-        `nome` filtra por busca parcial, sem diferenciar acento ou caixa."""
+        `nome` filtra por busca parcial, sem diferenciar acento ou caixa;
+        `limite`/`offset` paginam (ver `listar_disciplinas` sobre o
+        cabeçalho `X-Total-Count`)."""
         self._verificar_aberto()
-        resposta = _professores.sync_detailed(client=self._cliente, nome=nome if nome is not None else UNSET)
+        resposta = _professores.sync_detailed(
+            client=self._cliente,
+            nome=nome if nome is not None else UNSET,
+            limite=limite if limite is not None else UNSET,
+            offset=offset,
+        )
         if not isinstance(resposta.parsed, list):
             raise RespostaInesperada(resposta.status_code, resposta.parsed)
         return resposta.parsed
@@ -173,5 +204,14 @@ class CerradinhoClient:
         self._verificar_aberto()
         resposta = _execucoes.sync_detailed(client=self._cliente, limite=limite)
         if not isinstance(resposta.parsed, list):
+            raise RespostaInesperada(resposta.status_code, resposta.parsed)
+        return resposta.parsed
+
+    def obter_resumo(self) -> Resumo:
+        """Contagens de turmas, disciplinas, professores e salas, sem baixar
+        a lista inteira de cada domínio."""
+        self._verificar_aberto()
+        resposta = _resumo.sync_detailed(client=self._cliente)
+        if not isinstance(resposta.parsed, Resumo):
             raise RespostaInesperada(resposta.status_code, resposta.parsed)
         return resposta.parsed
