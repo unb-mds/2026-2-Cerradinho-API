@@ -15,5 +15,5 @@
 
 ## Rastreabilidade
 
-- **PRs:** [#108](https://github.com/unb-mds/2026-2-Cerradinho-API/pull/108), [#119](https://github.com/unb-mds/2026-2-Cerradinho-API/pull/119)
+- **PRs:** [#108](https://github.com/unb-mds/2026-2-Cerradinho-API/pull/108), [#119](https://github.com/unb-mds/2026-2-Cerradinho-API/pull/119), [#241](https://github.com/unb-mds/2026-2-Cerradinho-API/pull/241)
 - **Testes:** [`tests/routers/test_disciplinas_router.py`](https://github.com/unb-mds/2026-2-Cerradinho-API/blob/dev/backend/tests/routers/test_disciplinas_router.py), [`tests/routers/test_professores_router.py`](https://github.com/unb-mds/2026-2-Cerradinho-API/blob/dev/backend/tests/routers/test_professores_router.py), [`tests/routers/test_salas_router.py`](https://github.com/unb-mds/2026-2-Cerradinho-API/blob/dev/backend/tests/routers/test_salas_router.py), [`tests/routers/test_cardapio_router.py`](https://github.com/unb-mds/2026-2-Cerradinho-API/blob/dev/backend/tests/routers/test_cardapio_router.py), [`tests/contract/test_openapi_contract.py`](https://github.com/unb-mds/2026-2-Cerradinho-API/blob/dev/backend/tests/contract/test_openapi_contract.py)

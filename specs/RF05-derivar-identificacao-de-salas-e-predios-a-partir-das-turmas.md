@@ -19,6 +19,6 @@
 
 ## Rastreabilidade
 
-- **PRs:** [#88](https://github.com/unb-mds/2026-2-Cerradinho-API/pull/88), [#119](https://github.com/unb-mds/2026-2-Cerradinho-API/pull/119)
+- **PRs:** [#88](https://github.com/unb-mds/2026-2-Cerradinho-API/pull/88), [#119](https://github.com/unb-mds/2026-2-Cerradinho-API/pull/119), [#241](https://github.com/unb-mds/2026-2-Cerradinho-API/pull/241)
 - **Testes:** [`tests/domain/test_disciplinas.py`](https://github.com/unb-mds/2026-2-Cerradinho-API/blob/dev/backend/tests/domain/test_disciplinas.py), [`tests/routers/test_salas_router.py`](https://github.com/unb-mds/2026-2-Cerradinho-API/blob/dev/backend/tests/routers/test_salas_router.py)
 - **Decisões:** [ADR 0006](https://github.com/unb-mds/2026-2-Cerradinho-API/blob/dev/docs/adr/0006-salas-derivadas-das-turmas.md), [ADR 0010](https://github.com/unb-mds/2026-2-Cerradinho-API/blob/dev/docs/adr/0010-sala-por-horario-nao-por-turma.md)

@@ -13,6 +13,6 @@
 
 ## Rastreabilidade
 
-- **PRs:** nenhum ainda.
+- **PRs:** [#241](https://github.com/unb-mds/2026-2-Cerradinho-API/pull/241)
 - **Testes:** [`tests/routers/test_resumo_router.py`](https://github.com/unb-mds/2026-2-Cerradinho-API/blob/dev/backend/tests/routers/test_resumo_router.py)
 - **Observação:** issue própria não foi criada ainda (ação de escrita externa bloqueada nesta sessão) — criar e atualizar esta linha antes do PR.

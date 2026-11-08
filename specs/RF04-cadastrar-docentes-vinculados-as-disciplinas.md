@@ -18,5 +18,5 @@
 
 ## Rastreabilidade
 
-- **PRs:** [#119](https://github.com/unb-mds/2026-2-Cerradinho-API/pull/119)
+- **PRs:** [#119](https://github.com/unb-mds/2026-2-Cerradinho-API/pull/119), [#241](https://github.com/unb-mds/2026-2-Cerradinho-API/pull/241)
 - **Testes:** [`tests/routers/test_professores_router.py`](https://github.com/unb-mds/2026-2-Cerradinho-API/blob/dev/backend/tests/routers/test_professores_router.py)

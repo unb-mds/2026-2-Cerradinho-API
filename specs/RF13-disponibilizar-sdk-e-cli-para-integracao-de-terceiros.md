@@ -16,5 +16,5 @@
 
 ## Rastreabilidade
 
-- **PRs:** nenhum ainda.
+- **PRs:** [#241](https://github.com/unb-mds/2026-2-Cerradinho-API/pull/241)
 - **Testes:** [`sdk/tests/test_client.py`](https://github.com/unb-mds/2026-2-Cerradinho-API/blob/dev/sdk/tests/test_client.py) — contra respostas HTTP mockadas (`respx`), validado também de ponta a ponta contra o backend real antes do commit.

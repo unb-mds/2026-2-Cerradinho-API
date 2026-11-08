@@ -21,6 +21,6 @@
 
 ## Rastreabilidade
 
-- **PRs:** [#75](https://github.com/unb-mds/2026-2-Cerradinho-API/pull/75), [#81](https://github.com/unb-mds/2026-2-Cerradinho-API/pull/81), [#88](https://github.com/unb-mds/2026-2-Cerradinho-API/pull/88), [#118](https://github.com/unb-mds/2026-2-Cerradinho-API/pull/118)
+- **PRs:** [#75](https://github.com/unb-mds/2026-2-Cerradinho-API/pull/75), [#81](https://github.com/unb-mds/2026-2-Cerradinho-API/pull/81), [#88](https://github.com/unb-mds/2026-2-Cerradinho-API/pull/88), [#118](https://github.com/unb-mds/2026-2-Cerradinho-API/pull/118), [#241](https://github.com/unb-mds/2026-2-Cerradinho-API/pull/241)
 - **Testes:** [`tests/scrapers/test_disciplinas_parser.py`](https://github.com/unb-mds/2026-2-Cerradinho-API/blob/dev/backend/tests/scrapers/test_disciplinas_parser.py), [`tests/domain/test_disciplinas.py`](https://github.com/unb-mds/2026-2-Cerradinho-API/blob/dev/backend/tests/domain/test_disciplinas.py), [`tests/tasks/test_scraping.py`](https://github.com/unb-mds/2026-2-Cerradinho-API/blob/dev/backend/tests/tasks/test_scraping.py), [`tests/integration/test_pipeline_disciplinas_postgres.py`](https://github.com/unb-mds/2026-2-Cerradinho-API/blob/dev/backend/tests/integration/test_pipeline_disciplinas_postgres.py)
 - **Decisões:** [ADR 0002](https://github.com/unb-mds/2026-2-Cerradinho-API/blob/dev/docs/adr/0002-ferramentas-de-scraping.md)
