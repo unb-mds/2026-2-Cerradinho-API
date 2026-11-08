@@ -11,8 +11,23 @@ set -euo pipefail
 RAIZ="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 BACKEND_VENV="$RAIZ/backend/venv/bin"
 SDK_DIR="$RAIZ/sdk"
+# PYTHON roda o gerador e o ruff - precisa de `pip install -e "sdk/[dev]"`,
+# não do venv do backend (que não tem openapi-python-client). Pode ser
+# sobrescrito (ex. PYTHON=.venv/bin/python) se não for o python padrão.
+PYTHON="${PYTHON:-python3}"
 TMP_DIR="$(mktemp -d)"
 trap 'rm -rf "$TMP_DIR"' EXIT
+
+if ! "$PYTHON" -c "import openapi_python_client" >/dev/null 2>&1; then
+    echo "openapi-python-client não está instalado em '$PYTHON'." >&2
+    echo "Rode: pip install -e \"$SDK_DIR\"[dev]" >&2
+    echo "(ou defina PYTHON=/caminho/do/venv/com/isso, se não for o python padrão)" >&2
+    exit 1
+fi
+if ! "$PYTHON" -c "import ruff" >/dev/null 2>&1; then
+    echo "ruff não está instalado em '$PYTHON' (também vem do extra [dev] do sdk/)." >&2
+    exit 1
+fi
 
 echo "Exportando o OpenAPI do backend..."
 (cd "$RAIZ/backend" && "$BACKEND_VENV/python" -c "
@@ -23,7 +38,7 @@ with open('$TMP_DIR/openapi.json', 'w') as f:
 ")
 
 echo "Gerando o cliente..."
-"$BACKEND_VENV/openapi-python-client" generate \
+"$PYTHON" -m openapi_python_client generate \
     --path "$TMP_DIR/openapi.json" \
     --meta none \
     --output-path "$TMP_DIR/gerado" \
@@ -48,7 +63,13 @@ __all__ = (
 )
 EOF
 
-"$BACKEND_VENV/ruff" format "$SDK_DIR/cerradinho_sdk/_gerado" >/dev/null
-"$BACKEND_VENV/ruff" check --fix --unsafe-fixes "$SDK_DIR/cerradinho_sdk/_gerado" >/dev/null || true
+echo "Formatando e verificando o código gerado..."
+"$PYTHON" -m ruff format "$SDK_DIR/cerradinho_sdk/_gerado"
+# E501 (linha longa) é esperado nas docstrings geradas e não é verificado
+# pelo CI pra este diretório (ver sdk/ruff.toml) - ignorado explicitamente
+# aqui, não escondido: qualquer outro achado (import não usado, nome
+# indefinido etc.) continua falhando o script, sem `|| true` escondendo erro
+# de verdade.
+"$PYTHON" -m ruff check --fix --ignore E501 "$SDK_DIR/cerradinho_sdk/_gerado"
 
 echo "Cliente regenerado em $SDK_DIR/cerradinho_sdk/_gerado"

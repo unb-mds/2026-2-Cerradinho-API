@@ -5,7 +5,6 @@ from typing import TYPE_CHECKING, Any, TypeVar
 
 from attrs import define as _attrs_define
 from attrs import field as _attrs_field
-from typing_extensions import Self
 
 if TYPE_CHECKING:
     from ..models.horario import Horario
@@ -87,10 +86,10 @@ class Turma:
         return field_dict
 
     @classmethod
-    def from_dict(cls, src_dict: Mapping[str, Any]) -> Self:
-        from ..models.horario import Horario
-        from ..models.professor import Professor
-        from ..models.sala import Sala
+    def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
+        from ..models.horario import Horario  # noqa: PLC0415
+        from ..models.professor import Professor  # noqa: PLC0415
+        from ..models.sala import Sala  # noqa: PLC0415
 
         d = dict(src_dict)
         disciplina_codigo = d.pop("disciplina_codigo")

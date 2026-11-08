@@ -75,8 +75,10 @@ class CerradinhoClient:
 
     def __init__(self, base_url: str, *, timeout: float = 10.0) -> None:
         self._cliente = _ClienteGerado(base_url=base_url, timeout=httpx.Timeout(timeout))
+        self._fechado = False
 
     def __enter__(self) -> Self:
+        self._verificar_aberto()
         self._cliente.__enter__()
         return self
 
@@ -87,27 +89,46 @@ class CerradinhoClient:
         traceback: TracebackType | None,
     ) -> None:
         self._cliente.__exit__(tipo_excecao, excecao, traceback)
+        self._fechado = True
+
+    def _verificar_aberto(self) -> None:
+        if self._fechado:
+            raise RuntimeError(
+                "CerradinhoClient já foi fechado (saiu do `with` ou chamou fechar()) - crie um novo pra continuar."
+            )
 
     def fechar(self) -> None:
-        """Encerra as conexões HTTP abertas. Opcional fora de um `with`."""
-        self._cliente.get_httpx_client().close()
+        """Encerra as conexões HTTP abertas. Opcional fora de um `with`;
+        chamar duas vezes, ou sem nunca ter feito uma requisição, não tem
+        efeito."""
+        if not self._fechado:
+            self._cliente.get_httpx_client().close()
+            self._fechado = True
 
     def listar_disciplinas(self) -> list[Turma]:
         """Turmas ofertadas no período, com professores, horários, sala e vagas (RF01-05)."""
-        return _disciplinas.sync(client=self._cliente) or []
+        self._verificar_aberto()
+        resposta = _disciplinas.sync_detailed(client=self._cliente)
+        if not isinstance(resposta.parsed, list):
+            raise RespostaInesperada(resposta.status_code, resposta.parsed)
+        return resposta.parsed
 
     def listar_professores(self, nome: str | None = None) -> list[Docente]:
         """Docentes do período, com as disciplinas que lecionam (RF04).
 
         `nome` filtra por busca parcial, sem diferenciar acento ou caixa."""
-        resultado = _professores.sync(client=self._cliente, nome=nome if nome is not None else UNSET)
-        return resultado if isinstance(resultado, list) else []
+        self._verificar_aberto()
+        resposta = _professores.sync_detailed(client=self._cliente, nome=nome if nome is not None else UNSET)
+        if not isinstance(resposta.parsed, list):
+            raise RespostaInesperada(resposta.status_code, resposta.parsed)
+        return resposta.parsed
 
     def obter_agenda(self, professor_id: int) -> Agenda:
         """Agenda semanal do professor, com horário decomposto em dia/início/fim
         e a sala de cada bloco de aula (RF18).
 
         Levanta `ProfessorNaoEncontrado` se `professor_id` não existir."""
+        self._verificar_aberto()
         resposta = _agenda.sync_detailed(professor_id, client=self._cliente)
         if resposta.status_code == httpx.codes.NOT_FOUND:
             raise ProfessorNaoEncontrado(professor_id)
@@ -117,29 +138,40 @@ class CerradinhoClient:
 
     def listar_salas(self) -> list[Espaco]:
         """Salas com aula no período, ordenadas por prédio e nome (RF05)."""
-        return _salas.sync(client=self._cliente) or []
+        self._verificar_aberto()
+        resposta = _salas.sync_detailed(client=self._cliente)
+        if not isinstance(resposta.parsed, list):
+            raise RespostaInesperada(resposta.status_code, resposta.parsed)
+        return resposta.parsed
 
     def listar_salas_vazias(self, dia: DiaSemana | str, horario: str) -> list[Espaco]:
         """Salas sem nenhuma turma cadastrada no dia/horário dados (RF17).
 
         `dia` é um dos nomes de `DiaSemana` ("segunda", "terca", ...); `horario`
         é o início de uma aula, no formato "HH:MM" (ex. "14:00")."""
-        resultado = _salas_vazias.sync(client=self._cliente, dia=DiaSemana(dia), horario=horario)
-        return resultado if isinstance(resultado, list) else []
+        self._verificar_aberto()
+        resposta = _salas_vazias.sync_detailed(client=self._cliente, dia=DiaSemana(dia), horario=horario)
+        if not isinstance(resposta.parsed, list):
+            raise RespostaInesperada(resposta.status_code, resposta.parsed)
+        return resposta.parsed
 
     def obter_cardapio_semana(self, data_inicio: datetime.date | None = None) -> CardapioSemana:
         """Cardápio do RU (Darcy) dos 7 dias a partir de `data_inicio` (hoje, se
         omitido), agrupado por dia e refeição, sempre com os 7 dias (RF19)."""
-        resultado = _cardapio.sync(
+        self._verificar_aberto()
+        resposta = _cardapio.sync_detailed(
             client=self._cliente,
             data_inicio=data_inicio if data_inicio is not None else UNSET,
         )
-        if not isinstance(resultado, CardapioSemana):
-            raise RespostaInesperada(None, resultado)
-        return resultado
+        if not isinstance(resposta.parsed, CardapioSemana):
+            raise RespostaInesperada(resposta.status_code, resposta.parsed)
+        return resposta.parsed
 
     def listar_execucoes(self, limite: int = 50) -> list[Execucao]:
         """Histórico de execuções dos scrapers, da mais recente pra mais antiga
         (RF16). `limite` é o número máximo de execuções devolvidas."""
-        resultado = _execucoes.sync(client=self._cliente, limite=limite)
-        return resultado if isinstance(resultado, list) else []
+        self._verificar_aberto()
+        resposta = _execucoes.sync_detailed(client=self._cliente, limite=limite)
+        if not isinstance(resposta.parsed, list):
+            raise RespostaInesperada(resposta.status_code, resposta.parsed)
+        return resposta.parsed

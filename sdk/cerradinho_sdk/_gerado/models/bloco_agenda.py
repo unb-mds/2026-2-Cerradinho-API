@@ -5,7 +5,6 @@ from typing import TYPE_CHECKING, Any, TypeVar, cast
 
 from attrs import define as _attrs_define
 from attrs import field as _attrs_field
-from typing_extensions import Self
 
 if TYPE_CHECKING:
     from ..models.espaco import Espaco
@@ -31,7 +30,7 @@ class BlocoAgenda:
     additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)
 
     def to_dict(self) -> dict[str, Any]:
-        from ..models.espaco import Espaco
+        from ..models.espaco import Espaco  # noqa: PLC0415
 
         dia = self.dia
 
@@ -59,8 +58,8 @@ class BlocoAgenda:
         return field_dict
 
     @classmethod
-    def from_dict(cls, src_dict: Mapping[str, Any]) -> Self:
-        from ..models.espaco import Espaco
+    def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
+        from ..models.espaco import Espaco  # noqa: PLC0415
 
         d = dict(src_dict)
         dia = d.pop("dia")

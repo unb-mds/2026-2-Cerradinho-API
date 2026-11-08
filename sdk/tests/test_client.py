@@ -177,3 +177,50 @@ def test_listar_execucoes_usa_o_limite_informado(cerradinho):
     cerradinho.listar_execucoes(limite=10)
 
     assert rota.calls.last.request.url.params["limite"] == "10"
+
+
+@pytest.mark.parametrize(
+    ("metodo", "args", "kwargs", "rota"),
+    [
+        ("listar_disciplinas", (), {}, "/v1/disciplinas"),
+        ("listar_professores", (), {}, "/v1/professores"),
+        ("listar_salas", (), {}, "/v1/salas"),
+        ("listar_salas_vazias", (), {"dia": "segunda", "horario": "14h"}, "/v1/salas/vazias"),
+        ("listar_execucoes", (), {}, "/v1/execucoes"),
+    ],
+)
+@respx.mock
+def test_metodos_de_lista_levantam_erro_em_resposta_inesperada(cerradinho, metodo, args, kwargs, rota):
+    """Achado da revisão do Gabriel: um 422/429/500 não pode virar lista
+    vazia em silêncio - "nenhuma sala vazia" e "não tem turma" são
+    respostas válidas só quando a API realmente devolve `[]` com 200."""
+    corpo_422 = {"detail": [{"loc": ["query", "parametro"], "msg": "inválido", "type": "value_error"}]}
+    respx.get(f"{BASE_URL}{rota}").mock(return_value=httpx.Response(422, json=corpo_422))
+
+    with pytest.raises(RespostaInesperada):
+        getattr(cerradinho, metodo)(*args, **kwargs)
+
+
+@respx.mock
+def test_obter_cardapio_semana_resposta_fora_do_contrato_levanta_erro(cerradinho):
+    respx.get(f"{BASE_URL}/v1/cardapio/semana").mock(return_value=httpx.Response(500))
+
+    with pytest.raises(RespostaInesperada):
+        cerradinho.obter_cardapio_semana()
+
+
+def test_usar_cliente_depois_de_fechado_levanta_erro_claro():
+    """Achado da revisão do Gabriel: usar o cliente depois do `with` (ou de
+    `fechar()`) dava um `RuntimeError` do httpx sobre conexão fechada, não
+    um erro claro do SDK."""
+    with CerradinhoClient(BASE_URL) as cliente:
+        pass
+
+    with pytest.raises(RuntimeError, match="já foi fechado"):
+        cliente.listar_disciplinas()
+
+
+def test_fechar_duas_vezes_nao_quebra():
+    cliente = CerradinhoClient(BASE_URL)
+    cliente.fechar()
+    cliente.fechar()  # não pode levantar erro
