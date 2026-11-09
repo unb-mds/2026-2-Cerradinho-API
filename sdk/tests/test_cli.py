@@ -5,6 +5,7 @@ passa pela CLI e pelo SDK juntos, e confirma que a CLI consulta a API só pelo S
 """
 
 import json
+import re
 
 import httpx
 import pytest
@@ -15,6 +16,14 @@ from cerradinho_sdk import __version__
 from cerradinho_sdk.cli import app
 
 BASE_URL = "https://api.cerradinho.teste"
+
+# No GitHub Actions o Typer força saída colorida, e os códigos de cor quebram o texto
+# no meio (ex. "--base-url" vira "-" + "-base" + "-url").
+CODIGO_DE_COR = re.compile(r"\x1b\[[0-9;]*m")
+
+
+def _saida(resultado):
+    return CODIGO_DE_COR.sub("", resultado.output)
 
 TURMA = {
     "disciplina_codigo": "FGA0242",
@@ -82,9 +91,9 @@ def test_disciplinas_em_tabela(cerradinho):
 
     resultado = cerradinho("disciplinas")
 
-    assert resultado.exit_code == 0, resultado.output
+    assert resultado.exit_code == 0, _saida(resultado)
     for esperado in ("FGA0242", "Ana Souza", "6T2345", "FCTE - I9/I10", "38/40"):
-        assert esperado in resultado.output
+        assert esperado in _saida(resultado)
 
 
 @respx.mock
@@ -104,7 +113,7 @@ def test_json_devolve_a_resposta_da_api(cerradinho):
     resultado = cerradinho("--json", "disciplinas")
 
     assert resultado.exit_code == 0
-    assert json.loads(resultado.output) == [TURMA]
+    assert json.loads(_saida(resultado)) == [TURMA]
 
 
 @respx.mock
@@ -114,7 +123,7 @@ def test_lista_vazia_avisa_que_nao_ha_resultado(cerradinho):
     resultado = cerradinho("salas")
 
     assert resultado.exit_code == 0
-    assert "Nenhum resultado." in resultado.output
+    assert "Nenhum resultado." in _saida(resultado)
 
 
 @respx.mock
@@ -125,7 +134,7 @@ def test_professores_filtra_por_nome(cerradinho):
 
     assert resultado.exit_code == 0
     assert rota.calls.last.request.url.params["nome"] == "ana"
-    assert "Ana Souza" in resultado.output and "7" in resultado.output
+    assert "Ana Souza" in _saida(resultado) and "7" in _saida(resultado)
 
 
 @respx.mock
@@ -135,9 +144,9 @@ def test_agenda_mostra_cada_aula_e_aula_sem_sala(cerradinho):
     resultado = cerradinho("agenda", "7")
 
     assert resultado.exit_code == 0
-    assert "Ana Souza" in resultado.output
-    assert "FCTE - I9" in resultado.output
-    assert "sem sala" in resultado.output
+    assert "Ana Souza" in _saida(resultado)
+    assert "FCTE - I9" in _saida(resultado)
+    assert "sem sala" in _saida(resultado)
 
 
 @respx.mock
@@ -147,7 +156,7 @@ def test_agenda_de_professor_inexistente_sai_com_erro(cerradinho):
     resultado = cerradinho("agenda", "99")
 
     assert resultado.exit_code == 1
-    assert "Nenhum professor com id=99" in resultado.output
+    assert "Nenhum professor com id=99" in _saida(resultado)
 
 
 @respx.mock
@@ -158,7 +167,7 @@ def test_salas_vazias_repassa_dia_e_horario(cerradinho):
 
     assert resultado.exit_code == 0
     assert dict(rota.calls.last.request.url.params) == {"dia": "segunda", "horario": "14:00"}
-    assert "FCTE" in resultado.output
+    assert "FCTE" in _saida(resultado)
 
 
 @respx.mock
@@ -179,9 +188,9 @@ def test_cardapio_mostra_dia_nao_publicado(cerradinho):
 
     assert resultado.exit_code == 0
     assert rota.calls.last.request.url.params["data_inicio"] == "2026-11-09"
-    assert "09/11 a 15/11" in resultado.output
-    assert "Feijoada" in resultado.output
-    assert "não publicado" in resultado.output
+    assert "09/11 a 15/11" in _saida(resultado)
+    assert "Feijoada" in _saida(resultado)
+    assert "não publicado" in _saida(resultado)
 
 
 @respx.mock
@@ -201,7 +210,7 @@ def test_execucoes_repassa_limite_e_mostra_falha(cerradinho):
     assert resultado.exit_code == 0
     assert rota.calls.last.request.url.params["limite"] == "5"
     for esperado in ("scrape_cardapio_task", "falha", "fonte", "RU fora do ar", "08/11/2026 08:00"):
-        assert esperado in resultado.output
+        assert esperado in _saida(resultado)
 
 
 @respx.mock
@@ -211,7 +220,7 @@ def test_resumo(cerradinho):
     resultado = cerradinho("resumo")
 
     assert resultado.exit_code == 0
-    assert "6500" in resultado.output and "Professores" in resultado.output
+    assert "6500" in _saida(resultado) and "Professores" in _saida(resultado)
 
 
 @respx.mock
@@ -228,14 +237,14 @@ def test_sem_base_url_a_cli_pede_o_endereco(cerradinho):
     resultado = cerradinho("salas", env={"CERRADINHO_API_URL": None})
 
     assert resultado.exit_code == 2
-    assert "--base-url" in resultado.output
+    assert "--base-url" in _saida(resultado)
 
 
 def test_version(cerradinho):
     resultado = cerradinho("--version", env={"CERRADINHO_API_URL": None})
 
     assert resultado.exit_code == 0
-    assert __version__ in resultado.output
+    assert __version__ in _saida(resultado)
 
 
 @respx.mock
@@ -245,7 +254,7 @@ def test_api_fora_do_ar_vira_mensagem_e_nao_traceback(cerradinho):
     resultado = cerradinho("salas")
 
     assert resultado.exit_code == 1
-    assert f"Não foi possível acessar a API em {BASE_URL}" in resultado.output
+    assert f"Não foi possível acessar a API em {BASE_URL}" in _saida(resultado)
     assert resultado.exception is None or isinstance(resultado.exception, SystemExit)
 
 
@@ -256,7 +265,7 @@ def test_timeout_vira_mensagem(cerradinho):
     resultado = cerradinho("--timeout", "2", "salas")
 
     assert resultado.exit_code == 1
-    assert "não respondeu em 2 s" in resultado.output
+    assert "não respondeu em 2 s" in _saida(resultado)
 
 
 @pytest.mark.parametrize(
@@ -274,4 +283,4 @@ def test_resposta_fora_do_contrato_vira_mensagem(cerradinho, status, corpo, mens
     resultado = cerradinho("resumo")
 
     assert resultado.exit_code == 1
-    assert mensagem in resultado.output
+    assert mensagem in _saida(resultado)
