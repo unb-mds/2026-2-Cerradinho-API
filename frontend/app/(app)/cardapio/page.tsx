@@ -28,11 +28,11 @@ export default function CardapioPage() {
     <main className="flex flex-1 flex-col pb-10">
       <PageHeader title="Cardápio" sub="Cardápio da semana · Restaurante Universitário" />
 
-      <div className="px-10 pt-4">
+      <div className="px-4 md:px-10 pt-4">
         <ApiStatus loading={loading} error={error} />
       </div>
 
-      <div className="flex items-center gap-3 px-10 pt-4">
+      <div className="flex flex-wrap items-center gap-3 px-4 md:px-10 pt-4">
         <button type="button" onClick={() => { setDia(null); semanaAnterior(); }} className="rounded-lg border border-border bg-surface px-3 py-1.5 text-sm text-foreground hover:bg-background">
           ← Anterior
         </button>
@@ -51,7 +51,7 @@ export default function CardapioPage() {
         <FilterPills label="Dia" value={diaAtivo} onChange={setDia} options={dias} />
       </FilterBar>
 
-      <div className="flex flex-col gap-4 px-10 pt-5">
+      <div className="flex flex-col gap-4 px-4 md:px-10 pt-5">
         {!loading && !error && filtrado.length === 0 && (
           <p className="rounded-xl border border-border bg-surface px-6 py-12 text-center text-sm text-muted">
             {diaAtivo === "Todos"
@@ -61,14 +61,14 @@ export default function CardapioPage() {
         )}
         {filtrado.map((c) => (
           <div key={`${c.data}-${c.refeicao}`} className="overflow-hidden rounded-xl border border-border bg-surface">
-            <div className="flex items-center gap-3 bg-background px-6 py-4">
+            <div className="flex flex-wrap items-center gap-3 bg-background px-4 py-4 md:px-6">
               <div className="font-bold text-foreground">{c.dia}, {formatarData(c.data)}</div>
               {c.data === hojeISO() && <Badge>Hoje</Badge>}
               <Badge>{c.refeicao}</Badge>
             </div>
             <ul className="divide-y divide-border">
               {c.itens.map((item, i) => (
-                <li key={`${item.categoria}-${i}`} className="grid grid-cols-[minmax(0,10rem)_1fr] items-center gap-4 px-6 py-3">
+                <li key={`${item.categoria}-${i}`} className="grid grid-cols-1 items-center gap-1 px-4 py-3 sm:grid-cols-[minmax(0,10rem)_1fr] sm:gap-4 md:px-6">
                   <span className="text-xs text-muted">{item.categoria}:</span>
                   <span className="text-sm text-foreground">{item.item}</span>
                 </li>

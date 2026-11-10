@@ -1,9 +1,9 @@
 "use client";
 
 import { useEffect, useRef } from "react";
+import { API_URL } from "@/lib/api";
 import "swagger-ui-dist/swagger-ui.css";
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000/v1";
 const SPEC_URL = `${API_URL.replace(/\/v1$/, "")}/openapi.json`;
 
 // swagger-ui-dist já vem empacotado; o swagger-ui-react quebra no Turbopack

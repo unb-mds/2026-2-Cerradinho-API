@@ -4,6 +4,8 @@ import ApiStatus from "@/components/ApiStatus";
 import PageHeader from "@/components/PageHeader";
 import { FilterBar, FilterPills, FilterSelect } from "@/components/Filters";
 import { useSalasVazias, HORARIOS } from "@/hooks/useSalasVazias";
+import { useMostrarMais } from "@/hooks/useMostrarMais";
+import MostrarMais from "@/components/MostrarMais";
 
 export const DIAS: Record<string, string> = {
     Segunda: "segunda",
@@ -17,6 +19,7 @@ export const DIAS: Record<string, string> = {
 
 export default function SalasVaziasPage() {
     const { salas, loading, error, dia, horario, setDia, setHorario } = useSalasVazias();
+    const { visiveis, restantes, mostrarMais } = useMostrarMais(salas, `${dia}|${horario}`);
     const rotuloDia = Object.keys(DIAS).find((rotulo) => DIAS[rotulo] === dia) ?? "Segunda";
 
 
@@ -27,7 +30,7 @@ export default function SalasVaziasPage() {
                 sub={loading ? "Carregando..." : `${salas.length} salas sem aula cadastrada`}
             />
 
-            <div className="px-10 pt-4">
+            <div className="px-4 md:px-10 pt-4">
                 <ApiStatus loading={loading} error={error} />
             </div>
 
@@ -40,12 +43,26 @@ export default function SalasVaziasPage() {
                 />
                 <FilterSelect label="Horário" value={horario} onChange={setHorario} options={HORARIOS} />
             </FilterBar>
-            <p className="px-10 pt-4 text-xs text-muted">
+            <p className="px-4 md:px-10 pt-4 text-xs text-muted">
                 Vazia quer dizer sem aula cadastrada no SIGAA. Reserva informal e eventos não aparecem aqui.
             </p>
 
-            <div className="px-10 pt-5">
-                <div className="overflow-x-auto rounded-xl border border-border bg-surface">
+            <div className="px-4 md:px-10 pt-5">
+                <ul className="divide-y divide-border rounded-xl border border-border bg-surface md:hidden">
+                    {salas.length === 0 ? (
+                        <li className="px-4 py-12 text-center text-sm text-muted">
+                            {loading || error ? "" : "Nenhuma sala vazia nesse horário."}
+                        </li>
+                    ) : (
+                        visiveis.map((s) => (
+                            <li key={s.id} className="flex items-center justify-between gap-3 px-4 py-3">
+                                <span className="font-mono text-sm font-semibold text-brand">{s.nome}</span>
+                                <span className="text-sm text-foreground">{s.predio || "-"}</span>
+                            </li>
+                        ))
+                    )}
+                </ul>
+                <div className="hidden overflow-x-auto rounded-xl border border-border bg-surface md:block">
                     <table className="w-full border-collapse text-sm">
                         <thead>
                             <tr className="border-b border-border bg-background text-left text-[10px] font-bold uppercase tracking-wide text-muted">
@@ -61,7 +78,7 @@ export default function SalasVaziasPage() {
                                     </td>
                                 </tr>
                             ) : (
-                                salas.map((s) => (
+                                visiveis.map((s) => (
                                     <tr key={s.id} className="border-t border-border">
                                         <td className="whitespace-nowrap px-4 py-3.5 font-mono text-sm font-semibold text-brand">
                                             {s.nome}
@@ -73,6 +90,7 @@ export default function SalasVaziasPage() {
                         </tbody>
                     </table>
                 </div>
+                <MostrarMais restantes={restantes} onClick={mostrarMais} />
             </div>
         </main>
     );
