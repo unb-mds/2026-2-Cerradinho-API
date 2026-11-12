@@ -12,7 +12,11 @@ license = { text = "MIT" }
 dependencies = [
     "httpx>=0.23.0,<1.0",
     "attrs>=22.2.0",
+    "typer>=0.12",
 ]
+
+[project.scripts]
+cerradinho = "cerradinho_sdk.cli:app"
 
 [project.urls]
 Repositorio = "https://github.com/unb-mds/2026-2-Cerradinho-API"
