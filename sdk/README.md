@@ -19,12 +19,24 @@ with CerradinhoClient("https://api.<ip>.sslip.io") as cerradinho:
     turmas = cerradinho.listar_disciplinas()
     salas_vazias = cerradinho.listar_salas_vazias(dia="segunda", horario="14:00")
     cardapio = cerradinho.obter_cardapio_semana()
+    resumo = cerradinho.obter_resumo()  # só as contagens, sem baixar a lista inteira
 
     try:
         agenda = cerradinho.obter_agenda(professor_id=12)
     except ProfessorNaoEncontrado:
         ...
 ```
+
+`listar_disciplinas` e `listar_professores` aceitam busca/filtro e paginação:
+
+```python
+    pagina = cerradinho.listar_disciplinas(busca="fga", departamento="FGA", limite=20, offset=0)
+    docentes = cerradinho.listar_professores(nome="andre", limite=10)
+```
+
+O total depois do filtro vem no cabeçalho `X-Total-Count` da resposta HTTP,
+que esta versão do SDK não expõe — pagine conferindo se a página voltou
+mais curta que o `limite` pedido.
 
 `base_url` é obrigatório — não tem um padrão de produção embutido (o IP da instância ainda não é fixo, ver `docs/DEPLOY.md`). Pra testar contra um ambiente local:
 

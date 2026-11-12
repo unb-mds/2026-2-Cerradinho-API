@@ -14,6 +14,7 @@
 - A interface pública do SDK (`CerradinhoClient`, em `cerradinho_sdk/client.py`) é um cliente fino: um método por endpoint de `/v1/`, sem recalcular nada que o backend já computa (salas vazias, agenda do professor continuam sendo só leitura do que a API responde).
 - A CLI (`cerradinho`, em `cerradinho_sdk/cli.py`, com Typer) é instalada junto com o SDK e só chama os métodos do `CerradinhoClient`: não monta requisição HTTP própria nem recalcula nada. Usa a mesma URL de API, por `--base-url` ou pela variável `CERRADINHO_API_URL`.
 - A versão do SDK acompanha a versão da API que ele cobre (RF12) — hoje, `1.0.0` pra `/v1/`.
+- "Publicado" aqui é uma tag/release no GitHub (ex. `sdk-v1.0.0`) no momento em que o SDK entrar na `main`, não PyPI — não faz sentido reservar o nome do pacote num índice público antes da Release 2 estar pronta.
 
 ## Rastreabilidade
 

@@ -7,6 +7,10 @@ import PageHeader from "@/components/PageHeader";
 import { FilterBar, FilterPills, FilterSelect, SearchInput } from "@/components/Filters";
 import Badge from "@/components/Badge";
 import SeatBar from "@/components/SeatBar";
+import DisciplinaCard from "@/components/DisciplinaCard";
+import { casaBusca } from "@/lib/busca";
+import { useMostrarMais } from "@/hooks/useMostrarMais";
+import MostrarMais from "@/components/MostrarMais";
 
 const DIAS = ["Todos", "Seg", "Ter", "Qua", "Qui", "Sex", "Sáb"];
 const HORARIOS = ["Todos", "08:00", "10:00", "12:00", "14:00", "16:00", "18:00", "19:00", "20:50"];
@@ -23,14 +27,11 @@ export default function DisciplinasPage() {
     const matchDepartamento = departamento === "Todos" || d.departamento === departamento;
     const matchDia = dia === "Todos" || d.dias.includes(dia);
     const matchHorario = horario === "Todos" || d.horario.startsWith(horario);
-    const termo = busca.toLowerCase();
-    const matchBusca =
-      busca === "" ||
-      d.nome.toLowerCase().includes(termo) ||
-      d.codigo.toLowerCase().includes(termo) ||
-      d.professor.toLowerCase().includes(termo);
+    const matchBusca = casaBusca(busca, d.nome, d.codigo, d.professor);
     return matchDepartamento && matchDia && matchHorario && matchBusca;
   });
+
+  const { visiveis, restantes, mostrarMais } = useMostrarMais(filtradas, [departamento, dia, horario, busca].join("|"));
 
   const hasFilters = departamento !== "Todos" || dia !== "Todos" || horario !== "Todos" || busca !== "";
   const limparFiltros = () => {
@@ -44,7 +45,7 @@ export default function DisciplinasPage() {
     <main className="flex flex-1 flex-col pb-10">
       <PageHeader title="Disciplinas" sub={`${filtradas.length} de ${disciplinas.length} turmas · semestre atual`} />
 
-      <div className="px-10 pt-4">
+      <div className="px-4 md:px-10 pt-4">
         <ApiStatus loading={loading} error={error} />
       </div>
 
@@ -55,8 +56,21 @@ export default function DisciplinasPage() {
         <FilterSelect label="Horário" value={horario} onChange={setHorario} options={HORARIOS} />
       </FilterBar>
 
-      <div className="px-10 pt-5">
-        <div className="overflow-x-auto rounded-xl border border-border bg-surface">
+      <div className="px-4 md:px-10 pt-5">
+        <ul className="divide-y divide-border rounded-xl border border-border bg-surface md:hidden">
+          {filtradas.length === 0 ? (
+            <li className="px-4 py-12 text-center text-sm text-muted">
+              {loading || error ? "" : "Nenhuma disciplina encontrada."}
+            </li>
+          ) : (
+            visiveis.map((d) => (
+              <li key={d.codigo + d.turma}>
+                <DisciplinaCard disciplina={d} mostrarStatus />
+              </li>
+            ))
+          )}
+        </ul>
+        <div className="hidden overflow-x-auto rounded-xl border border-border bg-surface md:block">
           <table className="w-full border-collapse text-sm">
             <thead>
               <tr className="border-b border-border bg-background text-left text-[10px] font-bold uppercase tracking-wide text-muted">
@@ -78,7 +92,7 @@ export default function DisciplinasPage() {
                   </td>
                 </tr>
               ) : (
-                filtradas.map((d) => {
+                visiveis.map((d) => {
                   const lotada = d.vagasOcupadas >= d.vagas;
                   return (
                     <tr key={d.codigo + d.turma} className="border-t border-border">
@@ -112,6 +126,7 @@ export default function DisciplinasPage() {
             </tbody>
           </table>
         </div>
+        <MostrarMais restantes={restantes} onClick={mostrarMais} />
       </div>
     </main>
   );
