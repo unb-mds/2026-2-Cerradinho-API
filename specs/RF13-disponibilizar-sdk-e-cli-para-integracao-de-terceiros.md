@@ -13,6 +13,7 @@
 - O cliente de baixo nível (`cerradinho_sdk._gerado`) é **gerado** a partir do OpenAPI que o backend expõe (RF11), via `openapi-python-client` — não escrito à mão, pra nunca ficar fora de sincronia com os routers. `sdk/scripts/gerar_cliente.sh` regera depois de qualquer mudança num router.
 - A interface pública do SDK (`CerradinhoClient`, em `cerradinho_sdk/client.py`) é um cliente fino: um método por endpoint de `/v1/`, sem recalcular nada que o backend já computa (salas vazias, agenda do professor continuam sendo só leitura do que a API responde).
 - A versão do SDK acompanha a versão da API que ele cobre (RF12) — hoje, `1.0.0` pra `/v1/`.
+- "Publicado" aqui é uma tag/release no GitHub (ex. `sdk-v1.0.0`) no momento em que o SDK entrar na `main`, não PyPI — não faz sentido reservar o nome do pacote num índice público antes da Release 2 estar pronta.
 
 ## Rastreabilidade
 
