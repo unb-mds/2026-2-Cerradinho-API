@@ -9,8 +9,8 @@ import SwaggerViewer from "./SwaggerViewer";
 const REPO_URL = "https://github.com/unb-mds/2026-2-Cerradinho-API";
 const DOCS_URL = `${REPO_URL}/tree/main/docs`;
 
-// O SDK ainda não está no PyPI nem na main: instala direto da pasta sdk/ da
-// dev. Quando a release 2 entrar na main, trocar pra "main".
+// O SDK e a CLI ainda não estão no PyPI nem na main: instalam direto da pasta
+// sdk/ da dev. Quando a release 2 entrar na main, trocar pra "main".
 const BRANCH_SDK = "dev";
 const SDK_URL = `${REPO_URL}/tree/${BRANCH_SDK}/sdk`;
 const SDK_INSTALACAO = `pip install "git+${REPO_URL}.git@${BRANCH_SDK}#subdirectory=sdk"`;
@@ -21,6 +21,14 @@ const SDK_EXEMPLO = `from cerradinho_sdk import CerradinhoClient
 with CerradinhoClient("${API_URL.replace(/\/v1$/, "")}") as cerradinho:
     salas = cerradinho.listar_salas_vazias(dia="segunda", horario="08:00")
     cardapio = cerradinho.obter_cardapio_semana()`;
+
+// A CLI vem no mesmo pacote do SDK e, como ele, recebe a URL sem o /v1.
+const CLI_URL = `${SDK_URL}#cli`;
+const CLI_CONFIGURACAO = `export CERRADINHO_API_URL=${API_URL.replace(/\/v1$/, "")}
+cerradinho --help`;
+const CLI_EXEMPLO = `cerradinho salas-vazias segunda 08:00
+cerradinho professores "maria"
+cerradinho --json cardapio`;
 
 // Espelha os routers de backend/app/routers. Ao criar/mudar rota lá, atualizar aqui.
 const ENDPOINTS = [
@@ -81,6 +89,7 @@ const NAV = [
   { href: "#endpoints", label: "Endpoints" },
   { href: "#exemplos", label: "Exemplos" },
   { href: "#swagger", label: "Swagger" },
+  { href: "#sdk", label: "SDK e CLI" },
 ];
 
 function Secao({
@@ -167,22 +176,17 @@ function Tabela({
 function CartaoFerramenta({
   titulo,
   descricao,
-  emBreve = false,
   link,
   children,
 }: {
   titulo: string;
   descricao: string;
-  emBreve?: boolean;
   link: string;
   children: ReactNode;
 }) {
   return (
     <div className="flex min-w-0 flex-1 flex-col gap-3 rounded-xl border border-border bg-surface p-6">
-      <div className="flex items-center gap-2">
-        <h3 className="text-lg font-bold text-foreground">{titulo}</h3>
-        {emBreve && <Badge>em breve</Badge>}
-      </div>
+      <h3 className="text-lg font-bold text-foreground">{titulo}</h3>
       <p className="text-sm text-muted">{descricao}</p>
       {children}
       <a
@@ -337,11 +341,11 @@ export default function PortalDesenvolvedorPage() {
             </CartaoFerramenta>
             <CartaoFerramenta
               titulo="CLI"
-              descricao="Consulte a API pelo terminal, em cima do SDK."
-              emBreve
-              link={REPO_URL}
+              descricao="Comando cerradinho, instalado junto com o SDK, para consultar a API pelo terminal. A saída vem em tabela ou, com --json, em JSON."
+              link={CLI_URL}
             >
-              <CodeBlock code="<comando-cli> salas vazias --dia segunda --horario 08:00" />
+              <CodeBlock code={CLI_CONFIGURACAO} />
+              <CodeBlock code={CLI_EXEMPLO} />
             </CartaoFerramenta>
           </div>
         </Secao>
