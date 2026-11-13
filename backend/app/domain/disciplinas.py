@@ -16,6 +16,7 @@ from collections import defaultdict
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import Session
 
+from app.core.busca import normalizar_busca
 from app.models import Disciplina, Horario, Professor, Sala, Turma
 from app.schemas.disciplina import Horario as HorarioCapturado
 from app.schemas.disciplina import Professor as ProfessorCapturado
@@ -38,8 +39,17 @@ _PADRAO_DIA_ENTRE_PARENTESES = re.compile(
 # O Darcy usa espaço simples (sem "-" nem "/") entre prédio e sala em vários
 # casos ("PAT AT 125", "ICC ANF.16"). Só reconhece como prédio quando o
 # primeiro token é um desses, confirmados contra turma real do Darcy -
-# outro prefixo desconhecido fica tudo como nome, igual antes.
-_PREDIOS_SEM_SEPARADOR = {"ICC", "PAT", "BSA", "FCTE"}
+# outro prefixo desconhecido fica tudo como nome, igual antes. Valor é
+# (prédio real, prefixo a devolver pro nome) - "BSAS" é "BSA S" (BSA Sul)
+# colado sem espaço nessa unidade, achado real também.
+_PREDIOS_SEM_SEPARADOR: dict[str, tuple[str, str]] = {
+    "ICC": ("ICC", ""),
+    "PAT": ("PAT", ""),
+    "BSA": ("BSA", ""),
+    "FCTE": ("FCTE", ""),
+    "PJC": ("PJC", ""),
+    "BSAS": ("BSA", "S "),
+}
 # "TÉRREO"/"SUBSOLO" são andar, não prédio - o SIGAA às vezes escreve só
 # isso antes da sala (ex. "TÉRREO/SUBSOLO"), e o separador "/" fazia virar
 # prédio errado. Sem saber o prédio de verdade nesses casos, mantém vazio
@@ -51,6 +61,12 @@ _PALAVRAS_DE_ANDAR = {"TERREO", "TÉRREO", "SUBSOLO"}
 # ter mais de um segmento colado com espaço, quando a turma tem aula em
 # turnos diferentes (ex. "35M5 35T1").
 _PADRAO_CODIGO_HORARIO = re.compile(r"^([2-7]+)([MTN])([0-9]+)$")
+# Achado real do Darcy: o SIGAA também junta o código de horário com a sala
+# daquele dia no próprio campo de sala, um par por dia (ex.
+# "2N12(ICC ANF.15) 4N12(ICC ANF.16)" - segunda na ANF.15, quarta na
+# ANF.16). Diferente de `_montar_horarios`, aqui o dia já vem casado com a
+# sala certa, sem precisar adivinhar pela ordem.
+_PADRAO_PAR_CODIGO_SALA = re.compile(r"([2-7]+[MTN][0-9]+)\(([^)]+)\)")
 
 logger = logging.getLogger(__name__)
 
@@ -76,10 +92,29 @@ def normalizar_salas(descricao: str) -> list[tuple[str, str]]:
     else:
         predio = descricao[: match.start()].strip().upper()
         nome_completo = descricao[match.end() :].strip()
+        primeiro_token = predio.split(" ", 1)[0]
+        segundo_token = predio[len(primeiro_token) :].strip().split(" ", 1)[0]
         if predio in _PALAVRAS_DE_ANDAR:
             # "andar" (TÉRREO/SUBSOLO) não é prédio - junta de volta ao nome
             # em vez de gravar um prédio errado.
             predio, nome_completo = "", f"{predio} {nome_completo}".strip()
+        elif predio in _PREDIOS_SEM_SEPARADOR:
+            # o candidato a prédio já é exatamente um alias conhecido (ex.
+            # "BSAS - B2 28/14", "BSAS/B2") - sem isso, "BSAS" com separador
+            # não fundia com "BSA S" (achado da revisão do Gabriel).
+            predio_real, prefixo = _PREDIOS_SEM_SEPARADOR[predio]
+            predio, nome_completo = predio_real, f"{prefixo}{nome_completo}"
+        elif primeiro_token in _PREDIOS_SEM_SEPARADOR and len(segundo_token) <= 2:
+            # achado real do Darcy: o separador que o regex casou tá dentro
+            # do código da sala, não entre prédio e sala (ex. "BSA S B1 34 -
+            # 10", "ICC AT 114 - 092") - distingue de "BSA SUL - A1" (prédio
+            # de verdade, nome completo) pelo token logo depois do prédio
+            # ser curto (sigla de ala/bloco: "S", "N", "AT"), não uma
+            # palavra. O prédio de verdade é só o primeiro token, e o
+            # código da sala fica inteiro, sem cortar no meio.
+            predio_real, prefixo = _PREDIOS_SEM_SEPARADOR[primeiro_token]
+            resto = re.sub(r"^[-/]\s*", "", descricao[len(primeiro_token) :].strip())
+            predio, nome_completo = predio_real, f"{prefixo}{resto}"
     return [(predio, _normalizar_nome_sala(nome)) for nome in _dividir_nome_em_varias_salas(nome_completo)]
 
 
@@ -89,8 +124,10 @@ def _separar_predio_sem_separador(descricao: str) -> tuple[str, str]:
     um prédio conhecido - um prefixo desconhecido fica tudo como nome,
     como antes dessa checagem existir."""
     primeiro_token, _, resto = descricao.partition(" ")
-    if primeiro_token.upper() in _PREDIOS_SEM_SEPARADOR and resto.strip():
-        return primeiro_token.upper(), resto.strip()
+    alias = _PREDIOS_SEM_SEPARADOR.get(primeiro_token.upper())
+    if alias is not None and resto.strip():
+        predio, prefixo = alias
+        return predio, f"{prefixo}{resto.strip()}"
     return "", descricao
 
 
@@ -181,6 +218,75 @@ def _get_ou_cria_salas(session: Session, descricao: str) -> list[Sala]:
     return salas
 
 
+def _extrair_pares_codigo_sala(descricao: str) -> list[tuple[str, str]] | None:
+    """Quando o campo de sala é feito só de pares "código(sala)" colados com
+    espaço, devolve cada par; senão, `None` (ex. texto truncado pelo SIGAA,
+    ou um segmento sem sala junto - achados reais do Darcy). Só aceita
+    quando o texto inteiro é coberto pelos pares, pra não arriscar perder
+    parte da informação de um formato que não bate exatamente."""
+    descricao = descricao.strip()
+    pares = _PADRAO_PAR_CODIGO_SALA.findall(descricao)
+    if not pares:
+        return None
+    reconstruido = " ".join(f"{codigo}({sala})" for codigo, sala in pares)
+    if reconstruido != descricao:
+        return None
+    return pares
+
+
+def _atomos_do_codigo(codigo: str) -> set[tuple[str, str, str]]:
+    """Achata um código em átomos (dia, turno, aula) individuais, pra
+    comparar cobertura sem depender de como os segmentos foram agrupados."""
+    atomos = set()
+    for dias, turno, aulas in decompor_codigo_horario(codigo):
+        for dia in dias:
+            for aula in aulas:
+                atomos.add((dia, turno, aula))
+    return atomos
+
+
+def _pares_cobrem_horarios(pares_codigo_sala: list[tuple[str, str]], horarios: list[HorarioCapturado]) -> bool:
+    """Confere se os pares código(sala) do campo de sala cobrem exatamente
+    os mesmos dia+turno+aula dos horários reais da turma - sem isso, uma
+    aula que não aparece no campo de sala (ou um código divergente entre os
+    dois campos) desapareceria da turma em vez de só não ter sala."""
+    atomos_esperados = {atomo for h in horarios for atomo in _atomos_do_codigo(h.codigo)}
+    atomos_cobertos = {atomo for codigo, _ in pares_codigo_sala for atomo in _atomos_do_codigo(codigo)}
+    return atomos_esperados == atomos_cobertos
+
+
+def _descricao_do_codigo(horarios: list[HorarioCapturado], codigo: str) -> str:
+    """Acha, entre os horários reais da turma, a descrição de quem contém
+    o átomo desse código - pra cada par código(sala) herdar a descrição do
+    horário que ele representa, não sempre a do primeiro horário."""
+    atomos_do_par = _atomos_do_codigo(codigo)
+    if not atomos_do_par:
+        return ""
+    for horario in horarios:
+        if _atomos_do_codigo(horario.codigo) & atomos_do_par:
+            return horario.descricao
+    return ""
+
+
+def _montar_horarios_com_sala_explicita(
+    session: Session, horarios: list[HorarioCapturado], pares_codigo_sala: list[tuple[str, str]]
+) -> list[Horario]:
+    novos_horarios = []
+    for codigo, sala_texto in pares_codigo_sala:
+        descricao = _descricao_do_codigo(horarios, codigo)
+        salas = _get_ou_cria_salas(session, sala_texto)
+        if not salas:
+            novos_horarios.append(Horario(codigo=codigo, descricao=descricao, sala_id=None))
+            continue
+        # normalmente uma sala só por par - se o texto dentro do parêntese
+        # também junta mais de uma (achado possível, não visto ainda em
+        # produção), nenhuma pode ser descartada: uma linha por sala, todas
+        # com o mesmo código.
+        for sala in salas:
+            novos_horarios.append(Horario(codigo=codigo, descricao=descricao, sala_id=sala.id))
+    return novos_horarios
+
+
 def _montar_horarios(horarios: list[HorarioCapturado], salas: list[Sala]) -> list[Horario]:
     """Associa cada horário à sala correspondente. Com uma sala só (o caso
     comum) ou nenhuma, todo horário usa a mesma. Com mais de uma, o SIGAA as
@@ -230,7 +336,20 @@ def persistir_turma(session: Session, turma: TurmaCapturada, unidade: str) -> Tu
     atualizados, nunca virar uma linha duplicada.
     """
     disciplina = _get_ou_cria_disciplina(session, turma.disciplina_codigo, turma.disciplina_nome)
-    salas = _get_ou_cria_salas(session, turma.sala.descricao)
+    pares_codigo_sala = _extrair_pares_codigo_sala(turma.sala.descricao)
+    if pares_codigo_sala is not None and not _pares_cobrem_horarios(pares_codigo_sala, turma.horarios):
+        # os pares do campo de sala não cobrem exatamente os horários reais
+        # da turma (ex. uma aula que só aparece em `turma.horarios`, ou um
+        # código divergente entre os dois campos) - não confia no formato
+        # explícito, pra não perder parte da aula.
+        logger.warning(
+            "Pares código(sala) não cobrem os horários da turma %s/%s - ignorando o formato explícito: %r",
+            turma.disciplina_codigo,
+            turma.numero,
+            turma.sala.descricao,
+        )
+        pares_codigo_sala = None
+    salas = [] if pares_codigo_sala is not None else _get_ou_cria_salas(session, turma.sala.descricao)
     professores = [_get_ou_cria_professor(session, p.nome) for p in turma.professores]
 
     turma_existente = (
@@ -252,7 +371,10 @@ def persistir_turma(session: Session, turma: TurmaCapturada, unidade: str) -> Tu
     for horario_antigo in list(turma_existente.horarios):
         session.delete(horario_antigo)
     session.flush()
-    turma_existente.horarios = _montar_horarios(turma.horarios, salas)
+    if pares_codigo_sala is not None:
+        turma_existente.horarios = _montar_horarios_com_sala_explicita(session, turma.horarios, pares_codigo_sala)
+    else:
+        turma_existente.horarios = _montar_horarios(turma.horarios, salas)
 
     return turma_existente
 
@@ -290,9 +412,15 @@ def _descricao_salas(turma: Turma) -> str:
 
     if not salas_na_ordem:
         return ""
-    nomes = " / ".join(sala.nome for sala in salas_na_ordem)
-    predio = salas_na_ordem[0].predio
-    return f"{predio} - {nomes}" if predio else nomes
+    predios = {sala.predio for sala in salas_na_ordem}
+    if len(predios) <= 1:
+        nomes = " / ".join(sala.nome for sala in salas_na_ordem)
+        predio = salas_na_ordem[0].predio
+        return f"{predio} - {nomes}" if predio else nomes
+    # prédios diferentes (ex. sala do Darcy com código embutido em dias de
+    # prédios distintos) - cada sala leva o seu, não dá pra assumir todas
+    # do prédio da primeira.
+    return " / ".join(f"{sala.predio} - {sala.nome}" if sala.predio else sala.nome for sala in salas_na_ordem)
 
 
 def _horarios_sem_repeticao(turma: Turma) -> list[HorarioCapturado]:
@@ -325,3 +453,57 @@ def _turma_para_contrato(turma: Turma) -> TurmaCapturada:
 
 def listar_turmas(session: Session) -> list[TurmaCapturada]:
     return [_turma_para_contrato(turma) for turma in session.query(Turma).all()]
+
+
+_PADRAO_DEPARTAMENTO = re.compile(r"^[A-Za-zÀ-ÿ]+")
+
+
+def _departamento_do_codigo(disciplina_codigo: str) -> str:
+    """"FGA0242" -> "FGA" - as letras antes do primeiro dígito, mesma regra
+    que o frontend já usa (`useDisciplinas.ts`, `extrairDepartamento`)."""
+    match = _PADRAO_DEPARTAMENTO.match(disciplina_codigo)
+    return match.group().upper() if match else disciplina_codigo.upper()
+
+
+def listar_turmas_filtradas(
+    session: Session,
+    *,
+    busca: str | None = None,
+    departamento: str | None = None,
+    limite: int | None = None,
+    offset: int = 0,
+) -> tuple[list[TurmaCapturada], int]:
+    """Como `listar_turmas`, com filtro e paginação (RF01).
+
+    `busca` casa palavra a palavra, normalizada (sem acento/caixa), contra
+    o código e o nome da disciplina e o nome de qualquer professor da
+    turma - mesma convenção de busca do RF04. `departamento` casa contra o
+    prefixo de letras do código da disciplina. Filtra em Python, não em
+    SQL, pela mesma razão de `app.domain.professores.listar_professores`
+    (acento/caixa não são portáveis entre SQLite e Postgres sem extensão).
+
+    Devolve (página, total) - `total` é a contagem depois do filtro, antes
+    de `limite`/`offset`, pro cabeçalho `X-Total-Count`."""
+    turmas = [_turma_para_contrato(turma) for turma in session.query(Turma).all()]
+
+    if departamento:
+        departamento_norm = departamento.strip().upper()
+        turmas = [t for t in turmas if _departamento_do_codigo(t.disciplina_codigo) == departamento_norm]
+
+    if busca:
+        termos = normalizar_busca(busca).split()
+
+        def bate_na_busca(turma: TurmaCapturada) -> bool:
+            campo = normalizar_busca(
+                " ".join([turma.disciplina_codigo, turma.disciplina_nome, *(p.nome for p in turma.professores)])
+            )
+            return all(termo in campo for termo in termos)
+
+        turmas = [t for t in turmas if bate_na_busca(t)]
+
+    total = len(turmas)
+    if limite is not None:
+        turmas = turmas[offset : offset + limite]
+    elif offset:
+        turmas = turmas[offset:]
+    return turmas, total

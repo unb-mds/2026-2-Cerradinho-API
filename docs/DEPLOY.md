@@ -18,10 +18,12 @@ Uma máquina só roda o [`docker-compose.prod.yml`](https://github.com/unb-mds/2
 | redis | Redis 7 | Não |
 | migrate | `alembic upgrade head`, roda e termina | Não |
 
-Endereços, com o IP fixo da máquina no lugar de `1-2-3-4`:
+Endereços de produção, no IP fixo `3.147.228.104` (instância `cerradinho`, região `us-east-2`):
 
-- frontend: `https://1-2-3-4.sslip.io`
-- API: `https://api.1-2-3-4.sslip.io`, com o Swagger em `/docs`
+- frontend: [https://3-147-228-104.sslip.io](https://3-147-228-104.sslip.io)
+- API: [https://api.3-147-228-104.sslip.io](https://api.3-147-228-104.sslip.io), com o Swagger em [`/docs`](https://api.3-147-228-104.sslip.io/docs)
+
+Num deploy novo, o IP da máquina entra no lugar de `3-147-228-104`.
 
 O [sslip.io](https://sslip.io) resolve qualquer nome com um IP dentro para esse IP, então não é preciso comprar domínio. O Caddy pede o certificado HTTPS para esses nomes na primeira vez que sobe.
 
@@ -97,7 +99,7 @@ As listas começam vazias. Para não esperar o agendamento (disciplinas no domin
 
 ```bash
 docker compose -f docker-compose.prod.yml exec worker celery -A app.celery_app call app.tasks.cardapio.scrape_cardapio_task
-docker compose -f docker-compose.prod.yml exec worker celery -A app.celery_app call app.tasks.scraping.scrape_disciplinas_task
+docker compose -f docker-compose.prod.yml exec worker celery -A app.celery_app call app.tasks.scraping.scrape_disciplinas_task --kwargs '{"nivel": "G", "ano": "2026", "periodo": "2"}'
 ```
 
 A de disciplinas leva cerca de 12 minutos. O resultado aparece em `/v1/execucoes`.

@@ -1,0 +1,10 @@
+target-version = "py311"
+line-length = 120
+# _gerado/ não é escrito à mão (openapi-python-client, ver scripts/gerar_cliente.sh)
+extend-exclude = ["cerradinho_sdk/_gerado"]
+
+[lint]
+select = ["E", "F", "I"]
+
+[lint.isort]
+known-first-party = ["cerradinho_sdk"]

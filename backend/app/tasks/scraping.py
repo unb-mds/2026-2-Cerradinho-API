@@ -45,6 +45,7 @@ def scrape_disciplinas_task(
                 logger.exception("Falha ao persistir a unidade %s, pulando", unidade)
         invalidar("cache:v1:disciplinas")
         invalidar("cache:v1:professores")
+        invalidar("cache:v1:resumo")
         # prefixo, pra levar junto as chaves de salas vazias por dia e horário
         invalidar_prefixo("cache:v1:salas")
         return total

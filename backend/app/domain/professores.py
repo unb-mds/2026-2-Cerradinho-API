@@ -4,10 +4,9 @@ Não existe scraper próprio de professores: a tabela é preenchida por
 `app/domain/disciplinas.py` a partir das turmas capturadas.
 """
 
-import unicodedata
-
 from sqlalchemy.orm import Session
 
+from app.core.busca import normalizar_busca
 from app.domain.salas import DIA_PARA_DIGITO, horario_para_intervalos_por_dia
 from app.models import Professor
 from app.schemas.api.agenda import Agenda, BlocoAgenda, TurmaAgenda
@@ -17,33 +16,39 @@ from app.schemas.api.sala import Espaco
 _DIA_POR_DIGITO = {digito: dia for dia, digito in DIA_PARA_DIGITO.items()}
 
 
-def _normalizar_busca(texto: str) -> str:
-    """Remove acentuação e ignora maiúsculas/minúsculas pra comparação de
-    busca — "andré" e "Andre" e "ANDRÉ" todos viram a mesma chave."""
-    sem_acento = unicodedata.normalize("NFKD", texto).encode("ascii", "ignore").decode("ascii")
-    return sem_acento.casefold()
-
-
 def _professor_para_resposta(professor: Professor) -> Docente:
     codigos = sorted({turma.disciplina.codigo for turma in professor.turmas})
     return Docente(id=professor.id, nome=professor.nome, disciplinas=codigos)
 
 
-def listar_professores(session: Session, nome: str | None = None) -> list[Docente]:
+def listar_professores(
+    session: Session,
+    nome: str | None = None,
+    *,
+    limite: int | None = None,
+    offset: int = 0,
+) -> tuple[list[Docente], int]:
     """nome filtra por busca parcial, normalizada (sem diferenciar
     maiúsculas/minúsculas ou acentos). Cada palavra de `nome` precisa
     aparecer em algum lugar do nome do professor, em qualquer ordem — assim
     "luis araujo" acha "André Luis Araújo" mesmo sem ser substring exata.
     Filtra em Python, não em SQL: o volume de professores é pequeno, e
     acento/caixa não são tratados de forma portável entre SQLite (testes)
-    e Postgres (produção) sem extensão (unaccent)."""
+    e Postgres (produção) sem extensão (unaccent).
+
+    Devolve (página, total) - `total` é a contagem depois do filtro por
+    nome, antes de `limite`/`offset`, pro cabeçalho `X-Total-Count`."""
     professores = session.query(Professor).order_by(Professor.nome).all()
     if nome:
-        termos = _normalizar_busca(nome).split()
-        professores = [
-            p for p in professores if all(termo in _normalizar_busca(p.nome) for termo in termos)
-        ]
-    return [_professor_para_resposta(professor) for professor in professores]
+        termos = normalizar_busca(nome).split()
+        professores = [p for p in professores if all(termo in normalizar_busca(p.nome) for termo in termos)]
+
+    total = len(professores)
+    if limite is not None:
+        professores = professores[offset : offset + limite]
+    elif offset:
+        professores = professores[offset:]
+    return [_professor_para_resposta(professor) for professor in professores], total
 
 
 def _bloco_para_resposta(dia: str, inicio: str, fim: str, sala) -> BlocoAgenda:

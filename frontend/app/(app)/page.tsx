@@ -1,0 +1,128 @@
+"use client";
+
+import Link from "next/link";
+import { useDisciplinas } from "@/hooks/useDisciplinas";
+import { useProfessores } from "@/hooks/useProfessores";
+import { useSalasVaziasAgora } from "@/hooks/useSalasVazias";
+import StatCard from "@/components/StatCard";
+import Badge from "@/components/Badge";
+import SeatBar from "@/components/SeatBar";
+import DisciplinaCard from "@/components/DisciplinaCard";
+import ApiStatus from "@/components/ApiStatus";
+import { BookIcon, BowlIcon, DoorOpenIcon, ChevronRightIcon, UserIcon } from "@/components/Icons";
+
+// A API devolve todas as turmas do período (milhares); renderizar todas aqui
+// travava a página. O dashboard mostra só uma amostra, o resto fica em /disciplinas.
+const AMOSTRA_DISCIPLINAS = 10;
+
+export default function Home() {
+  const { disciplinas, loading: carregandoDisciplinas, error: erroDisciplinas } = useDisciplinas();
+  const { professores, loading: carregandoProfessores, error: erroProfessores } = useProfessores();
+  const { quantidade, horario, foraDoHorario, loading: carregandoSalas, error: erroSalas } = useSalasVaziasAgora();
+  const loading = carregandoDisciplinas || carregandoProfessores || carregandoSalas;
+  const error = erroDisciplinas ?? erroProfessores ?? erroSalas;
+  const numero = (n: number) => (loading || error ? "-" : String(n));
+
+  return (
+    <main className="flex flex-1 flex-col gap-7 px-4 md:px-10 py-9">
+      <div>
+        <h1 className="text-2xl font-bold tracking-tight text-foreground">Visão Geral</h1>
+        <p className="mt-1.5 text-sm text-muted">Universidade de Brasília — UnB</p>
+      </div>
+      <ApiStatus loading={loading} error={error} />
+      <div className="grid grid-cols-2 gap-3 md:flex md:flex-wrap md:gap-3.5">
+        <StatCard
+          icon={<BookIcon className="h-4.5 w-4.5" />}
+          label="Disciplinas"
+          stat={numero(disciplinas.length)}
+          sub="turmas ofertadas"
+          href="/disciplinas"
+          active
+        />
+        <StatCard
+          icon={<BowlIcon className="h-4.5 w-4.5" />}
+          label="Cardápio"
+          stat="RU"
+          sub="cardápio da semana"
+          href="/cardapio"
+        />
+        <StatCard
+          icon={<UserIcon className="h-4.5 w-4.5" />}
+          label="Professores"
+          stat={numero(professores.length)}
+          sub="docentes ativos"
+          href="/professores"
+        />
+        <StatCard
+          icon={<DoorOpenIcon className="h-4.5 w-4.5" />}
+          label="Salas Vazias"
+          stat={foraDoHorario ? "-" : numero(quantidade)}
+          sub={foraDoHorario ? "fora do horário de aula" : `agora, aula das ${horario}`}
+          href="/salas/vazias"
+        />
+      </div>
+
+      <div className="overflow-hidden rounded-xl border border-border bg-surface">
+        <div className="flex items-center justify-between gap-3 border-b border-border px-4 py-4 md:px-6">
+          <div>
+            <h2 className="text-sm font-semibold text-foreground">Disciplinas em Oferta</h2>
+            <span className="text-xs text-muted">Semestre atual</span>
+          </div>
+          <Link
+            href="/disciplinas"
+            className="flex items-center gap-1.5 rounded-lg bg-muted-bg px-3 py-1.5 text-xs font-semibold text-brand"
+          >
+            Ver todas <ChevronRightIcon className="h-3 w-3" />
+          </Link>
+        </div>
+        <ul className="divide-y divide-border md:hidden">
+          {disciplinas.slice(0, AMOSTRA_DISCIPLINAS).map((d) => (
+            <li key={d.codigo + d.turma}>
+              <DisciplinaCard disciplina={d} />
+            </li>
+          ))}
+        </ul>
+        <div className="hidden overflow-x-auto md:block">
+          <table className="w-full border-collapse text-sm">
+            <thead>
+              <tr className="bg-background text-left text-[10px] font-bold uppercase tracking-wide text-muted">
+                <th className="whitespace-nowrap px-4 py-2.5">Código</th>
+                <th className="px-4 py-2.5">Disciplina</th>
+                <th className="px-4 py-2.5">Turma</th>
+                <th className="whitespace-nowrap px-4 py-2.5">Horário</th>
+                <th className="whitespace-nowrap px-4 py-2.5">Sala</th>
+                <th className="px-4 py-2.5">Vagas</th>
+              </tr>
+            </thead>
+            <tbody>
+              {disciplinas.slice(0, AMOSTRA_DISCIPLINAS).map((d) => (
+                <tr key={d.codigo + d.turma} className="border-t border-border">
+                  <td className="whitespace-nowrap px-4 py-3 font-mono text-xs font-medium text-brand">
+                    {d.codigo}
+                  </td>
+                  <td className="px-4 py-3">
+                    <div className="font-medium text-foreground">{d.nome}</div>
+                    <div className="mt-0.5 text-xs text-muted">{d.professor}</div>
+                  </td>
+                  <td className="px-4 py-3">
+                    <Badge>
+                      {d.departamento}-{d.turma}
+                    </Badge>
+                  </td>
+                  <td className="whitespace-nowrap px-4 py-3">
+                    <div className="font-mono text-xs text-foreground">{d.dias}</div>
+                    <div className="text-xs text-muted">{d.horario}</div>
+                  </td>
+                  <td className="whitespace-nowrap px-4 py-3 font-mono text-xs text-muted">{d.sala}</td>
+                  <td className="px-4 py-3">
+                    <SeatBar ocupadas={d.vagasOcupadas} total={d.vagas} />
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </main>
+  );
+}

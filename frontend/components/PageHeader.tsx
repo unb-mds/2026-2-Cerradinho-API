@@ -8,7 +8,7 @@ interface PageHeaderProps {
 
 export default function PageHeader({ title, sub }: PageHeaderProps) {
   return (
-    <div className="px-10 pt-8">
+    <div className="px-4 md:px-10 pt-8">
       <div className="mb-3 flex items-center gap-1.5 text-[13px]">
         <Link href="/" className="flex items-center gap-1 text-muted transition-colors hover:text-foreground">
           <GridIcon className="h-3.5 w-3.5" /> Visão Geral
