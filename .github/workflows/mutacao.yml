@@ -1,0 +1,44 @@
+name: Mutação
+
+# Teste de mutação nos módulos críticos do RNF09. Roda só quando alguém
+# aciona na aba Actions: cada mutante roda a suíte do módulo inteira, e
+# isso é lento demais para rodar em todo push.
+on:
+  workflow_dispatch:
+    inputs:
+      modulos:
+        description: "Módulos separados por espaço (vazio = todos os críticos)"
+        required: false
+        default: ""
+
+jobs:
+  mutacao:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+
+    defaults:
+      run:
+        working-directory: backend
+
+    steps:
+      - name: Checkout do código
+        uses: actions/checkout@v5
+
+      - name: Configurar Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: backend/requirements*.txt
+
+      - name: Instalar dependências
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements-dev.txt   # já inclui requirements.txt e o cosmic-ray
+
+      - name: Rodar teste de mutação (cosmic-ray)
+        env:
+          MODULOS: ${{ inputs.modulos }}
+        run: |
+          set -o pipefail
+          python -m scripts.mutacao --paralelo 4 $MODULOS | tee -a "$GITHUB_STEP_SUMMARY"   # falha se algum módulo ficar abaixo de 50%
