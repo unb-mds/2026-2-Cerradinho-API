@@ -5,6 +5,7 @@ from sqlalchemy.orm import Session
 import app.domain.disciplinas as disciplinas
 from app.domain.disciplinas import (
     _extrair_pares_codigo_sala,
+    decompor_codigo_horario,
     listar_turmas,
     normalizar_nome_professor,
     normalizar_sala,
@@ -534,3 +535,66 @@ def test_persistir_turmas_mesma_sala_com_separador_e_caixa_diferentes_nao_duplic
     assert len(turmas) == 2
     assert [t.horarios[0].sala_id for t in turmas] == [salas[0].id, salas[0].id]
     assert [h.codigo for t in turmas for h in t.horarios] == ["6T2345", "2M1234"]
+
+
+# Testes escritos a partir dos mutantes sobreviventes do teste de mutação
+# (RNF09, `python -m scripts.mutacao app/domain/disciplinas.py`).
+
+
+def test_normalizar_salas_separa_tres_salas_marcadas_com_dia_sem_espaco():
+    assert normalizar_salas("FCTE - LDS(SEGUNDA)/I1(QUARTA)/I2(SEXTA)") == [
+        ("FCTE", "LDS(SEGUNDA)"),
+        ("FCTE", "I1(QUARTA)"),
+        ("FCTE", "I2(SEXTA)"),
+    ]
+
+
+def test_decompor_codigo_horario_segmento_invalido_no_meio_nao_descarta_os_seguintes():
+    assert decompor_codigo_horario("24M12 XX9 6T23") == [({"2", "4"}, "M", {"1", "2"}), ({"6"}, "T", {"2", "3"})]
+
+
+def test_persistir_turma_com_mais_salas_que_dias_associa_tudo_a_todas():
+    """Uma aula só na segunda, mas duas salas no campo: casar por posição
+    deixaria a MOCAP de fora."""
+    session = _in_memory_session()
+
+    turma_salva = persistir_turma(
+        session,
+        _turma_capturada(
+            horarios=[HorarioCapturado(codigo="2M12", descricao="Segunda, 08:00 às 09:50")],
+            sala=SalaCapturada(descricao="FCTE - S1 / MOCAP"),
+        ),
+        unidade="FCTE",
+    )
+    session.commit()
+
+    assert sorted((h.codigo, h.sala.nome) for h in turma_salva.horarios) == [("2M12", "MOCAP"), ("2M12", "S1")]
+
+
+def test_persistir_turma_com_par_codigo_sala_a_mais_nao_inventa_aula():
+    """O campo de sala tem um par para quarta, mas a turma só tem aula na
+    segunda: o formato explícito não é usado e a quarta não vira aula."""
+    session = _in_memory_session()
+
+    turma_salva = persistir_turma(
+        session,
+        _turma_capturada(
+            horarios=[HorarioCapturado(codigo="2M12", descricao="Segunda, 08:00 às 09:50")],
+            sala=SalaCapturada(descricao="2M12(A1) 4M12(B2)"),
+        ),
+        unidade="FCTE",
+    )
+    session.commit()
+
+    assert [h.codigo for h in turma_salva.horarios] == ["2M12"]
+
+
+def test_listar_turmas_com_horario_sem_sala_devolve_sala_vazia():
+    session = _in_memory_session()
+    persistir_turma(session, _turma_capturada(sala=SalaCapturada(descricao="")), unidade="FCTE")
+    session.commit()
+
+    [turma] = listar_turmas(session)
+
+    assert turma.sala.descricao == ""
+    assert [h.codigo for h in turma.horarios] == ["6T2345"]

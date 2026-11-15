@@ -87,3 +87,81 @@ def test_parse_turmas_com_docente_a_definir_trata_vagas_em_branco_como_zero():
     assert len(turmas) == 1
     assert turmas[0].vagas_ofertadas == 0
     assert turmas[0].vagas_ocupadas == 0
+
+
+# Testes escritos a partir dos mutantes sobreviventes do teste de mutação
+# (RNF09, `python -m scripts.mutacao app/scrapers/disciplinas/parser.py`):
+# os testes com a fixture real não conferiam cada campo da turma.
+
+LINHA_COMPLETA = """
+<tr class="linhaPar">
+  <td> 03 </td>
+  <td>
+    2026.2
+  </td>
+  <td>
+    ANA SOUZA (60h)<br/>
+    BRUNO LIMA (30h)
+  </td>
+  <td>
+    24M12 (10/08/2026 - 14/12/2026)
+    <div class="popUp">
+        Segunda-feira 08:00 às 09:50  <br>
+    </div>
+  </td>
+  <td>
+    6T23 (10/08/2026 - 14/12/2026)
+  </td>
+  <td> 45 </td>
+  <td> 12 </td>
+  <td> FCTE - I9 </td>
+</tr>
+"""
+
+
+def _tabela(*linhas: str) -> str:
+    agrupador = (
+        '<tr class="agrupador"><td colspan="8">'
+        '<span class="tituloDisciplina">FGA0242 - MÉTODOS DE DESENVOLVIMENTO DE SOFTWARE</span></td></tr>'
+    )
+    return f'<div id="turmasAbertas"><table class="listagem"><tbody>{agrupador}{"".join(linhas)}</tbody></table></div>'
+
+
+def test_parse_turmas_le_cada_coluna_no_campo_certo_e_sem_espacos():
+    [turma] = parse_turmas(_tabela(LINHA_COMPLETA))
+
+    assert turma.model_dump() == {
+        "disciplina_codigo": "FGA0242",
+        "disciplina_nome": "MÉTODOS DE DESENVOLVIMENTO DE SOFTWARE",
+        "numero": "03",
+        "ano_periodo": "2026.2",
+        "professores": [{"nome": "ANA SOUZA (60h)"}, {"nome": "BRUNO LIMA (30h)"}],
+        "horarios": [
+            {"codigo": "24M12", "descricao": "Segunda-feira 08:00 às 09:50"},
+            {"codigo": "6T23", "descricao": ""},
+        ],
+        "sala": {"descricao": "FCTE - I9"},
+        "vagas_ofertadas": 45,
+        "vagas_ocupadas": 12,
+    }
+
+
+def test_parse_turmas_aceita_linha_com_coluna_a_mais_no_fim():
+    linha_com_coluna_extra = LINHA_COMPLETA.replace("</tr>", "<td>coluna nova</td></tr>")
+
+    [turma] = parse_turmas(_tabela(linha_com_coluna_extra))
+
+    assert (turma.numero, turma.sala.descricao) == ("03", "FCTE - I9")
+
+
+def test_parse_turmas_tabela_sem_tbody_devolve_vazio():
+    assert parse_turmas('<div id="turmasAbertas"><table class="listagem"></table></div>') == []
+
+
+def test_parse_turmas_ignora_linha_de_tabela_aninhada_dentro_de_uma_celula():
+    aninhada = "<table><tr>" + "<td>x</td>" * 8 + "</tr></table>"
+    linha = LINHA_COMPLETA.replace("<td> FCTE - I9 </td>", f"<td> FCTE - I9 {aninhada}</td>")
+
+    turmas = parse_turmas(_tabela(linha))
+
+    assert [t.numero for t in turmas] == ["03"]
