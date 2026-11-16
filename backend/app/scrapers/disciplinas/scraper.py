@@ -7,12 +7,17 @@ está mais ativa". Por isso `buscar` sempre visita a home antes de ir para
 a busca — isso "aquece" a sessão. Também usamos `domcontentloaded` em vez
 de `networkidle`: o Google Analytics da página nunca deixa a rede ficar
 de fato ociosa, o que travava o scraper indefinidamente.
+
+Erro de rede ou timeout do Playwright (SIGAA fora do ar) vira
+ErroFonteIndisponivel, para o log de execução (RF16) registrar a falha como
+da fonte, e não como falha do nosso código.
 """
 
 from __future__ import annotations
 
 import asyncio
 
+from playwright.async_api import Error as ErroPlaywright
 from playwright.async_api import Page, async_playwright
 
 from app.core.exceptions import ErroFonteIndisponivel
@@ -57,34 +62,47 @@ class DisciplinaScraper:
         """HTML da própria página de busca, sem preencher nada — útil para
         descobrir as opções disponíveis (ex: lista de unidades) via
         parser.listar_unidades, sem precisar fazer uma busca completa."""
-        async with async_playwright() as p:
-            browser = await p.chromium.launch(headless=self._headless)
-            page = await browser.new_page()
-            await page.goto(URL_HOME, wait_until="domcontentloaded")
-            await page.goto(URL_BUSCA_TURMAS, wait_until="domcontentloaded")
-            html = await page.content()
-            await browser.close()
-            return html
-
-    async def buscar_html(self, nivel: str, unidade: str, ano: str, periodo: str, tentativas: int = 3) -> str:
-        """Busca uma unidade e devolve o HTML bruto do resultado."""
-        for tentativa in range(1, tentativas + 1):
+        try:
             async with async_playwright() as p:
                 browser = await p.chromium.launch(headless=self._headless)
                 page = await browser.new_page()
-
                 await page.goto(URL_HOME, wait_until="domcontentloaded")
                 await page.goto(URL_BUSCA_TURMAS, wait_until="domcontentloaded")
-                await self._preencher_e_buscar(page, nivel, unidade, ano, periodo)
-
                 html = await page.content()
                 await browser.close()
+                return html
+        except ErroPlaywright as erro:
+            raise ErroFonteIndisponivel(f"SIGAA não respondeu ao abrir o formulário de busca: {erro}") from erro
+
+    async def buscar_html(self, nivel: str, unidade: str, ano: str, periodo: str, tentativas: int = 3) -> str:
+        """Busca uma unidade e devolve o HTML bruto do resultado."""
+        ultimo_erro: ErroPlaywright | None = None
+        for tentativa in range(1, tentativas + 1):
+            try:
+                async with async_playwright() as p:
+                    browser = await p.chromium.launch(headless=self._headless)
+                    page = await browser.new_page()
+
+                    await page.goto(URL_HOME, wait_until="domcontentloaded")
+                    await page.goto(URL_BUSCA_TURMAS, wait_until="domcontentloaded")
+                    await self._preencher_e_buscar(page, nivel, unidade, ano, periodo)
+
+                    html = await page.content()
+                    await browser.close()
+            except ErroPlaywright as erro:
+                ultimo_erro = erro
+                print(f"SIGAA não respondeu na tentativa {tentativa}/{tentativas} (unidade {unidade}): {erro}")
+                continue
 
             if not _sessao_expirada(html):
                 return html
 
             print(f"Sessão expirou na tentativa {tentativa}/{tentativas} (unidade {unidade}), tentando de novo...")
 
+        if ultimo_erro is not None:
+            raise ErroFonteIndisponivel(
+                f"SIGAA não respondeu para a unidade {unidade} após {tentativas} tentativas: {ultimo_erro}"
+            ) from ultimo_erro
         raise ErroFonteIndisponivel(
             f"SIGAA continuou respondendo 'sessão não está mais ativa' para a unidade {unidade} "
             f"após {tentativas} tentativas."
@@ -101,20 +119,29 @@ class DisciplinaScraper:
         """Busca várias unidades reaproveitando a mesma sessão (mais rápido
         que abrir um navegador novo por unidade, e evita repetir o
         "aquecimento" da sessão a cada uma). Devolve {codigo_unidade: html};
-        unidades que falharem após as tentativas ficam de fora do dict."""
+        unidades que falharem após as tentativas (sessão expirada ou erro de
+        rede) ficam de fora do dict."""
         resultados: dict[str, str] = {}
 
         async with async_playwright() as p:
             browser = await p.chromium.launch(headless=self._headless)
             page = await browser.new_page()
-            await page.goto(URL_HOME, wait_until="domcontentloaded")
+            try:
+                await page.goto(URL_HOME, wait_until="domcontentloaded")
+            except ErroPlaywright as erro:
+                raise ErroFonteIndisponivel(f"SIGAA não respondeu ao abrir a página inicial: {erro}") from erro
 
             for codigo_unidade in unidades:
                 html = None
                 for tentativa in range(1, 4):
-                    await page.goto(URL_BUSCA_TURMAS, wait_until="domcontentloaded")
-                    await self._preencher_e_buscar(page, nivel, codigo_unidade, ano, periodo)
-                    html = await page.content()
+                    try:
+                        await page.goto(URL_BUSCA_TURMAS, wait_until="domcontentloaded")
+                        await self._preencher_e_buscar(page, nivel, codigo_unidade, ano, periodo)
+                        html = await page.content()
+                    except ErroPlaywright as erro:
+                        print(f"  unidade {codigo_unidade}: SIGAA não respondeu, tentativa {tentativa}/3: {erro}")
+                        html = None
+                        continue
                     if not _sessao_expirada(html):
                         break
                     print(f"  unidade {codigo_unidade}: sessão expirou, tentativa {tentativa}/3")
