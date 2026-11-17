@@ -1,38 +1,6 @@
-"""Seleção do PDF da semana e extração do cardápio (RF06/RF07).
+"""selecao do pdf da semana e extracao do cardapio rf06 rf07
 
-O RU monta a tabela do PDF de um jeito diferente a cada semana. Nos PDFs
-de 14/9 a 12/10/2026 (todos em tests/scrapers/fixtures/) já apareceram:
-
-- dia e data na mesma célula ("2ª FEIRA\n14/9/2026") ou em linhas
-  separadas, e às vezes cada data numa linha diferente da mesma página;
-- colunas fantasma entre os dias, com o prato numa coluna à esquerda da
-  coluna da data;
-- células mescladas que valem para a semana inteira (ex: "Leite integral
-  OU Bebida de soja" em BEBIDAS).
-
-Por isso a extração é posicional (ver specs/RF06) e não depende de qual
-linha ou coluna da tabela tem cada coisa:
-
-- o dia de cada célula é decidido pela posição x das datas na página: a
-  célula pertence a todos os dias cuja data está dentro da sua largura, o
-  que já aplica as células mescladas a todos os dias que elas cobrem;
-- a categoria é a célula da coluna de "COMPOSIÇÃO" que cobre a altura (y)
-  da célula do prato, então uma categoria que ocupa várias linhas visuais
-  (BEBIDAS com leite e café, por exemplo) junta todo o texto dela;
-- o texto de uma célula é formado pelos caracteres cujo centro está
-  dentro dela, porque uma letra pode passar um pouco da borda ("Rosé"
-  virava "osé" ao exigir o caractere inteiro dentro da célula);
-- as células vêm de todas as tabelas da página, porque o pdfplumber às
-  vezes quebra o cabeçalho em tabelas "fantasma" menores.
-
-A refeição de cada página é identificada pelo conjunto de categorias que
-aparecem nela (só café da manhã tem "PANIFICAÇÃO"/"FRUTA"; só almoço tem
-"GUARNIÇÃO"; só jantar tem "SOPA"/"TORRADA"), em vez de assumir uma ordem
-fixa de páginas, o que evita erro silencioso se uma semana vier com menos
-páginas (feriado sem jantar) ou em ordem diferente.
-
-Os ícones de alérgeno (leite, soja, glúten etc.) são imagens embutidas no
-PDF, não texto, e não são capturados (ver docs/fontes/ru-cardapio.md).
+leitura pela posicao das datas na pagina ver specs/RF06
 """
 
 from __future__ import annotations
@@ -65,7 +33,7 @@ ASSINATURAS_REFEICAO: dict[Refeicao, set[str]] = {
 
 RE_DATA = re.compile(r"\d{1,2}/\d{1,2}/\d{4}")
 TITULO_COLUNA_CATEGORIA = "COMPOSIÇÃO"
-TOLERANCIA_Y = 1  # pontos; absorve arredondamento entre bordas de células vizinhas
+TOLERANCIA_Y = 1  # folga entre bordas de celulas vizinhas
 
 
 class Celula(NamedTuple):
@@ -145,7 +113,7 @@ def encontrar_pdf_da_semana(links_cardapio: list[dict], referencia: date | None 
 
 
 def _texto_da_celula(pagina, bbox: tuple[float, float, float, float]) -> str:
-    """Junta os caracteres cujo centro está dentro da célula, numa linha só."""
+    # caracteres com o centro dentro da celula
     x0, top, x1, bottom = bbox
 
     def dentro(obj) -> bool:
@@ -159,14 +127,14 @@ def _texto_da_celula(pagina, bbox: tuple[float, float, float, float]) -> str:
 
 
 def _posicoes_das_datas(palavras: list[dict]) -> tuple[list[tuple[float, date]], float]:
-    """Retorna as datas da semana ordenadas pela posição x (centro) e a
-    altura (y) onde o cabeçalho termina, que é a parte de baixo da data
-    mais baixa."""
+    # datas ordenadas por x e o fim do cabecalho
     datas: dict[date, tuple[float, float]] = {}
     for palavra in palavras:
-        if RE_DATA.fullmatch(palavra["text"]):
+        # desde 16/11 a data vem entre parenteses
+        texto = palavra["text"].strip("()")
+        if RE_DATA.fullmatch(texto):
             centro_x = (palavra["x0"] + palavra["x1"]) / 2
-            datas.setdefault(_string_para_data(palavra["text"]), (centro_x, palavra["bottom"]))
+            datas.setdefault(_string_para_data(texto), (centro_x, palavra["bottom"]))
 
     if not datas:
         raise ValueError("Não foi possível identificar as datas dos dias no cabeçalho.")
@@ -177,7 +145,7 @@ def _posicoes_das_datas(palavras: list[dict]) -> tuple[list[tuple[float, date]],
 
 
 def _x_da_coluna_de_categoria(palavras: list[dict]) -> float:
-    """Posição x (centro) do título da coluna de categorias."""
+    # x da coluna de categorias
     for palavra in palavras:
         if palavra["text"] == TITULO_COLUNA_CATEGORIA:
             return (palavra["x0"] + palavra["x1"]) / 2
@@ -185,7 +153,7 @@ def _x_da_coluna_de_categoria(palavras: list[dict]) -> float:
 
 
 def _celulas_do_corpo(pagina, fim_cabecalho: float) -> list[Celula]:
-    """Células com texto abaixo do cabeçalho, de todas as tabelas da página."""
+    # celulas abaixo do cabecalho de todas as tabelas
     bboxes = {bbox for tabela in pagina.find_tables() for bbox in tabela.cells}
     if not bboxes:
         raise ValueError("Nenhuma tabela encontrada na página.")
@@ -216,8 +184,7 @@ def _categoria_na_altura(categorias: list[Celula], top: float) -> str | None:
 
 
 def _extrair_itens_pagina(pagina) -> tuple[Refeicao, list[ItemCardapio]]:
-    """Lê uma página (uma refeição) e devolve os itens na ordem do PDF:
-    categoria de cima para baixo e, dentro dela, dia a dia."""
+    # uma pagina por refeicao na ordem do pdf
     palavras = pagina.extract_words()
     colunas_dias, fim_cabecalho = _posicoes_das_datas(palavras)
     x_categoria = _x_da_coluna_de_categoria(palavras)

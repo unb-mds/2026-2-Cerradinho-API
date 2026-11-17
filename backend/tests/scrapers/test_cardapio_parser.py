@@ -7,10 +7,15 @@ from app.scrapers.cardapio.parser import encontrar_pdf_da_semana, extrair_itens_
 
 FIXTURES = Path(__file__).parent / "fixtures"
 
-# Um PDF real por semana, cada um com a tabela montada de um jeito
-# (ver a docstring de app/scrapers/cardapio/parser.py). A data é a
-# segunda-feira da semana.
-SEMANAS = [date(2026, 9, 14), date(2026, 9, 21), date(2026, 9, 28), date(2026, 10, 5), date(2026, 10, 12)]
+# um pdf real por semana cada um com um layout ver specs/RF06
+SEMANAS = [
+    date(2026, 9, 14),
+    date(2026, 9, 21),
+    date(2026, 9, 28),
+    date(2026, 10, 5),
+    date(2026, 10, 12),
+    date(2026, 11, 16),
+]
 
 
 def _itens_da_semana(segunda: date):
@@ -79,6 +84,8 @@ def test_extrair_itens_cardapio_le_as_tres_refeicoes_nos_sete_dias(segunda):
         (date(2026, 9, 28), "almoco", "PRATO PRINCIPAL PADRÃO", "Carne ao molho"),
         (date(2026, 10, 5), "almoco", "PRATO PRINCIPAL PADRÃO", "Frango assado com manjericão"),
         (date(2026, 10, 12), "jantar", "PRATO PRINCIPAL PADRÃO", "Suíno ao molho barbecue de figo"),
+        # data entre parenteses no cabecalho
+        (date(2026, 11, 16), "almoco", "PRATO PRINCIPAL PADRÃO", "Frango com creme de milho"),
     ],
 )
 def test_extrair_itens_cardapio_atribui_o_prato_ao_dia_e_categoria_certos(segunda, refeicao, categoria, esperado):
