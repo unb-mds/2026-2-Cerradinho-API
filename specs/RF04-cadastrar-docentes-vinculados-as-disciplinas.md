@@ -7,6 +7,7 @@
 **Critérios de aceitação**
 - `GET /v1/professores` lista todo professor que leciona pelo menos uma turma capturada, com as disciplinas associadas.
 - Professor sem nenhuma turma ativa não aparece na listagem (não há cadastro manual de professor).
+- `"A DEFINIR DOCENTE"` (placeholder do SIGAA pra turma sem docente definido) também não aparece — não é um professor real, e hoje acumula mais de 150 disciplinas num só registro, o que tornava a agenda dele ilegível.
 - `GET /v1/professores?nome=` filtra por busca parcial de nome, sem diferenciar maiúsculas/minúsculas ou acentos (ex: `nome=andre` acha "André").
 - `GET /v1/professores?limite=&offset=` pagina a listagem. Ver RF10 pra `X-Total-Count`.
 - Professor com o mesmo nome em disciplinas diferentes aparece como um único registro, mesmo quando o SIGAA publica carga horária distinta por disciplina (ver RF02).
