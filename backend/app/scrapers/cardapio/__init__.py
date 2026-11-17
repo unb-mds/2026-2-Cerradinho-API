@@ -24,9 +24,7 @@ logger = logging.getLogger(__name__)
 
 
 def _url_do_pdf_da_semana(referencia: date | None) -> str:
-    """Procura o PDF da semana em cada página de URLS_CARDAPIO, na ordem, e
-    devolve o primeiro encontrado. Uma página fora do ar não impede a
-    consulta à outra."""
+    # primeira pagina com o pdf da semana atual
     for url in URLS_CARDAPIO:
         try:
             html = baixar_html(url)
@@ -47,10 +45,6 @@ def raspar_cardapio(referencia: date | None = None) -> list[ItemCardapio]:
     """Captura e valida o cardápio da semana que contém `referencia` (por
     padrão, hoje). Este é o contrato público do módulo: entrada = data de
     referência opcional, saída = list[ItemCardapio].
-
-    Levanta ErroFonteIndisponivel se nenhuma página tiver o PDF da semana.
-    Nunca devolve o cardápio de uma semana antiga (risco A2 em
-    docs/fontes/ru-cardapio.md).
     """
     conteudo_pdf = baixar_pdf(_url_do_pdf_da_semana(referencia))
     return extrair_itens_cardapio(conteudo_pdf)

@@ -329,8 +329,7 @@ def test_normalizar_sala_bsas_com_separador_tambem_funde_com_bsa_s():
 
 
 def test_listar_turmas_nao_repete_horario_gravado_uma_vez_por_sala():
-    """O horário gravado uma vez para cada sala (caso acima) aparece uma vez
-    só em GET /v1/disciplinas."""
+    # horario repetido por sala aparece uma vez so
     session = _in_memory_session()
     persistir_turma(
         session,

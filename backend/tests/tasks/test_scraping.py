@@ -97,9 +97,7 @@ def test_scrape_disciplinas_task_varre_todas_as_unidades_por_padrao(monkeypatch)
 
 
 def test_scrape_disciplinas_task_limpa_o_cache_de_salas_vazias(monkeypatch):
-    """Regressão: a task apagava só a chave exata "cache:v1:salas", e as
-    chaves de salas vazias por dia e horário ficavam até 7 dias com as
-    salas da raspagem anterior."""
+    # cache de salas vazias tambem precisa ser limpo
     session = _in_memory_session()
     monkeypatch.setattr(scraping_task, "SessionLocal", lambda: session)
     monkeypatch.setattr(scraping_task, "raspar_disciplinas_varias_unidades", _raspagem_falsa)

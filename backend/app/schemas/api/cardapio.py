@@ -1,9 +1,4 @@
-"""Resposta de GET /v1/cardapio/semana (RF19).
-
-Separado de `app/schemas/cardapio.py`, que é o contrato de saída do
-scraper (um item por linha). Aqui os itens já vêm agrupados por dia e por
-refeição, e a semana sempre tem os 7 dias, mesmo os que não têm cardápio.
-"""
+"""resposta de get v1 cardapio semana rf19"""
 
 from datetime import date
 

@@ -424,9 +424,7 @@ def _descricao_salas(turma: Turma) -> str:
 
 
 def _horarios_sem_repeticao(turma: Turma) -> list[HorarioCapturado]:
-    """Quando as salas não casam com os dias, o mesmo horário é gravado uma
-    vez por sala (ver `_montar_horarios`). No contrato público ele aparece
-    uma vez só."""
+    # horario gravado uma vez por sala aparece uma vez so
     vistos: set[tuple[str, str]] = set()
     horarios = []
     for horario in turma.horarios:

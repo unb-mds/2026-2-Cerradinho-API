@@ -69,9 +69,7 @@ def _desagrupar_bloco(bloco: str | None) -> list[ItemRefeicao]:
 
 
 def listar_cardapio_semana(session: Session, data_inicio: date) -> CardapioSemana:
-    """Lê do histórico (RF07) os 7 dias a partir de `data_inicio`, sem
-    disparar coleta. Dia sem linha no banco entra com `publicado=False` e as
-    refeições vazias, em vez de sumir da resposta (RF19)."""
+    # sempre 7 dias e dia sem cardapio vem com publicado false
     data_fim = data_inicio + timedelta(days=6)
     por_data = {
         cardapio.data: cardapio
