@@ -1,6 +1,6 @@
 ---
 name: data-contract
-description: Define or change a Pydantic schema in backend/app/schemas/ that represents validated data coming out of a scraper, or a request/response shape for the API. Use when adding a new domain (professores, salas, cardapio, eventos, editais) or field.
+description: Define or change a Pydantic schema in backend/app/schemas/ that represents validated data coming out of a scraper, or a request/response shape for the API. Use when adding a new domain (professores, salas, cardapio, resumo) or field.
 ---
 
 # Data contract (Pydantic schemas)
@@ -33,11 +33,11 @@ the top of `backend/app/schemas/disciplina.py` for the canonical explanation of 
   and let `app/domain/` (or a dedicated normalization step) coerce it to `int` — don't
   bake type coercion that can silently fail into the schema unless you also handle the
   failure explicitly.
-- These are the **scraper-output contracts**, distinct from the API request/response
-  models that will live under the same `app/schemas/` tree once routers exist (RF10) —
-  when both exist, keep scraper-output schemas and API I/O schemas in clearly separate
-  modules (e.g. `schemas/disciplina.py` vs `schemas/api/disciplina.py`), don't reuse one
-  for both purposes if their shapes diverge.
+- These are the **scraper-output contracts**, kept separate from the API
+  request/response models in `app/schemas/api/` (RF10). Don't reuse one for both
+  purposes when their shapes diverge — e.g. `schemas/cardapio.py` is one item per row as
+  the scraper produces it, while `schemas/api/cardapio.py` is the week grouped by day and
+  meal that `GET /v1/cardapio/semana` returns (RF19).
 
 ## When adding a new domain
 
