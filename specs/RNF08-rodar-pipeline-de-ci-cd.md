@@ -13,7 +13,7 @@
 
 ## Rastreabilidade
 
-- **PRs:** [#85](https://github.com/unb-mds/2026-2-Cerradinho-API/pull/85), [#112](https://github.com/unb-mds/2026-2-Cerradinho-API/pull/112), [#114](https://github.com/unb-mds/2026-2-Cerradinho-API/pull/114), [#116](https://github.com/unb-mds/2026-2-Cerradinho-API/pull/116), [#124](https://github.com/unb-mds/2026-2-Cerradinho-API/pull/124)
+- **PRs:** [#85](https://github.com/unb-mds/2026-2-Cerradinho-API/pull/85), [#112](https://github.com/unb-mds/2026-2-Cerradinho-API/pull/112), [#114](https://github.com/unb-mds/2026-2-Cerradinho-API/pull/114), [#116](https://github.com/unb-mds/2026-2-Cerradinho-API/pull/116), [#124](https://github.com/unb-mds/2026-2-Cerradinho-API/pull/124), [#142](https://github.com/unb-mds/2026-2-Cerradinho-API/pull/142) (actions no Node 24), [#248](https://github.com/unb-mds/2026-2-Cerradinho-API/pull/248) (workflow de mutação)
 - **Testes:** [`.github/workflows/ci.yml`](https://github.com/unb-mds/2026-2-Cerradinho-API/blob/dev/.github/workflows/ci.yml)
 - **Decisões:** [ADR 0008](https://github.com/unb-mds/2026-2-Cerradinho-API/blob/dev/docs/adr/0008-bandit-como-sast.md)
 - **Observação:** O pipeline roda lint, SAST e testes, mas ainda não é check obrigatório para o merge.

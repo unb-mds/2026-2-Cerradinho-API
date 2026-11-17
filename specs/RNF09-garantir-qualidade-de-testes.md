@@ -120,7 +120,7 @@ A sabotagem achou três falhas silenciosas no SIGAA, corrigidas no commit `f5a8f
 
 ## Rastreabilidade
 
-- **PRs:** a abrir, da `R2-joao` para a `dev`.
+- **PRs:** [#147](https://github.com/unb-mds/2026-2-Cerradinho-API/pull/147) (cobertura e módulos críticos), [#248](https://github.com/unb-mds/2026-2-Cerradinho-API/pull/248) (mutação e sabotagem)
 - **Issues:** [#206](https://github.com/unb-mds/2026-2-Cerradinho-API/issues/206) (mutação e sabotagem, Sprint 9) e [#214](https://github.com/unb-mds/2026-2-Cerradinho-API/issues/214) (metas do RNF09, Sprint 10).
 - **Testes:** [`tests/sabotagem/`](https://github.com/unb-mds/2026-2-Cerradinho-API/tree/dev/backend/tests/sabotagem), [`tests/scrapers/test_cardapio_parser_posicional.py`](https://github.com/unb-mds/2026-2-Cerradinho-API/blob/dev/backend/tests/scrapers/test_cardapio_parser_posicional.py), [`tests/domain/test_execucoes.py`](https://github.com/unb-mds/2026-2-Cerradinho-API/blob/dev/backend/tests/domain/test_execucoes.py) e os testes marcados como "escritos a partir dos mutantes sobreviventes" em `tests/domain/` e `tests/scrapers/`.
 - **Observação:** a cobertura é medida no passo de testes do CI, sem mínimo exigido. A mutação roda sob demanda, pelo workflow **Mutação** ou por `python -m scripts.mutacao`. Ao mudar um módulo crítico, rode o script para ele antes do merge.
