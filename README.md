@@ -1,8 +1,15 @@
-# Cerradinho — API aberta da UnB
+# Cerradinho
 
-API pública que reúne, num só lugar, dados institucionais da UnB hoje espalhados em vários sistemas: disciplinas, professores, salas e cardápio do RU. Os dados vêm só de fontes públicas e são coletados automaticamente por scrapers agendados.
+[![CI](https://github.com/unb-mds/2026-2-Cerradinho-API/actions/workflows/ci.yml/badge.svg?branch=dev)](https://github.com/unb-mds/2026-2-Cerradinho-API/actions/workflows/ci.yml)
+[![Docs](https://img.shields.io/badge/docs-GitHub%20Pages-blue)](https://unb-mds.github.io/2026-2-Cerradinho-API/)
+[![Licença MIT](https://img.shields.io/badge/licen%C3%A7a-MIT-green)](LICENSE)
+[![Python 3.12](https://img.shields.io/badge/python-3.12-blue)](backend/README.md)
+
+API aberta da UnB. Reúne num só lugar dados institucionais hoje espalhados em vários sistemas, como disciplinas, professores, salas vazias e o cardápio do RU. Os dados vêm só de fontes públicas e são coletados automaticamente por scrapers agendados.
 
 Projeto da disciplina de Métodos de Desenvolvimento de Software (MDS), UnB FCTE, 2026/2.
+
+> O Cerradinho não é um serviço oficial da UnB. Os dados são copiados do SIGAA e do site do RU e podem estar desatualizados ou incompletos. Para matrícula e decisões importantes, confira sempre a fonte oficial.
 
 ## Em produção
 
@@ -10,6 +17,44 @@ Projeto da disciplina de Métodos de Desenvolvimento de Software (MDS), UnB FCTE
 - API: [https://api.3-147-228-104.sslip.io/v1](https://api.3-147-228-104.sslip.io/docs), com a documentação interativa em [`/docs`](https://api.3-147-228-104.sslip.io/docs)
 
 Como a produção sobe está em [`docs/DEPLOY.md`](docs/DEPLOY.md).
+
+## Exemplo de uso
+
+Salas sem aula na segunda às 14h, direto pela API:
+
+```bash
+curl "https://api.3-147-228-104.sslip.io/v1/salas/vazias?dia=segunda&horario=14:00"
+```
+
+O mesmo pelo [SDK Python](sdk/README.md), que também instala a CLI `cerradinho`:
+
+```bash
+pip install "git+https://github.com/unb-mds/2026-2-Cerradinho-API.git#subdirectory=sdk"
+```
+
+```python
+from cerradinho_sdk import CerradinhoClient
+
+with CerradinhoClient("https://api.3-147-228-104.sslip.io") as cerradinho:
+    salas = cerradinho.listar_salas_vazias(dia="segunda", horario="14:00")
+    cardapio = cerradinho.obter_cardapio_semana()
+```
+
+```bash
+export CERRADINHO_API_URL=https://api.3-147-228-104.sslip.io
+cerradinho salas-vazias segunda 14:00
+```
+
+Todas as rotas estão na [documentação interativa](https://api.3-147-228-104.sslip.io/docs) e no [portal do desenvolvedor](https://3-147-228-104.sslip.io/desenvolvedores). A API aceita até 60 requisições por minuto por IP.
+
+## Fontes de dado
+
+| Dado | Fonte | Atualização |
+|---|---|---|
+| Disciplinas, turmas, professores e salas | [SIGAA](https://sigaa.unb.br/sigaa/public/turmas/listar.jsf) | Todo domingo às 3h |
+| Cardápio do RU (Darcy Ribeiro) | [Site do RU](https://ru.unb.br/cardapio) | Todo dia às 5h |
+
+"Sala vazia" quer dizer sala sem aula cadastrada no SIGAA. Reserva informal e eventos não aparecem. As limitações de cada fonte estão em [`docs/fontes/`](docs/fontes/).
 
 ## Para quem é
 
@@ -52,8 +97,9 @@ O site abre em `http://localhost:3000`. Detalhes de cada parte, testes e variáv
 ```
 backend/    API FastAPI, scrapers, tasks Celery, migrations e testes
 frontend/   telas de consulta em Next.js
-sdk/        SDK/CLI em Python (Release 2)
+sdk/        SDK e CLI em Python
 docs/       documentação do projeto
+specs/      um arquivo por requisito, com critérios e rastreabilidade
 ```
 
 ## Documentação
@@ -87,6 +133,19 @@ Quadro do time no Figma: [CERRADINHO](https://www.figma.com/board/Xn4RLNLqWrNfUc
 | João Paulo | QA, testes de contrato, CI e CLI |
 
 O Ítalo participou da Release 1 (scraping do RU) e saiu do projeto no início da Release 2.
+
+## Como contribuir
+
+Contribuições de fora do time são bem-vindas. O [CONTRIBUTING.md](CONTRIBUTING.md) explica como rodar os testes e abrir um pull request, e as issues marcadas com [`good first issue`](https://github.com/unb-mds/2026-2-Cerradinho-API/labels/good%20first%20issue) são um bom começo. Quem participa segue o [Código de Conduta](CODE_OF_CONDUCT.md).
+
+## Suporte
+
+- Bug ou dado errado: abra uma [issue](https://github.com/unb-mds/2026-2-Cerradinho-API/issues/new/choose).
+- Falha de segurança: siga a [política de segurança](SECURITY.md) e não abra issue pública.
+
+## Status
+
+O desenvolvimento ativo vai até a entrega da Release 2, em 25/11/2026. As versões e o que mudou em cada uma estão nas [Releases](https://github.com/unb-mds/2026-2-Cerradinho-API/releases) e no [Changelog](CHANGELOG.md).
 
 ## Licença
 
