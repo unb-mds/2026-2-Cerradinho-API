@@ -43,3 +43,19 @@ def test_obter_resumo_conta_cada_dominio(client, db_session):
     response = client.get("/v1/resumo")
 
     assert response.json() == {"turmas": 2, "disciplinas": 2, "professores": 2, "salas": 2}
+
+
+def test_obter_resumo_nao_conta_o_docente_placeholder(client, db_session):
+    persistir_turma(db_session, _turma_capturada(numero="01"), unidade="FCTE")
+    persistir_turma(
+        db_session,
+        _turma_capturada(numero="02", professores=[Professor(nome="A DEFINIR DOCENTE")]),
+        unidade="FCTE",
+    )
+    db_session.commit()
+
+    resumo = client.get("/v1/resumo").json()
+    listagem = client.get("/v1/professores", params={"limite": 10})
+
+    assert resumo["professores"] == 1
+    assert int(listagem.headers["X-Total-Count"]) == resumo["professores"]
