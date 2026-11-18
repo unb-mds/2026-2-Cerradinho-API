@@ -6,9 +6,10 @@ from app.core.config import Settings
 @pytest.mark.parametrize(
     ("redis_url", "cache", "rate_limit"),
     [
-        # padrao do docker compose
+        # padrão do docker compose, com o banco no path
         ("redis://redis:6379/0", "redis://redis:6379/2", "redis://redis:6379/3"),
-        # url sem banco no path
+        # formato do REDIS_URL do Railway, sem path: cortar no último "/"
+        # dava "redis://2", que o Python resolve como o IP 0.0.0.2
         (
             "redis://default:senha@redis.railway.internal:6379",
             "redis://default:senha@redis.railway.internal:6379/2",

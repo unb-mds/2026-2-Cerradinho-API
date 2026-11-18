@@ -7,7 +7,9 @@ import app.scrapers.cardapio as cardapio
 from app.core.exceptions import ErroFonteIndisponivel
 from app.scrapers.cardapio.scraper import URLS_CARDAPIO
 
-# uma pagina atualizada e outra parada na semana anterior
+# As duas páginas onde o RU publica o PDF do Darcy Ribeiro. Em outubro de
+# 2026 uma delas ficou uma semana parada enquanto a outra já tinha a semana
+# nova, e depois as duas voltaram a ser atualizadas (risco A2).
 PAGINA_ATUALIZADA = """
 <a href="/wp-content/uploads/Darcy-Ribeiro-Semana-01-19-10-a-25-10.pdf">ISM &#8211; 19/10/2026 À 25/10/2026</a>
 """
@@ -19,7 +21,8 @@ SEMANA_NOVA = date(2026, 10, 21)
 
 @pytest.fixture
 def paginas(monkeypatch):
-    # html falso por url e devolve o pdf escolhido
+    """Substitui o download das páginas pelo HTML de cada URL e devolve o
+    PDF escolhido, sem baixar nem ler PDF de verdade."""
     conteudo: dict[str, str | Exception] = {}
 
     def baixar_html_falso(url):

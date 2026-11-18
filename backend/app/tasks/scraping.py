@@ -46,7 +46,7 @@ def scrape_disciplinas_task(
         invalidar("cache:v1:disciplinas")
         invalidar("cache:v1:professores")
         invalidar("cache:v1:resumo")
-        # prefixo pra limpar tambem salas vazias
+        # prefixo, pra levar junto as chaves de salas vazias por dia e horário
         invalidar_prefixo("cache:v1:salas")
         return total
     finally:

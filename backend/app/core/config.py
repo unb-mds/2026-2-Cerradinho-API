@@ -35,7 +35,9 @@ class Settings(BaseSettings):
 
 
 def _trocar_banco_redis(url: str, banco: int) -> str:
-    # troca so o banco no path da url
+    """Troca o número do banco no path da URL. O REDIS_URL do Railway vem
+    sem path ("redis://default:senha@host:6379"), então não dá pra cortar
+    no último "/", que nesse caso é o de "redis://"."""
     return urlunsplit(urlsplit(url)._replace(path=f"/{banco}"))
 
 

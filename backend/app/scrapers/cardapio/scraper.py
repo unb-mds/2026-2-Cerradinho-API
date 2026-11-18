@@ -1,4 +1,12 @@
-"""captura http do cardapio do ru rf06 rf07"""
+"""Captura HTTP para o scraper de Cardápio (RF06/RF07): HTML da página de
+listagem e download do PDF selecionado por parser.py.
+
+O RU publica o PDF do Darcy Ribeiro em duas páginas, `cardapio/` e
+`cardapio-refeitorio/`, e alterna qual delas atualiza (ver risco A2 em
+docs/fontes/ru-cardapio.md). A que fica para trás continua respondendo 200
+com HTML válido, só que com a semana antiga. Por isso o scraper consulta as
+duas, na ordem de URLS_CARDAPIO, e usa a primeira que tiver o PDF da semana.
+"""
 
 import logging
 import time
@@ -9,7 +17,6 @@ from app.core.exceptions import ErroFonteIndisponivel
 
 logger = logging.getLogger(__name__)
 
-# o ru alterna qual das duas paginas atualiza
 URLS_CARDAPIO = ("https://ru.unb.br/cardapio/", "https://ru.unb.br/cardapio-refeitorio/")
 HEADERS = {"User-Agent": "CerradinhoBot/1.0 (+https://github.com/unb-mds/2026-2-Cerradinho-API)"}
 TENTATIVAS_DOWNLOAD = 3
