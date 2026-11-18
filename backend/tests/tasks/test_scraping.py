@@ -77,6 +77,7 @@ def test_scrape_disciplinas_task_unidade_com_falha_nao_derruba_as_outras(monkeyp
     total = scraping_task.scrape_disciplinas_task.run(nivel="G", ano="2026", periodo="2")
 
     assert total["turmas_persistidas"] == 1
+    assert total["unidades_com_falha"] == ["FUP"]
     turmas = session.query(Turma).all()
     assert {t.unidade for t in turmas} == {"FCTE"}
 

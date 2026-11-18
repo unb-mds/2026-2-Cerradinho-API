@@ -271,6 +271,14 @@ def test_raspar_varias_unidades_aceita_unidade_sem_turma_se_outra_tem(monkeypatc
     assert len(turmas_por_unidade["673"]) == TURMAS_NA_FIXTURE
     assert turmas_por_unidade["650"] == []
 
+def test_raspar_varias_unidades_unidade_que_nunca_responde_entra_em_unidades_com_falha(sigaa):
+    sigaa.expiracoes = {"650": SEMPRE}
+
+    turmas_por_unidade, unidades_com_falha = asyncio.run(
+        raspar_disciplinas_varias_unidades("G", "2026", "2", ["673", "650"]))
+
+    assert list(turmas_por_unidade) == ["673"]
+    assert unidades_com_falha == ["650"]
 
 # ----------------------------------------------------------------- parser
 

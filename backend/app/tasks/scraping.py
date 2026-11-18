@@ -45,6 +45,7 @@ def scrape_disciplinas_task(
                 # junto na rolagem de volta - commit por unidade, não um só no fim.
                 db.rollback()
                 logger.exception("Falha ao persistir a unidade %s, pulando", unidade)
+                unidades_com_falha.append(unidade)
         invalidar("cache:v1:disciplinas")
         invalidar("cache:v1:professores")
         invalidar("cache:v1:resumo")
