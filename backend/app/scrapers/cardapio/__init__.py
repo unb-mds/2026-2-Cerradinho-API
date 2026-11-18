@@ -45,6 +45,9 @@ def raspar_cardapio(referencia: date | None = None) -> list[ItemCardapio]:
     """Captura e valida o cardápio da semana que contém `referencia` (por
     padrão, hoje). Este é o contrato público do módulo: entrada = data de
     referência opcional, saída = list[ItemCardapio].
+
+    Levanta ErroFonteIndisponivel se nenhuma página tiver o PDF da semana,
+    em vez de devolver uma semana antiga.
     """
     conteudo_pdf = baixar_pdf(_url_do_pdf_da_semana(referencia))
     return extrair_itens_cardapio(conteudo_pdf)
