@@ -20,7 +20,7 @@ _DIA_POR_DIGITO = {digito: dia for dia, digito in DIA_PARA_DIGITO.items()}
 # de verdade: é um só registro acumulando todas as turmas sem docente (hoje,
 # mais de 150 disciplinas), o que torna a agenda dele ilegível - achado do
 # Daniel revisando a tela de agenda (PR #238).
-_DOCENTE_PLACEHOLDER = "A DEFINIR DOCENTE"
+DOCENTE_PLACEHOLDER = "A DEFINIR DOCENTE"
 
 
 def _professor_para_resposta(professor: Professor) -> Docente:
@@ -47,7 +47,7 @@ def listar_professores(
     nome, antes de `limite`/`offset`, pro cabeçalho `X-Total-Count`."""
     professores = (
         session.query(Professor)
-        .filter(Professor.nome != _DOCENTE_PLACEHOLDER)
+        .filter(Professor.nome != DOCENTE_PLACEHOLDER)
         .order_by(Professor.nome)
         .all()
     )
