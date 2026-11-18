@@ -16,11 +16,18 @@ const SDK_URL = `${REPO_URL}/tree/${BRANCH_SDK}/sdk`;
 const SDK_INSTALACAO = `pip install "git+${REPO_URL}.git@${BRANCH_SDK}#subdirectory=sdk"`;
 
 // O SDK recebe a URL sem o /v1 (ele monta os caminhos de /v1/ sozinho).
+// Um exemplo por domínio da API (RF13, #208) - mesma cobertura do sdk/README.md.
 const SDK_EXEMPLO = `from cerradinho_sdk import CerradinhoClient
 
 with CerradinhoClient("${API_URL.replace(/\/v1$/, "")}") as cerradinho:
-    salas = cerradinho.listar_salas_vazias(dia="segunda", horario="08:00")
-    cardapio = cerradinho.obter_cardapio_semana()`;
+    turmas = cerradinho.listar_disciplinas(busca="fga", limite=20)
+    docentes = cerradinho.listar_professores(nome="andre")
+    agenda = cerradinho.obter_agenda(professor_id=12)
+    salas = cerradinho.listar_salas()
+    salas_vazias = cerradinho.listar_salas_vazias(dia="segunda", horario="08:00")
+    cardapio = cerradinho.obter_cardapio_semana()
+    execucoes = cerradinho.listar_execucoes(limite=10)
+    resumo = cerradinho.obter_resumo()`;
 
 // A CLI vem no mesmo pacote do SDK e, como ele, recebe a URL sem o /v1.
 const CLI_URL = `${SDK_URL}#cli`;
