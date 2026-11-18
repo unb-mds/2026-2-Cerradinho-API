@@ -12,7 +12,7 @@ disclosure policy. This file is plain documentation, not a skill itself.
 
 | Skill | Source | Covers |
 |---|---|---|
-| [web-scraper](web-scraper/SKILL.md) | [openai/skills/playwright](https://www.skills.sh/openai/skills/playwright), [mindrally/skills/web-scraping](https://www.skills.sh/mindrally/skills/web-scraping) | Scraper/parser split for any public source (SIGAA, RU, agenda, editais, CKAN) |
+| [web-scraper](web-scraper/SKILL.md) | [openai/skills/playwright](https://www.skills.sh/openai/skills/playwright), [mindrally/skills/web-scraping](https://www.skills.sh/mindrally/skills/web-scraping) | Scraper/parser split for the sources in scope (SIGAA turmas, RU cardápio PDF) |
 | [data-contract](data-contract/SKILL.md) | [mindrally/skills/fastapi-python](https://www.skills.sh/mindrally/skills/fastapi-python) | Pydantic schemas in `app/schemas/` — scraper-output and API contracts |
 | [db-model](db-model/SKILL.md) | [sickn33/antigravity-awesome-skills/database-architect](https://skills.sh/sickn33/antigravity-awesome-skills/database-architect) | SQLAlchemy models + Alembic migrations |
 | [scheduled-task](scheduled-task/SKILL.md) | [sickn33/antigravity-awesome-skills/fastapi-pro](https://skills.sh/sickn33/antigravity-awesome-skills/fastapi-pro) | Celery/Redis jobs, RF15-16 (scheduling + run logging) |
@@ -39,9 +39,10 @@ disclosure policy. This file is plain documentation, not a skill itself.
 | [adr-writing](adr-writing/SKILL.md) | [wshobson/agents/architecture-decision-records](https://skills.sh/wshobson/agents/architecture-decision-records) | Architecture Decision Records under `docs/adr/` |
 | [ai-usage-log](ai-usage-log/SKILL.md) | *(none — custom)* | Logging AI-assisted contributions in `AI-USAGE.md` (course requirement) |
 
-## Not yet a skill (add when the work starts)
+## Not yet a skill
 
-Rate limiting (`slowapi`, RNF01), Redis caching (RNF02), and observability/uptime
-monitoring (RNF03) don't have dedicated modules yet. When that work starts, check
-skills.sh first (a `slowapi`/rate-limiting or observability skill likely already exists)
-before writing a project-specific one from scratch.
+Rate limiting (RNF01), cache (RNF02) and mutation/sabotage tests (RNF09) are covered
+inside `fastapi-endpoint`, `scheduled-task` and `contract-testing`. Observability
+(RNF03, `/health` and the UptimeRobot monitors in `backend/scripts/uptimerobot.py`) and
+the production deploy (RNF06, `docs/DEPLOY.md`) don't have a skill yet. If that work
+grows, check skills.sh first before writing a project-specific one from scratch.

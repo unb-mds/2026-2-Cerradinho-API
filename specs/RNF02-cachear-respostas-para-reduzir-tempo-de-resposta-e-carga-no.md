@@ -62,7 +62,7 @@ devem passar sem alteração nenhuma.
 
 ## Rastreabilidade
 
-- **PRs:** #150
+- **PRs:** [#150](https://github.com/unb-mds/2026-2-Cerradinho-API/pull/150), [#243](https://github.com/unb-mds/2026-2-Cerradinho-API/pull/243) (teste de carga)
 - **Testes:** `tests/core/test_cache.py` (helper de cache: grava no miss, lê no hit, invalidação por chave e por prefixo), mais a cobertura indireta de `tests/routers/conftest.py` (fixture `cache_falso`, autouse em toda a suíte de rotas).
 - **Observações:** implementado com uma função auxiliar (`resposta_cacheada`, em `app/core/cache.py`), não uma FastAPI dependency, mais simples pro caso de 4 rotas.
 - **Decisões:** [ADR 0007](https://github.com/unb-mds/2026-2-Cerradinho-API/blob/dev/docs/adr/0007-cache-e-rate-limit-na-api.md)
