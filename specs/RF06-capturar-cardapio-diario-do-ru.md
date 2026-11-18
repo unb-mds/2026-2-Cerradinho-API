@@ -11,7 +11,7 @@
 **Regra de negócio**
 - A extração é posicional (coordenadas das células do PDF), não por leitura linear de texto — uma extração sequencial embaralha qual prato pertence a qual dia, porque o layout usa células mescladas.
 - O layout da tabela muda de uma semana para outra. Já apareceram o dia e a data na mesma célula ou em linhas separadas, cada data numa linha diferente da mesma página, colunas fantasma entre os dias com o prato à esquerda da coluna da data e a data entre parênteses (desde 16/11). Por isso a leitura não depende de qual linha ou coluna da tabela tem cada coisa.
-- O dia de cada célula vem da posição horizontal das datas no cabeçalho. A célula pertence a todos os dias cuja data cai dentro da sua largura, e é assim que uma célula mesclada vale para todos os dias que ela cobre.
+- O dia de cada célula vem da posição horizontal das datas no cabeçalho. A data é procurada dentro de cada palavra, então ela é reconhecida mesmo colada em outro texto, como "(16/11/2026)" ou "FEIRA(16/11/2026)". A célula pertence a todos os dias cuja data cai dentro da sua largura, e é assim que uma célula mesclada vale para todos os dias que ela cobre.
 - A categoria de um prato é a célula da coluna "COMPOSIÇÃO" que cobre a altura dele. Uma categoria que ocupa várias linhas visuais (BEBIDAS com leite e café, por exemplo) junta todo o texto dela.
 - Um caractere pertence à célula quando o seu centro está dentro dela, porque uma letra pode passar um pouco da borda ("Rosé" virava "osé" quando se exigia o caractere inteiro dentro da célula).
 - As células vêm de todas as tabelas da página, porque o pdfplumber às vezes quebra o cabeçalho em tabelas menores.
