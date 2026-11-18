@@ -10,7 +10,8 @@ from app.models import ExecucaoLog
 @task_success.connect
 def log_success(sender=None, result=None, **kwargs):
     print(f"[{datetime.now(timezone.utc)}] SUCESSO - {sender.name}")
-    _gravar(task_name=sender.name, status="sucesso")
+    _gravar(task_name=sender.name, status="sucesso", mensagem=str(result)
+            if result is not None else None)
  
  
 @task_failure.connect
