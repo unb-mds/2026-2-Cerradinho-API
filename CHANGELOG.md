@@ -14,8 +14,11 @@ Mudanças relevantes do Cerradinho, por release. O formato segue o [Keep a Chang
 
 ### Corrigido
 
+- Agenda do professor (RF18) ilegível quando várias turmas caem no mesmo horário (ex. 12 turmas simultâneas de Música numa sexta): a coluna do dia era dividida em uma fatia por turma. Agora turmas com o mesmo início e fim viram um bloco "N turmas", que abre a lista abaixo da grade.
 - Grade noturna de horário (RF17/RF18) com os horários errados e faltando a N4; agora confirmada contra turma real (aulas de 50 min, não 55, com 5 min de intervalo entre T6 e N1).
 - Sala do Darcy com o código de horário embutido no próprio campo de sala (ex. `"2N12(ICC ANF.15) 4N12(ICC ANF.16)"`), que antes virava uma sala só sem separar os prédios/salas; e prédio cortado errado quando o separador caía dentro do código da sala (`"BSA S B1 34 - 10"`, `"ICC AT 114 - 092"`) em vez de entre prédio e sala (RF05).
+- `GET /v1/professores` mostrando `"A DEFINIR DOCENTE"` (placeholder do SIGAA pra turma sem docente, hoje com mais de 150 disciplinas acumuladas nesse registro só) como se fosse um professor real, com uma agenda ilegível (RF04, RF18).
+- CORS sem expor o `X-Total-Count` (RF10): o cabeçalho chegava na resposta, mas o JS do navegador não conseguia ler, então a paginação do front não tinha como saber o total.
 
 ### Alterado
 

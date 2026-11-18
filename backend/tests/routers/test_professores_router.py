@@ -60,6 +60,24 @@ def test_listar_professores_ordena_por_nome(client, db_session):
     assert [p["nome"] for p in response.json()] == ["Ana Souza", "Carlos Lima"]
 
 
+def test_listar_professores_nao_mostra_docente_a_definir(client, db_session):
+    persistir_turma(
+        db_session,
+        _turma_capturada(professores=[Professor(nome="A DEFINIR DOCENTE")]),
+        unidade="FCTE",
+    )
+    persistir_turma(
+        db_session,
+        _turma_capturada(disciplina_codigo="FGA0071", professores=[Professor(nome="Ana Souza")]),
+        unidade="FCTE",
+    )
+    db_session.commit()
+
+    response = client.get("/v1/professores")
+
+    assert [p["nome"] for p in response.json()] == ["Ana Souza"]
+
+
 def test_listar_professores_sem_dado_retorna_lista_vazia(client):
     response = client.get("/v1/professores")
 

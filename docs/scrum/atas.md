@@ -198,3 +198,23 @@ Registro das reuniões do time: presença, o que foi feito e o que ficou combina
 **Pendências / próximos passos (Sprint 9, 08/11 a 14/11):** Vitor fecha e documenta o SDK, e cria a issue do RF20 que ficou pendente. Daniel termina o portal e acompanha o frontend em produção com o Gabriel. Arthur confirma o worker e o agendamento estáveis em produção (RF15). Gabriel faz os ajustes pós-deploy e termina de atualizar a rastreabilidade das specs. João Paulo fecha a CLI e avança mutação e sabotagem (RNF09). PRs #243, #244 e #245 ainda precisam de merge.
 
 ---
+
+### Segunda-feira, 16/11 — Review da Sprint 9 e planning da Sprint 10
+
+**Presentes:** Vitor, Arthur, Gabriel, Daniel, João Paulo
+
+**Progresso:**
+
+- **Vitor**: fechou o SDK (RF13, issue #199) — README com exemplos de busca/paginação/resumo, e a decisão de que "publicar" o SDK é uma tag no GitHub quando entrar na `main` (não PyPI, pra não reservar o nome do pacote num índice público antes da hora). Depois, já adiantando a Sprint 10 (issues #207/#208): achou e corrigiu o placeholder `"A DEFINIR DOCENTE"` aparecendo como professor de verdade em `GET /v1/professores` — acumulava mais de 150 disciplinas sem docente definido num só registro, deixando a agenda dele ilegível, exatamente o que o Daniel tinha reportado no PR #238; corrigiu o CORS não expondo o `X-Total-Count` (RF10), outro achado do Daniel (PR #244) — o header chegava na resposta mas o JS do front não conseguia ler, então a paginação não tinha como saber o total; e expandiu o exemplo do SDK no portal do desenvolvedor pra cobrir os 8 domínios da API, não só 2. Preencheu também a rastreabilidade do RF18, que estava com "nenhum PR ainda" apesar do #237/#238 já implementarem o requisito — PR #250.
+
+- **Daniel**: fechou o portal do desenvolvedor (RF14, issue #201) — o cartão da CLI deixou de ser "em breve", com comandos reais contra a API em produção, e o menu do topo ganhou o link "SDK e CLI" — PR #247.
+
+- **Arthur**: fechou o teste de carga (RNF01) contra a API real, confirmando cache e rate limit sob concorrência — PR #243, mergeado hoje.
+
+- **João Paulo**: fechou as metas do RNF09 adiantando trabalho da Sprint 10 — cobertura subiu de 81% pra 98%, mutação com cosmic-ray medida em todos os 8 módulos críticos (87,3% a 100% por módulo) e sabotagem nos 8 de 8, com 13 cenários de fonte quebrada (SIGAA fora do ar, sessão expirada, layout novo, PDF do RU corrompido). A sabotagem achou 3 falhas silenciosas reais no scraper do SIGAA — timeout e sessão expirada virando "sucesso" em vez de falha de fonte, e layout novo também virando "sucesso" com 0 turmas; corrigido no mesmo PR #248. Abriu também o #249, conferindo `GET /v1/execucoes` contra produção (disciplinas rodou certo nos dois domingos, 08/11 e 15/11) e atualizando a observação desatualizada da spec do RF15.
+
+- **Gabriel**: sem PR esta sprint. As duas issues da Sprint 9 (#203 ajustes pós-deploy, #204 rastreabilidade das specs da R2) continuam abertas, carregadas pra Sprint 10.
+
+**Pendências / próximos passos (Sprint 10, 15/11 a 21/11):** Vitor faz os ajustes finais de salas vazias e agenda e os exemplos do SDK (já em andamento, PR #250). Daniel fecha as telas finais e o GitPage com a visão de produto. Arthur faz os ajustes finais de cache, rate limit e log de execução. Gabriel deixa a produção estável e fecha o cardápio semanal — e ainda carrega as duas issues da Sprint 9. João Paulo fecha a cobertura/mutação/sabotagem do RNF09 (adiantado no #248) e os contratos completos do RNF04. RF20 continua sem issue própria — pendente de alguém com permissão criar.
+
+---

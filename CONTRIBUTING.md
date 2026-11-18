@@ -2,6 +2,27 @@
 
 Regras para levar uma mudança até a `dev`. Como o time se organiza (sprints, ritos, Definition of Done) está no [PROCESSO.md](docs/PROCESSO.md); como rodar o projeto, no [README](README.md).
 
+## Se você não é do time
+
+Qualquer pessoa pode contribuir, seja com código, documentação, um bug reportado ou um dado errado que encontrou. Quem participa segue o [Código de Conduta](CODE_OF_CONDUCT.md).
+
+1. Procure uma issue aberta, de preferência com o rótulo [`good first issue`](https://github.com/unb-mds/2026-2-Cerradinho-API/labels/good%20first%20issue), e comente nela que vai trabalhar. Para algo que ainda não tem issue, abra uma antes e espere uma resposta do time, assim ninguém faz trabalho repetido.
+2. Faça um fork do repositório e crie uma branch a partir da `dev`, com um nome que diga o que ela faz (ex.: `fix-sala-sem-predio`).
+3. Rode o projeto e os testes antes e depois da mudança:
+
+   ```bash
+   cd backend
+   python3 -m venv .venv && source .venv/bin/activate
+   pip install -r requirements-dev.txt
+   pytest
+   ruff check .
+   ```
+
+   Os testes de integração precisam do Postgres do `docker compose up` e são pulados sem ele. Os detalhes estão no [README do backend](backend/README.md).
+4. Abra o pull request do seu fork para a `dev`, preencha o [template](.github/PULL_REQUEST_TEMPLATE.md) e siga os padrões de commit e de código abaixo.
+
+As seções seguintes valem para todo mundo. A de branches descreve como o time organiza o próprio trabalho, e quem vem de fora usa o fork no lugar da branch `R2-nome`.
+
 ## 1. Branches
 
 ```
