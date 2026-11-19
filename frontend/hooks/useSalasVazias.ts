@@ -2,7 +2,7 @@
 
 import { predioDoGama } from "@/lib/campus";
 import { useApiResource } from "./useApiResource";
-import { useState } from "react";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import type { Sala } from "./useSalas";
 
 export const HORARIOS = [
@@ -32,12 +32,62 @@ export function aulaAgora(agora = new Date()): { dia: string; horario: string } 
     return { dia, horario };
 }
 
+// Fora do horário de aula (intervalo, noite, domingo), a próxima aula que começa.
+export function proximaAula(agora = new Date()): { dia: string; horario: string } {
+    const minutos = agora.getHours() * 60 + agora.getMinutes();
+    const hoje = DIAS_API[agora.getDay()];
+    const maisTarde = HORARIOS.find((h) => minutosDoInicio(h) > minutos);
+    if (hoje && maisTarde) return { dia: hoje, horario: maisTarde };
+
+    // Hoje já acabou (ou é domingo): primeira aula do próximo dia letivo.
+    for (let i = 1; i <= 7; i++) {
+        const dia = DIAS_API[(agora.getDay() + i) % 7];
+        if (dia) return { dia, horario: HORARIOS[0] };
+    }
+    return { dia: "segunda", horario: HORARIOS[0] };
+}
+
+export function linkSalasVazias(dia: string, horario: string) {
+    return `/salas/vazias?dia=${dia}&horario=${horario}`;
+}
+
+// Dia e horário vêm da URL (?dia=quinta&horario=14:00), pra o link ser
+// compartilhável e o card da home abrir no mesmo horário que contou. Sem
+// parâmetro, abre na aula de agora - ou na próxima, fora do horário de aula.
+// Usa useSearchParams: a página precisa envolver isto num <Suspense>.
 export function useSalasVazias() {
-    const [dia, setDia] = useState("segunda");
-    const [horario, setHorario] = useState("08:00");
+    const params = useSearchParams();
+    const router = useRouter();
+    const pathname = usePathname();
+
+    const agora = aulaAgora();
+    const padrao = agora ?? proximaAula();
+    const diaUrl = params.get("dia");
+    const horarioUrl = params.get("horario");
+    const dia = diaUrl && DIAS_API.includes(diaUrl) ? diaUrl : padrao.dia;
+    const horario = horarioUrl && HORARIOS.includes(horarioUrl) ? horarioUrl : padrao.horario;
+
+    const ir = (novoDia: string, novoHorario: string) =>
+        router.replace(`${pathname}?dia=${novoDia}&horario=${novoHorario}`, { scroll: false });
 
     const { data, loading, error } = useApiResource<Sala[]>(caminhoSalasVazias(dia, horario), []);
-    return { salas: data.filter((s) => predioDoGama(s.predio)), loading, error, dia, horario, setDia, setHorario };
+    return {
+        salas: data.filter((s) => predioDoGama(s.predio)),
+        loading,
+        error,
+        dia,
+        horario,
+        // "agora" quando é a aula em andamento; "proxima" quando é o padrão fora do horário.
+        momento: agora && agora.dia === dia && agora.horario === horario
+            ? ("agora" as const)
+            : !agora && padrao.dia === dia && padrao.horario === horario
+                ? ("proxima" as const)
+                : null,
+        temAulaAgora: agora !== null,
+        setDia: (novo: string) => ir(novo, horario),
+        setHorario: (novo: string) => ir(dia, novo),
+        voltarParaAgora: () => router.replace(pathname, { scroll: false }),
+    };
 }
 
 export function useSalasVaziasAgora() {
@@ -46,5 +96,13 @@ export function useSalasVaziasAgora() {
         caminhoSalasVazias(agora?.dia ?? "segunda", agora?.horario ?? "08:00"), [],
     );
 
-    return { quantidade: data.filter((s) => predioDoGama(s.predio)).length, horario: agora?.horario ?? null, foraDoHorario: agora === null, loading, error };
+    return {
+        quantidade: data.filter((s) => predioDoGama(s.predio)).length,
+        horario: agora?.horario ?? null,
+        // Leva pra Salas Vazias no mesmo horário que o card contou.
+        href: agora ? linkSalasVazias(agora.dia, agora.horario) : "/salas/vazias",
+        foraDoHorario: agora === null,
+        loading,
+        error,
+    };
 }

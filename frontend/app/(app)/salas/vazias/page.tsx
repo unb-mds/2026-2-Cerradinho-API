@@ -1,5 +1,6 @@
 "use client";
 
+import { Suspense } from "react";
 import ApiStatus from "@/components/ApiStatus";
 import PageHeader from "@/components/PageHeader";
 import { FilterBar, FilterPills, FilterSelect } from "@/components/Filters";
@@ -17,24 +18,43 @@ export const DIAS: Record<string, string> = {
 };
 
 
+// Dia e horário vêm da URL (useSearchParams), que só existe no navegador:
+// o Suspense deixa o build pré-renderizar o resto e mostra o cabeçalho enquanto isso.
 export default function SalasVaziasPage() {
-    const { salas, loading, error, dia, horario, setDia, setHorario } = useSalasVazias();
+    return (
+        <Suspense
+            fallback={
+                <main className="flex flex-1 flex-col pb-10">
+                    <PageHeader title="Salas Vazias" sub="Carregando..." />
+                </main>
+            }
+        >
+            <SalasVazias />
+        </Suspense>
+    );
+}
+
+const MOMENTO: Record<"agora" | "proxima", string> = { agora: " (agora)", proxima: " (próxima aula)" };
+
+function SalasVazias() {
+    const { salas, loading, error, dia, horario, momento, temAulaAgora, setDia, setHorario, voltarParaAgora } = useSalasVazias();
     const { visiveis, restantes, mostrarMais } = useMostrarMais(salas, `${dia}|${horario}`);
     const rotuloDia = Object.keys(DIAS).find((rotulo) => DIAS[rotulo] === dia) ?? "Segunda";
-
+    const quando = `${rotuloDia}, ${horario}${momento ? MOMENTO[momento] : ""}`;
+    const contagem = salas.length === 1 ? "1 sala livre" : `${salas.length} salas livres`;
 
     return (
         <main className="flex flex-1 flex-col pb-10">
             <PageHeader
                 title="Salas Vazias"
-                sub={loading ? "Carregando..." : `${salas.length} salas sem aula cadastrada`}
+                sub={loading ? `Carregando · ${quando}` : `${contagem} · ${quando}`}
             />
 
             <div className="px-4 lg:px-10 pt-4">
                 <ApiStatus loading={loading} error={error} />
             </div>
 
-            <FilterBar hasFilters={false} onClear={() => { }}>
+            <FilterBar hasFilters={momento === null} onClear={voltarParaAgora} clearLabel={temAulaAgora ? "Agora" : "Próxima aula"}>
                 <FilterPills
                     label="Dia"
                     value={rotuloDia}

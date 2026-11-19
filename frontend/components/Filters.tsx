@@ -5,9 +5,10 @@ interface FilterBarProps {
   children: ReactNode;
   hasFilters: boolean;
   onClear: () => void;
+  clearLabel?: string;
 }
 
-export function FilterBar({ children, hasFilters, onClear }: FilterBarProps) {
+export function FilterBar({ children, hasFilters, onClear, clearLabel = "Limpar" }: FilterBarProps) {
   return (
     <div className="px-4 lg:px-10 pt-5">
       <div className="flex flex-wrap items-center gap-4 rounded-xl border border-border bg-surface px-4 py-3.5 md:px-5">
@@ -25,7 +26,7 @@ export function FilterBar({ children, hasFilters, onClear }: FilterBarProps) {
               onClick={onClear}
               className="text-xs font-semibold text-muted transition-colors hover:text-foreground"
             >
-              Limpar
+              {clearLabel}
             </button>
           </>
         )}

@@ -18,7 +18,7 @@ const AMOSTRA_DISCIPLINAS = 10;
 export default function Home() {
   const { disciplinas, loading: carregandoDisciplinas, error: erroDisciplinas } = useDisciplinas();
   const { professores, loading: carregandoProfessores, error: erroProfessores } = useProfessores();
-  const { quantidade, horario, foraDoHorario, loading: carregandoSalas, error: erroSalas } = useSalasVaziasAgora();
+  const { quantidade, horario, href: linkSalas, foraDoHorario, loading: carregandoSalas, error: erroSalas } = useSalasVaziasAgora();
   const loading = carregandoDisciplinas || carregandoProfessores || carregandoSalas;
   const error = erroDisciplinas ?? erroProfessores ?? erroSalas;
   const numero = (n: number) => (loading || error ? "-" : String(n));
@@ -58,7 +58,7 @@ export default function Home() {
           label="Salas Vazias"
           stat={foraDoHorario ? "-" : numero(quantidade)}
           sub={foraDoHorario ? "fora do horário de aula" : `agora, aula das ${horario}`}
-          href="/salas/vazias"
+          href={linkSalas}
         />
       </div>
 
