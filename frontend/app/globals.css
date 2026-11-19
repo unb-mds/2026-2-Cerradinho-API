@@ -10,9 +10,10 @@
   --brand-foreground: #f2efe9;
   --accent: #c05a28;
   --accent-surface: rgba(192, 90, 40, 0.1);
-  --muted: #7a7568;
+  --muted: #6b665a;
   --muted-bg: #e8e4dc;
-  --danger: #c05a28;
+  --danger: #9e4519;
+  --warning: #a8741a;
   --danger-surface: rgba(192, 90, 40, 0.1);
   --sidebar: #252d18;
   --sidebar-foreground: #c8d3a8;
@@ -33,6 +34,7 @@
   --color-muted: var(--muted);
   --color-muted-bg: var(--muted-bg);
   --color-danger: var(--danger);
+  --color-warning: var(--warning);
   --color-danger-surface: var(--danger-surface);
   --color-sidebar: var(--sidebar);
   --color-sidebar-foreground: var(--sidebar-foreground);
@@ -56,6 +58,7 @@
     --muted: #a39d8a;
     --muted-bg: #2a2d1e;
     --danger: #e4844f;
+    --warning: #d9a645;
     --danger-surface: rgba(228, 132, 79, 0.14);
     --sidebar: #12150c;
     --sidebar-foreground: #a7b487;

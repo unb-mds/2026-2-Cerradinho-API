@@ -68,7 +68,7 @@ interface FilterPillsProps {
 
 export function FilterPills({ label, value, onChange, options }: FilterPillsProps) {
   return (
-    <div className="flex flex-col gap-1">
+    <div role="group" aria-label={label} className="flex flex-col gap-1">
       <span className="text-[10px] font-bold uppercase tracking-wide text-muted">{label}</span>
       <div className="flex flex-wrap gap-1">
         {options.map((option) => {
@@ -78,6 +78,7 @@ export function FilterPills({ label, value, onChange, options }: FilterPillsProp
               key={option}
               type="button"
               onClick={() => onChange(option)}
+              aria-pressed={active}
               className={`rounded-md px-2.5 py-1.5 text-xs font-semibold transition-colors ${
                 active ? "bg-brand text-brand-foreground" : "border border-border bg-background text-foreground"
               }`}
@@ -105,7 +106,9 @@ export function SearchInput({ value, onChange, placeholder }: SearchInputProps) 
         value={value}
         onChange={(e) => onChange(e.target.value)}
         placeholder={placeholder}
-        className="w-full rounded-lg border border-border bg-background py-2 pl-8 pr-3 text-sm text-foreground outline-none"
+        aria-label={placeholder.replace(/\.+$/, "")}
+        type="search"
+        className="w-full rounded-lg border border-border bg-background py-2 pl-8 pr-3 text-sm text-foreground placeholder:text-muted focus:border-brand focus:outline-2 focus:outline-brand/30"
       />
     </div>
   );

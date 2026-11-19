@@ -83,7 +83,10 @@ export default function GradeSemanal({ blocos }: { blocos: BlocoDaGrade[] }) {
 
     return (
         <>
-            <div className="overflow-x-auto overflow-y-hidden rounded-xl border border-border bg-surface">
+            {/* No celular, a grade de 6 colunas não cabe: vira uma lista por dia. */}
+            <ListaPorDia celulas={celulas} />
+
+            <div className="hidden overflow-x-auto overflow-y-hidden rounded-xl border border-border bg-surface md:block">
                 <div className="grid min-w-190 grid-cols-[5rem_repeat(6,minmax(0,1fr))]">
                     <div className="border-b border-border bg-background" />
                     {Object.keys(DIAS).map((rotulo) => (
@@ -186,7 +189,7 @@ export default function GradeSemanal({ blocos }: { blocos: BlocoDaGrade[] }) {
             </div>
 
             {aberta && (
-                <section id="grade-turmas-simultaneas" className="mt-4 overflow-hidden rounded-xl border border-border bg-surface">
+                <section id="grade-turmas-simultaneas" className="mt-4 hidden md:block overflow-hidden rounded-xl border border-border bg-surface">
                     <div className="flex items-center justify-between gap-4 border-b border-border bg-background px-4 py-3">
                         <h2 className="text-sm font-semibold text-foreground">
                             {rotuloDoDia(aberta.dia)} · {aberta.inicio}–{aberta.fim} · {aberta.blocos.length} turmas no mesmo horário
@@ -211,5 +214,43 @@ export default function GradeSemanal({ blocos }: { blocos: BlocoDaGrade[] }) {
                 </section>
             )}
         </>
+    );
+}
+
+function ListaPorDia({ celulas }: { celulas: Celula[] }) {
+    const dias = Object.entries(DIAS)
+        .map(([rotulo, dia]) => ({
+            rotulo,
+            celulas: celulas.filter((c) => c.dia === dia).sort((a, b) => a.inicio.localeCompare(b.inicio)),
+        }))
+        .filter((d) => d.celulas.length > 0);
+
+    return (
+        <div className="flex flex-col gap-4 md:hidden">
+            {dias.map(({ rotulo, celulas: doDia }) => (
+                <section key={rotulo} className="overflow-hidden rounded-xl border border-border bg-surface">
+                    <h2 className="border-b border-border bg-background px-4 py-2.5 text-xs font-bold uppercase tracking-wide text-muted">
+                        {rotulo}
+                    </h2>
+                    <ul className="divide-y divide-border">
+                        {doDia.flatMap((c) =>
+                            c.blocos.map((b) => (
+                                <li key={chaveDoBloco(b)} className="grid grid-cols-[6.5rem_1fr] gap-x-3 px-4 py-3">
+                                    <span className="font-mono text-xs text-foreground">
+                                        {b.inicio}–{b.fim}
+                                    </span>
+                                    <span className="flex flex-col gap-0.5">
+                                        <span className="text-sm text-foreground">
+                                            <span className="font-mono text-xs font-semibold text-brand">{b.codigo}</span> · Turma {b.numero}
+                                        </span>
+                                        {b.sala && <span className="font-mono text-xs text-muted">{b.sala}</span>}
+                                    </span>
+                                </li>
+                            )),
+                        )}
+                    </ul>
+                </section>
+            ))}
+        </div>
     );
 }
