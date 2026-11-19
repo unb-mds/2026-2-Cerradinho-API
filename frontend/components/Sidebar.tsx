@@ -35,7 +35,7 @@ export default function Sidebar() {
 
   return (
     <>
-      <aside className="sticky top-0 hidden h-screen w-55 shrink-0 flex-col self-start bg-sidebar pb-6 md:flex">
+      <aside className="sticky top-0 hidden h-screen w-55 shrink-0 flex-col self-start bg-sidebar pb-6 lg:flex">
         <Link href="/" className="flex flex-col gap-1 px-6 pb-8 pt-7">
           <span className="flex items-center gap-2.5">
             <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-brand">
@@ -94,8 +94,8 @@ export default function Sidebar() {
         </Link>
       </aside>
 
-      {/* Celular: barra fixa embaixo no lugar da sidebar. */}
-      <nav className="fixed inset-x-0 bottom-0 z-40 flex border-t border-white/10 bg-sidebar pb-[env(safe-area-inset-bottom)] md:hidden">
+      {/* Celular e tablet: barra fixa embaixo no lugar da sidebar. */}
+      <nav className="fixed inset-x-0 bottom-0 z-40 flex border-t border-white/10 bg-sidebar pb-[env(safe-area-inset-bottom)] lg:hidden">
         {ITENS_CELULAR.map(({ href, curto, Icon }) => {
           const active = estaAtivo(pathname, href);
           return (

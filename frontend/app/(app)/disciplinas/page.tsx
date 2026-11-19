@@ -45,7 +45,7 @@ export default function DisciplinasPage() {
     <main className="flex flex-1 flex-col pb-10">
       <PageHeader title="Disciplinas" sub={`${filtradas.length} de ${disciplinas.length} turmas · semestre atual`} />
 
-      <div className="px-4 md:px-10 pt-4">
+      <div className="px-4 lg:px-10 pt-4">
         <ApiStatus loading={loading} error={error} />
       </div>
 
@@ -56,8 +56,8 @@ export default function DisciplinasPage() {
         <FilterSelect label="Horário" value={horario} onChange={setHorario} options={HORARIOS} />
       </FilterBar>
 
-      <div className="px-4 md:px-10 pt-5">
-        <ul className="divide-y divide-border rounded-xl border border-border bg-surface md:hidden">
+      <div className="px-4 lg:px-10 pt-5">
+        <ul className="divide-y divide-border rounded-xl border border-border bg-surface xl:hidden">
           {filtradas.length === 0 ? (
             <li className="px-4 py-12 text-center text-sm text-muted">
               {loading || error ? "" : "Nenhuma disciplina encontrada."}
@@ -70,7 +70,7 @@ export default function DisciplinasPage() {
             ))
           )}
         </ul>
-        <div className="hidden overflow-x-auto rounded-xl border border-border bg-surface md:block">
+        <div className="hidden overflow-x-auto rounded-xl border border-border bg-surface xl:block">
           <table className="w-full border-collapse text-sm">
             <thead>
               <tr className="border-b border-border bg-background text-left text-[10px] font-bold uppercase tracking-wide text-muted">
@@ -112,7 +112,7 @@ export default function DisciplinasPage() {
                       <td className="whitespace-nowrap px-4 py-3.5 font-mono text-xs text-foreground">
                         {d.horario}
                       </td>
-                      <td className="whitespace-nowrap px-4 py-3.5 font-mono text-xs text-muted">{d.sala}</td>
+                      <td className="max-w-48 px-4 py-3.5 font-mono text-xs text-muted">{d.sala}</td>
                       <td className="px-4 py-3.5">
                         <SeatBar ocupadas={d.vagasOcupadas} total={d.vagas} />
                       </td>

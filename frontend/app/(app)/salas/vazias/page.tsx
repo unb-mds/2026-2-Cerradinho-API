@@ -30,7 +30,7 @@ export default function SalasVaziasPage() {
                 sub={loading ? "Carregando..." : `${salas.length} salas sem aula cadastrada`}
             />
 
-            <div className="px-4 md:px-10 pt-4">
+            <div className="px-4 lg:px-10 pt-4">
                 <ApiStatus loading={loading} error={error} />
             </div>
 
@@ -43,12 +43,12 @@ export default function SalasVaziasPage() {
                 />
                 <FilterSelect label="Horário" value={horario} onChange={setHorario} options={HORARIOS} />
             </FilterBar>
-            <p className="px-4 md:px-10 pt-4 text-xs text-muted">
+            <p className="px-4 lg:px-10 pt-4 text-xs text-muted">
                 Vazia quer dizer sem aula cadastrada no SIGAA. Reserva informal e eventos não aparecem aqui.
             </p>
 
-            <div className="px-4 md:px-10 pt-5">
-                <ul className="divide-y divide-border rounded-xl border border-border bg-surface md:hidden">
+            <div className="px-4 lg:px-10 pt-5">
+                <ul className="divide-y divide-border rounded-xl border border-border bg-surface xl:hidden">
                     {salas.length === 0 ? (
                         <li className="px-4 py-12 text-center text-sm text-muted">
                             {loading || error ? "" : "Nenhuma sala vazia nesse horário."}
@@ -61,7 +61,7 @@ export default function SalasVaziasPage() {
                         ))
                     )}
                 </ul>
-                <div className="hidden overflow-x-auto rounded-xl border border-border bg-surface md:block">
+                <div className="hidden overflow-x-auto rounded-xl border border-border bg-surface xl:block">
                     <table className="w-full border-collapse text-sm">
                         <thead>
                             <tr className="border-b border-border bg-background text-left text-[10px] font-bold uppercase tracking-wide text-muted">

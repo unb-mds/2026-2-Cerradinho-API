@@ -36,7 +36,7 @@ export default function ProfessoresPage() {
     <main className="flex flex-1 flex-col pb-10">
       <PageHeader title="Professores" sub={`${filtrados.length} de ${professores.length} docentes ativos`} />
 
-      <div className="px-4 md:px-10 pt-4">
+      <div className="px-4 lg:px-10 pt-4">
         <ApiStatus loading={loading} error={error} />
       </div>
 
@@ -45,8 +45,8 @@ export default function ProfessoresPage() {
         <FilterSelect label="Departamento" value={departamento} onChange={setDepartamento} options={unidades} />
       </FilterBar>
 
-      <div className="px-4 md:px-10 pt-5">
-        <ul className="divide-y divide-border rounded-xl border border-border bg-surface md:hidden">
+      <div className="px-4 lg:px-10 pt-5">
+        <ul className="divide-y divide-border rounded-xl border border-border bg-surface xl:hidden">
           {filtrados.length === 0 ? (
             <li className="px-4 py-12 text-center text-sm text-muted">
               {loading || error ? "" : "Nenhum professor encontrado."}
@@ -74,7 +74,7 @@ export default function ProfessoresPage() {
             ))
           )}
         </ul>
-        <div className="hidden overflow-x-auto rounded-xl border border-border bg-surface md:block">
+        <div className="hidden overflow-x-auto rounded-xl border border-border bg-surface xl:block">
           <table className="w-full border-collapse text-sm">
             <thead>
               <tr className="border-b border-border bg-background text-left text-[10px] font-bold uppercase tracking-wide text-muted">
