@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useDisciplinas } from "@/hooks/useDisciplinas";
 import { useProfessores } from "@/hooks/useProfessores";
-import { useSalasVaziasAgora } from "@/hooks/useSalasVazias";
+import { useSalasVaziasAgora, fimDoBloco } from "@/hooks/useSalasVazias";
 import StatCard from "@/components/StatCard";
 import Badge from "@/components/Badge";
 import SeatBar from "@/components/SeatBar";
@@ -57,7 +57,7 @@ export default function Home() {
           icon={<DoorOpenIcon className="h-4.5 w-4.5" />}
           label="Salas Vazias"
           stat={foraDoHorario ? "-" : numero(quantidade)}
-          sub={foraDoHorario ? "fora do horário de aula" : `agora, aula das ${horario}`}
+          sub={foraDoHorario ? "fora do horário de aula" : `agora na FCTE, das ${horario} às ${fimDoBloco(horario ?? "08:00")}`}
           href="/salas/vazias"
         />
       </div>

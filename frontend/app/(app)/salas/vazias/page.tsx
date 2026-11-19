@@ -2,11 +2,10 @@
 
 import ApiStatus from "@/components/ApiStatus";
 import PageHeader from "@/components/PageHeader";
-import { FilterBar, FilterPills, FilterSelect } from "@/components/Filters";
-import { useSalasVazias, HORARIOS } from "@/hooks/useSalasVazias";
-import { useMostrarMais } from "@/hooks/useMostrarMais";
-import MostrarMais from "@/components/MostrarMais";
+import { FilterBar, FilterSelect } from "@/components/Filters";
+import { useSalasVazias, HORARIOS, fimDoBloco } from "@/hooks/useSalasVazias";
 
+// usado tambem pela grade semanal do professor
 export const DIAS: Record<string, string> = {
     Segunda: "segunda",
     Terça: "terca",
@@ -16,18 +15,18 @@ export const DIAS: Record<string, string> = {
     Sábado: "sabado",
 };
 
+// "08:00 às 09:50"
+const BLOCOS: Record<string, string> = Object.fromEntries(HORARIOS.map((h) => [`${h} às ${fimDoBloco(h)}`, h]));
 
 export default function SalasVaziasPage() {
-    const { salas, loading, error, dia, horario, setDia, setHorario } = useSalasVazias();
-    const { visiveis, restantes, mostrarMais } = useMostrarMais(salas, `${dia}|${horario}`);
-    const rotuloDia = Object.keys(DIAS).find((rotulo) => DIAS[rotulo] === dia) ?? "Segunda";
-
+    const { dias, loading, error, horario, setHorario, hoje } = useSalasVazias();
+    const rotuloBloco = Object.keys(BLOCOS).find((rotulo) => BLOCOS[rotulo] === horario) ?? "";
 
     return (
         <main className="flex flex-1 flex-col pb-10">
             <PageHeader
                 title="Salas Vazias"
-                sub={loading ? "Carregando..." : `${salas.length} salas sem aula cadastrada`}
+                sub={loading ? "Carregando..." : `Salas sem aula das ${rotuloBloco}, de segunda a sábado`}
             />
 
             <div className="px-4 md:px-10 pt-4">
@@ -35,62 +34,45 @@ export default function SalasVaziasPage() {
             </div>
 
             <FilterBar hasFilters={false} onClear={() => { }}>
-                <FilterPills
-                    label="Dia"
-                    value={rotuloDia}
-                    onChange={(rotulo) => setDia(DIAS[rotulo])}
-                    options={Object.keys(DIAS)}
-                />
-                <FilterSelect label="Horário" value={horario} onChange={setHorario} options={HORARIOS} />
+                <FilterSelect label="Horário" value={rotuloBloco} onChange={(rotulo) => setHorario(BLOCOS[rotulo])} options={Object.keys(BLOCOS)} />
             </FilterBar>
             <p className="px-4 md:px-10 pt-4 text-xs text-muted">
-                Vazia quer dizer sem aula cadastrada no SIGAA. Reserva informal e eventos não aparecem aqui.
+                Só aparecem as salas I1 a I10 e S1 a S10 da FCTE, em blocos de duas aulas das 8h às 17h50. Vazia quer dizer sem aula cadastrada no SIGAA no bloco inteiro. Reserva informal e eventos não aparecem aqui.
             </p>
 
-            <div className="px-4 md:px-10 pt-5">
-                <ul className="divide-y divide-border rounded-xl border border-border bg-surface md:hidden">
-                    {salas.length === 0 ? (
-                        <li className="px-4 py-12 text-center text-sm text-muted">
-                            {loading || error ? "" : "Nenhuma sala vazia nesse horário."}
-                        </li>
-                    ) : (
-                        visiveis.map((s) => (
-                            <li key={s.id} className="flex items-center justify-between gap-3 px-4 py-3">
-                                <span className="font-mono text-sm font-semibold text-brand">{s.nome}</span>
-                                <span className="text-sm text-foreground">{s.predio || "-"}</span>
-                            </li>
-                        ))
-                    )}
-                </ul>
-                <div className="hidden overflow-x-auto rounded-xl border border-border bg-surface md:block">
-                    <table className="w-full border-collapse text-sm">
-                        <thead>
-                            <tr className="border-b border-border bg-background text-left text-[10px] font-bold uppercase tracking-wide text-muted">
-                                <th className="px-4 py-3">Sala</th>
-                                <th className="px-4 py-3">Prédio</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {salas.length === 0 ? (
-                                <tr>
-                                    <td colSpan={2} className="px-6 py-12 text-center text-sm text-muted">
-                                        {loading || error ? "" : "Nenhuma sala vazia nesse horário."}
-                                    </td>
-                                </tr>
-                            ) : (
-                                visiveis.map((s) => (
-                                    <tr key={s.id} className="border-t border-border">
-                                        <td className="whitespace-nowrap px-4 py-3.5 font-mono text-sm font-semibold text-brand">
-                                            {s.nome}
-                                        </td>
-                                        <td className="px-4 py-3.5 text-foreground">{s.predio || "-"}</td>
-                                    </tr>
-                                ))
-                            )}
-                        </tbody>
-                    </table>
-                </div>
-                <MostrarMais restantes={restantes} onClick={mostrarMais} />
+            <div className="grid grid-cols-1 gap-4 px-4 pt-5 sm:grid-cols-2 md:px-10 xl:grid-cols-3">
+                {dias.map(({ dia, rotulo, salas }) => (
+                    <section
+                        key={dia}
+                        className={`rounded-xl border bg-surface ${dia === hoje ? "border-brand" : "border-border"}`}
+                    >
+                        <header className="flex items-baseline justify-between gap-3 border-b border-border px-4 py-3">
+                            <h2 className="text-sm font-bold text-foreground">
+                                {rotulo}
+                                {dia === hoje && <span className="ml-2 text-[10px] font-bold uppercase tracking-wide text-brand">hoje</span>}
+                            </h2>
+                            <span className="text-xs text-muted">
+                                {loading || error ? "" : `${salas.length} ${salas.length === 1 ? "sala" : "salas"}`}
+                            </span>
+                        </header>
+                        {loading || error ? (
+                            <p className="px-4 py-6 text-sm text-muted">{loading ? "Carregando..." : "-"}</p>
+                        ) : salas.length === 0 ? (
+                            <p className="px-4 py-6 text-sm text-muted">Nenhuma sala vazia nesse horário.</p>
+                        ) : (
+                            <ul className="flex flex-wrap gap-2 px-4 py-4">
+                                {salas.map((s) => (
+                                    <li
+                                        key={s.id}
+                                        className="rounded-md border border-border bg-background px-2.5 py-1 font-mono text-sm font-semibold text-brand"
+                                    >
+                                        {s.nome}
+                                    </li>
+                                ))}
+                            </ul>
+                        )}
+                    </section>
+                ))}
             </div>
         </main>
     );
