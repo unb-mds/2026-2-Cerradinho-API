@@ -42,7 +42,7 @@ export default function ProfessoresPage() {
 
       <FilterBar hasFilters={hasFilters} onClear={limparFiltros}>
         <SearchInput value={busca} onChange={setBusca} placeholder="Buscar por nome ou disciplina..." />
-        <FilterSelect label="Unidade" value={departamento} onChange={setDepartamento} options={unidades} />
+        <FilterSelect label="Departamento" value={departamento} onChange={setDepartamento} options={unidades} />
       </FilterBar>
 
       <div className="px-4 md:px-10 pt-5">
@@ -79,7 +79,7 @@ export default function ProfessoresPage() {
             <thead>
               <tr className="border-b border-border bg-background text-left text-[10px] font-bold uppercase tracking-wide text-muted">
                 <th className="px-4 py-3">Professor(a)</th>
-                <th className="px-4 py-3">Unidade</th>
+                <th className="px-4 py-3">Departamento</th>
                 <th className="px-4 py-3">Disciplinas</th>
               </tr>
             </thead>

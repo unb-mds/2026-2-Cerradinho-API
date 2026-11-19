@@ -51,7 +51,7 @@ export default function DisciplinasPage() {
 
       <FilterBar hasFilters={hasFilters} onClear={limparFiltros}>
         <SearchInput value={busca} onChange={setBusca} placeholder="Buscar por nome, código ou professor..." />
-        <FilterSelect label="Unidade" value={departamento} onChange={setDepartamento} options={departamentos} />
+        <FilterSelect label="Departamento" value={departamento} onChange={setDepartamento} options={departamentos} />
         <FilterPills label="Dia" value={dia} onChange={setDia} options={DIAS} />
         <FilterSelect label="Horário" value={horario} onChange={setHorario} options={HORARIOS} />
       </FilterBar>

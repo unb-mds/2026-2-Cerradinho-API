@@ -27,7 +27,7 @@ export default function Home() {
     <main className="flex flex-1 flex-col gap-7 px-4 md:px-10 py-9">
       <div>
         <h1 className="text-2xl font-bold tracking-tight text-foreground">Visão Geral</h1>
-        <p className="mt-1.5 text-sm text-muted">Universidade de Brasília — UnB</p>
+        <p className="mt-1.5 text-sm text-muted">Campus Gama — UnB</p>
       </div>
       <ApiStatus loading={loading} error={error} />
       <div className="grid grid-cols-2 gap-3 md:flex md:flex-wrap md:gap-3.5">

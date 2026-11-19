@@ -57,7 +57,6 @@ export default function SalasVaziasPage() {
                         visiveis.map((s) => (
                             <li key={s.id} className="flex items-center justify-between gap-3 px-4 py-3">
                                 <span className="font-mono text-sm font-semibold text-brand">{s.nome}</span>
-                                <span className="text-sm text-foreground">{s.predio || "-"}</span>
                             </li>
                         ))
                     )}
@@ -67,13 +66,12 @@ export default function SalasVaziasPage() {
                         <thead>
                             <tr className="border-b border-border bg-background text-left text-[10px] font-bold uppercase tracking-wide text-muted">
                                 <th className="px-4 py-3">Sala</th>
-                                <th className="px-4 py-3">Prédio</th>
                             </tr>
                         </thead>
                         <tbody>
                             {salas.length === 0 ? (
                                 <tr>
-                                    <td colSpan={2} className="px-6 py-12 text-center text-sm text-muted">
+                                    <td className="px-6 py-12 text-center text-sm text-muted">
                                         {loading || error ? "" : "Nenhuma sala vazia nesse horário."}
                                     </td>
                                 </tr>
@@ -83,7 +81,6 @@ export default function SalasVaziasPage() {
                                         <td className="whitespace-nowrap px-4 py-3.5 font-mono text-sm font-semibold text-brand">
                                             {s.nome}
                                         </td>
-                                        <td className="px-4 py-3.5 text-foreground">{s.predio || "-"}</td>
                                     </tr>
                                 ))
                             )}
