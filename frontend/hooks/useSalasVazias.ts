@@ -10,7 +10,7 @@ export const HORARIOS = [
     "14:55", "16:00", "16:55", "18:00", "19:00", "19:50", "20:50", "21:40",
 ];
 
-const DIAS_API = [null, "segunda", "terca", "quarta", "quinta", "sexta", "sabado"];
+export const DIAS_API = [null, "segunda", "terca", "quarta", "quinta", "sexta", "sabado"];
 
 function caminhoSalasVazias(dia: string, horario: string) {
     return `/salas/vazias?dia=${dia}&horario=${horario}`;
@@ -90,18 +90,20 @@ export function useSalasVazias() {
     };
 }
 
-export function useSalasVaziasAgora() {
-    const agora = aulaAgora();
+// Home: salas livres na aula de agora (ou na próxima, fora do horário).
+// `agora` vem do navegador; null enquanto a página não hidratou, e aí não busca nada.
+export function useSalasLivresAgora(agora: Date | null) {
+    const emAula = agora ? aulaAgora(agora) : null;
+    const slot = agora ? (emAula ?? proximaAula(agora)) : null;
     const { data, loading, error } = useApiResource<Sala[]>(
-        caminhoSalasVazias(agora?.dia ?? "segunda", agora?.horario ?? "08:00"), [],
+        slot ? caminhoSalasVazias(slot.dia, slot.horario) : null, [],
     );
 
     return {
-        quantidade: data.filter((s) => predioDoGama(s.predio)).length,
-        horario: agora?.horario ?? null,
-        // Leva pra Salas Vazias no mesmo horário que o card contou.
-        href: agora ? linkSalasVazias(agora.dia, agora.horario) : "/salas/vazias",
-        foraDoHorario: agora === null,
+        salas: data.filter((s) => predioDoGama(s.predio)),
+        slot,
+        emAula: emAula !== null,
+        href: slot ? linkSalasVazias(slot.dia, slot.horario) : "/salas/vazias",
         loading,
         error,
     };

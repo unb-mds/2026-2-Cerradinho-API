@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { Suspense, useState } from "react";
+import { useSearchParams } from "next/navigation";
 import { useDisciplinas } from "@/hooks/useDisciplinas";
 import ApiStatus from "@/components/ApiStatus";
 import PageHeader from "@/components/PageHeader";
@@ -15,13 +16,35 @@ import MostrarMais from "@/components/MostrarMais";
 const DIAS = ["Todos", "Seg", "Ter", "Qua", "Qui", "Sex", "Sáb"];
 const HORARIOS = ["Todos", "08:00", "10:00", "12:00", "14:00", "16:00", "18:00", "19:00", "20:50"];
 
+// A busca vem da URL (/disciplinas?busca=cálculo), que é por onde a busca da home chega,
+// e volta pra ela enquanto o aluno digita, pra o link poder ser compartilhado.
+function gravarBuscaNaUrl(busca: string) {
+  const url = new URL(window.location.href);
+  if (busca) url.searchParams.set("busca", busca);
+  else url.searchParams.delete("busca");
+  window.history.replaceState(null, "", url);
+}
+
 export default function DisciplinasPage() {
+  return (
+    <Suspense fallback={<main><PageHeader title="Disciplinas" sub="Carregando..." /></main>}>
+      <Disciplinas />
+    </Suspense>
+  );
+}
+
+function Disciplinas() {
+  const params = useSearchParams();
   const { disciplinas, loading, error } = useDisciplinas();
   const departamentos = ["Todos", ...[...new Set(disciplinas.map((d) => d.departamento))].sort()];
   const [departamento, setDepartamento] = useState("Todos");
   const [dia, setDia] = useState("Todos");
   const [horario, setHorario] = useState("Todos");
-  const [busca, setBusca] = useState("");
+  const [busca, setBuscaEstado] = useState(() => params.get("busca") ?? "");
+  const setBusca = (valor: string) => {
+    setBuscaEstado(valor);
+    gravarBuscaNaUrl(valor);
+  };
 
   const filtradas = disciplinas.filter((d) => {
     const matchDepartamento = departamento === "Todos" || d.departamento === departamento;

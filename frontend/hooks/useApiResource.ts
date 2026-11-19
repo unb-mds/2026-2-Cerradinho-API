@@ -17,8 +17,9 @@ interface ResourceState<T> {
  * Os componentes não chamam este hook direto: usam os hooks de domínio
  * (useDisciplinas, useProfessores etc.).
  * `mock` é o valor exibido enquanto a API não responde (nos hooks, uma lista vazia).
+ * `path` null não busca nada e fica em loading (ex.: esperando a hora do navegador).
  */
-export function useApiResource<T>(path: string, mock: T): ResourceState<T> {
+export function useApiResource<T>(path: string | null, mock: T): ResourceState<T> {
   const [state, setState] = useState<{ path: string | null; data: T; error: string | null; status: number | null }>({
     path: null,
     data: mock,
@@ -27,6 +28,7 @@ export function useApiResource<T>(path: string, mock: T): ResourceState<T> {
   });
 
   useEffect(() => {
+    if (path === null) return;
     let active = true;
 
     api
@@ -47,7 +49,7 @@ export function useApiResource<T>(path: string, mock: T): ResourceState<T> {
   }, [path]);
 
   // Enquanto carrega um path novo, ou se ele falhou, não mostra o dado do path anterior.
-  const loading = state.path !== path;
+  const loading = path === null || state.path !== path;
   const error = loading ? null : state.error;
   const status = loading ? null : state.status;
   return { data: loading || error ? mock : state.data, loading, error, status };
