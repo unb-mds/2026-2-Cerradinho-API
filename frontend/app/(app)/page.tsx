@@ -43,7 +43,7 @@ export default function Home() {
           icon={<BowlIcon className="h-4.5 w-4.5" />}
           label="Cardápio"
           stat="RU"
-          sub="cardápio da semana"
+          sub="RU Darcy Ribeiro"
           href="/cardapio"
         />
         <StatCard
