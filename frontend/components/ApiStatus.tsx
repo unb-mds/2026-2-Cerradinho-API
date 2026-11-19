@@ -1,5 +1,7 @@
 "use client";
 
+import { CerradinhoFlower } from "@/components/Icons";
+
 interface ApiStatusProps {
   loading: boolean;
   error: string | null;
@@ -9,7 +11,7 @@ export default function ApiStatus({ loading, error }: ApiStatusProps) {
   if (loading) {
     return (
       <p role="status" className="flex items-center gap-2 text-sm text-muted">
-        <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-brand" />
+        <CerradinhoFlower className="flor-abrindo h-6 w-6" aria-hidden />
         Carregando…
       </p>
     );

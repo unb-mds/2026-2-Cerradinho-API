@@ -3,6 +3,8 @@
 import { Suspense } from "react";
 import ApiStatus from "@/components/ApiStatus";
 import PageHeader from "@/components/PageHeader";
+import EstadoVazio from "@/components/EstadoVazio";
+import PontoAgora from "@/components/PontoAgora";
 import { FilterBar, FilterPills, FilterSelect } from "@/components/Filters";
 import { useSalasVazias, HORARIOS } from "@/hooks/useSalasVazias";
 import { useMostrarMais } from "@/hooks/useMostrarMais";
@@ -25,7 +27,7 @@ export default function SalasVaziasPage() {
         <Suspense
             fallback={
                 <main className="flex flex-1 flex-col pb-10">
-                    <PageHeader title="Salas Vazias" sub="Carregando..." />
+                    <PageHeader title="Salas Vazias" sub="Carregando..." href="/salas/vazias" />
                 </main>
             }
         >
@@ -34,20 +36,28 @@ export default function SalasVaziasPage() {
     );
 }
 
-const MOMENTO: Record<"agora" | "proxima", string> = { agora: " (agora)", proxima: " (próxima aula)" };
-
 function SalasVazias() {
     const { salas, caminho, loading, error, dia, horario, momento, temAulaAgora, setDia, setHorario, voltarParaAgora } = useSalasVazias();
     const { visiveis, restantes, mostrarMais } = useMostrarMais(salas, `${dia}|${horario}`);
     const rotuloDia = Object.keys(DIAS).find((rotulo) => DIAS[rotulo] === dia) ?? "Segunda";
-    const quando = `${rotuloDia}, ${horario}${momento ? MOMENTO[momento] : ""}`;
     const contagem = salas.length === 1 ? "1 sala livre" : `${salas.length} salas livres`;
 
     return (
         <main className="flex flex-1 flex-col pb-10">
             <PageHeader
                 title="Salas Vazias"
-                sub={loading ? `Carregando · ${quando}` : `${contagem} · ${quando}`}
+                href="/salas/vazias"
+                sub={
+                    <>
+                        {`${loading ? "Carregando" : contagem} · ${rotuloDia}, ${horario}`}
+                        {momento === "agora" && (
+                            <span className="flex items-center gap-1.5 font-semibold text-caliandra">
+                                <PontoAgora /> agora
+                            </span>
+                        )}
+                        {momento === "proxima" && <span>(próxima aula)</span>}
+                    </>
+                }
                 api={{ caminho, nota: "A API responde para todos os campi; este site mostra só as salas da FCTE." }}
             />
 
@@ -71,9 +81,7 @@ function SalasVazias() {
             <div className="px-4 lg:px-10 pt-5">
                 <ul className="divide-y divide-border rounded-xl border border-border bg-surface xl:hidden">
                     {salas.length === 0 ? (
-                        <li className="px-4 py-12 text-center text-sm text-muted">
-                            {loading || error ? "" : "Nenhuma sala vazia nesse horário."}
-                        </li>
+                        <li>{!loading && !error && <EstadoVazio>Todas as salas da FCTE têm aula nesse horário. Tente o horário seguinte.</EstadoVazio>}</li>
                     ) : (
                         visiveis.map((s) => (
                             <li key={s.id} className="flex items-center justify-between gap-3 px-4 py-3">
@@ -92,8 +100,8 @@ function SalasVazias() {
                         <tbody>
                             {salas.length === 0 ? (
                                 <tr>
-                                    <td className="px-6 py-12 text-center text-sm text-muted">
-                                        {loading || error ? "" : "Nenhuma sala vazia nesse horário."}
+                                    <td>
+                                        {!loading && !error && <EstadoVazio>Todas as salas da FCTE têm aula nesse horário. Tente o horário seguinte.</EstadoVazio>}
                                     </td>
                                 </tr>
                             ) : (

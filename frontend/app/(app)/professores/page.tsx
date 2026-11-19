@@ -7,6 +7,7 @@ import { useMostrarMais } from "@/hooks/useMostrarMais";
 import MostrarMais from "@/components/MostrarMais";
 import ApiStatus from "@/components/ApiStatus";
 import PageHeader from "@/components/PageHeader";
+import EstadoVazio from "@/components/EstadoVazio";
 import { FilterBar, FilterSelect, SearchInput } from "@/components/Filters";
 import Badge from "@/components/Badge";
 import Link from "next/link";
@@ -36,6 +37,7 @@ export default function ProfessoresPage() {
     <main className="flex flex-1 flex-col pb-10">
       <PageHeader
         title="Professores"
+        href="/professores"
         sub={`${filtrados.length} de ${professores.length} docentes ativos`}
         api={{ caminho, nota: "A API devolve os docentes da UnB inteira; este site mostra só os do campus Gama." }}
       />
@@ -52,9 +54,7 @@ export default function ProfessoresPage() {
       <div className="px-4 lg:px-10 pt-5">
         <ul className="divide-y divide-border rounded-xl border border-border bg-surface xl:hidden">
           {filtrados.length === 0 ? (
-            <li className="px-4 py-12 text-center text-sm text-muted">
-              {loading || error ? "" : "Nenhum professor encontrado."}
-            </li>
+            <li>{!loading && !error && <EstadoVazio>Nenhum professor com esses filtros. Tente outro nome ou limpe os filtros.</EstadoVazio>}</li>
           ) : (
             visiveis.map((p) => (
               <li key={p.id} className="flex flex-col gap-2.5 px-4 py-3.5">
@@ -90,8 +90,8 @@ export default function ProfessoresPage() {
             <tbody>
               {filtrados.length === 0 ? (
                 <tr>
-                  <td colSpan={3} className="px-6 py-12 text-center text-sm text-muted">
-                    {loading || error ? "" : "Nenhum professor encontrado."}
+                  <td colSpan={3}>
+                    {!loading && !error && <EstadoVazio>Nenhum professor com esses filtros. Tente outro nome ou limpe os filtros.</EstadoVazio>}
                   </td>
                 </tr>
               ) : (

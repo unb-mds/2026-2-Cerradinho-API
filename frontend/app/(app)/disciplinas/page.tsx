@@ -5,6 +5,7 @@ import { useSearchParams } from "next/navigation";
 import { useDisciplinas } from "@/hooks/useDisciplinas";
 import ApiStatus from "@/components/ApiStatus";
 import PageHeader from "@/components/PageHeader";
+import EstadoVazio from "@/components/EstadoVazio";
 import { FilterBar, FilterPills, FilterSelect, SearchInput } from "@/components/Filters";
 import Badge from "@/components/Badge";
 import SeatBar from "@/components/SeatBar";
@@ -27,7 +28,7 @@ function gravarBuscaNaUrl(busca: string) {
 
 export default function DisciplinasPage() {
   return (
-    <Suspense fallback={<main><PageHeader title="Disciplinas" sub="Carregando..." /></main>}>
+    <Suspense fallback={<main><PageHeader title="Disciplinas" sub="Carregando..." href="/disciplinas" /></main>}>
       <Disciplinas />
     </Suspense>
   );
@@ -68,6 +69,7 @@ function Disciplinas() {
     <main className="flex flex-1 flex-col pb-10">
       <PageHeader
         title="Disciplinas"
+        href="/disciplinas"
         sub={`${filtradas.length} de ${disciplinas.length} turmas · semestre atual`}
         api={{ caminho, nota: "A API devolve as turmas da UnB inteira; este site mostra só as do campus Gama." }}
       />
@@ -86,9 +88,7 @@ function Disciplinas() {
       <div className="px-4 lg:px-10 pt-5">
         <ul className="divide-y divide-border rounded-xl border border-border bg-surface xl:hidden">
           {filtradas.length === 0 ? (
-            <li className="px-4 py-12 text-center text-sm text-muted">
-              {loading || error ? "" : "Nenhuma disciplina encontrada."}
-            </li>
+            <li>{!loading && !error && <EstadoVazio>Nenhuma turma com esses filtros. Tente outro termo ou limpe os filtros.</EstadoVazio>}</li>
           ) : (
             visiveis.map((d) => (
               <li key={d.codigo + d.turma}>
@@ -114,8 +114,8 @@ function Disciplinas() {
             <tbody>
               {filtradas.length === 0 ? (
                 <tr>
-                  <td colSpan={8} className="px-6 py-12 text-center text-sm text-muted">
-                    {loading || error ? "" : "Nenhuma disciplina encontrada."}
+                  <td colSpan={8}>
+                    {!loading && !error && <EstadoVazio>Nenhuma turma com esses filtros. Tente outro termo ou limpe os filtros.</EstadoVazio>}
                   </td>
                 </tr>
               ) : (

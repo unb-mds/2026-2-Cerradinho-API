@@ -9,6 +9,7 @@ import ProfessorAvatar from "@/components/ProfessorAvatar";
 import Badge from "@/components/Badge";
 import GradeSemanal from "@/components/GradeSemanal";
 import ChamadaApi from "@/components/ChamadaApi";
+import EstadoVazio from "@/components/EstadoVazio";
 import { blocosDaAgenda, turmasSemHorario } from "@/hooks/useAgendaProfessor";
 
 export default function AgendaProfessorPage() {
@@ -50,9 +51,9 @@ export default function AgendaProfessorPage() {
                         {blocos.length > 0 ? (
                             <GradeSemanal blocos={blocos} />
                         ) : (
-                            <p className="rounded-xl border border-border bg-surface px-6 py-12 text-center text-sm text-muted">
-                                Nenhum horário cadastrado para este professor.
-                            </p>
+                            <div className="rounded-xl border border-border bg-surface">
+                                <EstadoVazio>Nenhum horário cadastrado para este professor neste semestre.</EstadoVazio>
+                            </div>
                         )}
                     </div>
 

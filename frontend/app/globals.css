@@ -19,6 +19,17 @@
   --sidebar-foreground: #c8d3a8;
   --sidebar-foreground-active: #f2efe9;
   --sidebar-active: #3a4821;
+
+  /* Cores do cerrado, uma por módulo (e a caliandra também marca o que é "agora").
+     As normais servem em fundo claro; as -viva, em fundo verde-escuro (sidebar). */
+  --buriti: #2a7449;
+  --ipe: #a87400; /* só ícone e detalhe gráfico: como texto não passa de 4.5:1 */
+  --terra: #b04a22;
+  --caliandra: #c22f5a;
+  --buriti-viva: #7cc98f;
+  --ipe-viva: #f0c24b;
+  --terra-viva: #ec8a5c;
+  --caliandra-viva: #f4809f;
 }
 
 @theme inline {
@@ -40,6 +51,14 @@
   --color-sidebar-foreground: var(--sidebar-foreground);
   --color-sidebar-foreground-active: var(--sidebar-foreground-active);
   --color-sidebar-active: var(--sidebar-active);
+  --color-buriti: var(--buriti);
+  --color-ipe: var(--ipe);
+  --color-terra: var(--terra);
+  --color-caliandra: var(--caliandra);
+  --color-buriti-viva: var(--buriti-viva);
+  --color-ipe-viva: var(--ipe-viva);
+  --color-terra-viva: var(--terra-viva);
+  --color-caliandra-viva: var(--caliandra-viva);
   --font-sans: var(--font-dm-sans);
   --font-mono: var(--font-dm-mono);
 }
@@ -64,6 +83,10 @@
     --sidebar-foreground: #a7b487;
     --sidebar-foreground-active: #f2efe9;
     --sidebar-active: #232a16;
+    --buriti: #7cc98f;
+    --ipe: #f0c24b;
+    --terra: #ec8a5c;
+    --caliandra: #f4809f;
   }
 }
 
@@ -71,4 +94,47 @@ body {
   background: var(--background);
   color: var(--foreground);
   font-family: var(--font-sans), Arial, Helvetica, sans-serif;
+}
+
+/* Carregando: os estames da caliandra abrem e fecham. É a única animação do site. */
+@keyframes estames-abrindo {
+  from {
+    transform: scale(0.35);
+    opacity: 0.35;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.flor-abrindo .estames {
+  transform-box: view-box;
+  transform-origin: 12px 12.6px;
+  animation: estames-abrindo 1.1s cubic-bezier(0.16, 1, 0.3, 1) infinite alternate;
+}
+
+/* "Agora": ponto da caliandra pulsando ao lado da aula em andamento. */
+@keyframes agora-pulso {
+  from {
+    box-shadow: 0 0 0 0 color-mix(in oklab, var(--caliandra) 45%, transparent);
+  }
+  to {
+    box-shadow: 0 0 0 6px color-mix(in oklab, var(--caliandra) 0%, transparent);
+  }
+}
+
+.ponto-agora {
+  animation: agora-pulso 1.6s ease-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .flor-abrindo .estames,
+  .ponto-agora {
+    animation: none;
+  }
+}
+
+::selection {
+  background: color-mix(in oklab, var(--caliandra) 25%, transparent);
 }

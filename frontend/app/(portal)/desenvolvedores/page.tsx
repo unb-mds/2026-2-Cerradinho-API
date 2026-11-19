@@ -208,9 +208,7 @@ export default function PortalDesenvolvedorPage() {
     <>
       <header className="sticky top-0 z-30 flex flex-wrap items-center justify-between gap-x-6 gap-y-2 border-b border-white/10 bg-sidebar px-4 py-3.5 md:px-16">
         <Link href="/desenvolvedores" className="flex items-center gap-2.5">
-          <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-sidebar-active">
-            <CerradinhoFlower className="h-6 w-6" />
-          </span>
+          <CerradinhoFlower className="h-10 w-10" aria-hidden />
           <span className="text-sm font-semibold text-sidebar-foreground-active">Cerradinho</span>
           <span className="rounded bg-sidebar-active px-1.5 py-0.5 font-mono text-[11px] font-semibold text-sidebar-foreground">
             API v1

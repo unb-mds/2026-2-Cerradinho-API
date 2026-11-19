@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useCardapioSemana, somarDias, hojeISO, nomeDoDia } from "@/hooks/useCardapioSemana";
 import ApiStatus from "@/components/ApiStatus";
 import PageHeader from "@/components/PageHeader";
+import EstadoVazio from "@/components/EstadoVazio";
 import { FilterBar, FilterPills } from "@/components/Filters";
 import Badge from "@/components/Badge";
 
@@ -38,7 +39,7 @@ export default function CardapioPage() {
 
   return (
     <main className="flex flex-1 flex-col pb-10">
-      <PageHeader title="Cardápio" sub="Cardápio da semana · RU Darcy Ribeiro" api={{ caminho }} />
+      <PageHeader title="Cardápio" sub="Cardápio da semana · RU Darcy Ribeiro" href="/cardapio" api={{ caminho }} />
       <p className="px-4 lg:px-10 pt-2 text-xs text-muted">
         O cardápio do RU do Gama ainda não está na API. Por enquanto, este é o do campus Darcy Ribeiro.
       </p>
@@ -68,29 +69,31 @@ export default function CardapioPage() {
 
       <div className="flex flex-col gap-4 px-4 lg:px-10 pt-5">
         {!loading && !error && filtrado.length === 0 && (
-          <div className="flex flex-col items-center gap-4 rounded-xl border border-border bg-surface px-6 py-12 text-center">
+          <div className="rounded-xl border border-border bg-surface">
             {cardapio.length === 0 ? (
-              <>
-                <p className="text-sm text-muted">
-                  {ehSemanaAtual
-                    ? "O RU ainda não publicou o cardápio desta semana."
-                    : "Nenhum cardápio publicado para essa semana."}
-                </p>
-                <button type="button" onClick={() => { setDia(null); semanaAnterior(); }} className={BOTAO}>
-                  ← Ver a semana anterior
-                </button>
-              </>
-            ) : (
-              <>
-                <p className="text-sm text-muted">
-                  Sem cardápio publicado para {diaAtivo}, {dataDoDia(diaAtivo)}.
-                </p>
-                {sugestao && (
-                  <button type="button" onClick={() => setDia(sugestao)} className={BOTAO}>
-                    Ver {sugestao}, {dataDoDia(sugestao)} →
+              <EstadoVazio
+                acao={
+                  <button type="button" onClick={() => { setDia(null); semanaAnterior(); }} className={BOTAO}>
+                    ← Ver a semana anterior
                   </button>
-                )}
-              </>
+                }
+              >
+                {ehSemanaAtual
+                  ? "O RU ainda não publicou o cardápio desta semana."
+                  : "Nenhum cardápio publicado para essa semana."}
+              </EstadoVazio>
+            ) : (
+              <EstadoVazio
+                acao={
+                  sugestao && (
+                    <button type="button" onClick={() => setDia(sugestao)} className={BOTAO}>
+                      Ver {sugestao}, {dataDoDia(sugestao)} →
+                    </button>
+                  )
+                }
+              >
+                Sem cardápio publicado para {diaAtivo}, {dataDoDia(diaAtivo)}.
+              </EstadoVazio>
             )}
           </div>
         )}
