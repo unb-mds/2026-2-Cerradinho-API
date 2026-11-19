@@ -73,6 +73,7 @@ Cada entrada deve conter: data, pessoa, ferramenta usada, o que foi pedido, o qu
 | 16/11/2026 | Daniel | Claude Code | Revisão do PR #250 do Vitor (comentário no PR) e conferência do caso de UX que ele reportou: na API de produção, o professor EDSON DIAS CARVALHO tem 12 turmas simultâneas na sexta às 10h, e a grade da agenda (`components/GradeSemanal.tsx`) dividia a coluna do dia em 12 fatias. Entre as opções que a IA levantou, o Daniel escolheu agrupar: turmas no mesmo dia com o mesmo início e fim viram um bloco "N turmas", e ao clicar a lista aparece abaixo da grade. Validado com `eslint`, `next build` e captura da agenda do professor com dados de produção | Aceito sem ajuste: a escolha da solução entre as opções foi do Daniel, que revisou o diff antes do commit |
 | 17/11/2026 | Gabriel | Claude Code | Conferencia da sprint 9 e 10: levantamento das issues pendentes, rastreabilidade das specs da R2 conferida contra os PRs mergeados e comentários do cardápio encurtados. Na conferência da produção a IA achou a coleta de 16/11 falhando porque o RU passou a escrever a data do cabeçalho entre parênteses. | Ajustado: ajustei os erros encontrados |
 | 17/11/2026 | Gabriel | Claude Code | Atualização das skills em `.claude/skills/`. Cada afirmação foi conferida contra o código atual | Ajustado: coerencia e qualidade das skills |
+| 19/11/2026 | Gabriel | Claude Code | Paginação de `/v1/disciplinas` e salas vazias em blocos de 2h (PR #256) | Ajustado: salas e blocos definidos por mim |
 
 ## Observações gerais
 
