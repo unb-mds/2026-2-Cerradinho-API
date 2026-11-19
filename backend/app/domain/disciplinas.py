@@ -14,7 +14,7 @@ import re
 from collections import defaultdict
 
 from sqlalchemy.exc import SQLAlchemyError
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Query, Session, joinedload, selectinload
 
 from app.core.busca import normalizar_busca
 from app.models import Disciplina, Horario, Professor, Sala, Turma
@@ -451,8 +451,18 @@ def _turma_para_contrato(turma: Turma) -> TurmaCapturada:
     )
 
 
+def _consulta_turmas(session: Session) -> Query[Turma]:
+    """Turmas com disciplina, professores, horarios e salas ja carregados em
+    lote, sem uma consulta extra por turma ao montar o contrato."""
+    return session.query(Turma).options(
+        joinedload(Turma.disciplina),
+        selectinload(Turma.professores),
+        selectinload(Turma.horarios).joinedload(Horario.sala),
+    )
+
+
 def listar_turmas(session: Session) -> list[TurmaCapturada]:
-    return [_turma_para_contrato(turma) for turma in session.query(Turma).all()]
+    return [_turma_para_contrato(turma) for turma in _consulta_turmas(session).all()]
 
 
 _PADRAO_DEPARTAMENTO = re.compile(r"^[A-Za-zÀ-ÿ]+")
@@ -483,8 +493,20 @@ def listar_turmas_filtradas(
     (acento/caixa não são portáveis entre SQLite e Postgres sem extensão).
 
     Devolve (página, total) - `total` é a contagem depois do filtro, antes
-    de `limite`/`offset`, pro cabeçalho `X-Total-Count`."""
-    turmas = [_turma_para_contrato(turma) for turma in session.query(Turma).all()]
+    de `limite`/`offset`, pro cabeçalho `X-Total-Count`.
+
+    Sem filtro, a paginação vai direto pro SQL e só a página é montada."""
+    if not busca and not departamento:
+        total = session.query(Turma).count()
+        # offset alem do fim nao vai pro sql, que estoura com numero gigante
+        if offset >= total:
+            return [], total
+        pagina = _consulta_turmas(session).order_by(Turma.id).offset(offset)
+        if limite is not None:
+            pagina = pagina.limit(limite)
+        return [_turma_para_contrato(turma) for turma in pagina.all()], total
+
+    turmas = [_turma_para_contrato(turma) for turma in _consulta_turmas(session).order_by(Turma.id).all()]
 
     if departamento:
         departamento_norm = departamento.strip().upper()
