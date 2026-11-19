@@ -79,5 +79,5 @@ export function useDisciplinas() {
   const { data, loading, error } = useApiResource<TurmaAPI[]>("/disciplinas", []);
   // Só o campus Gama: disciplinas da FCTE e turmas de outros departamentos com aula em sala da FCTE.
   const doGama = data.filter((t) => disciplinaDoGama(t.disciplina_codigo) || salaDoGama(t.sala.descricao));
-  return { disciplinas: doGama.map(mapTurmaToDisciplina), loading, error };
+  return { disciplinas: doGama.map(mapTurmaToDisciplina), caminho: "/disciplinas", loading, error };
 }

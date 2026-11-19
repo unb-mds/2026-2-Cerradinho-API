@@ -3,7 +3,9 @@ import type { ReactNode } from "react";
 import Badge from "@/components/Badge";
 import CodeBlock from "@/components/CodeBlock";
 import { API_URL } from "@/lib/api";
+import { CerradinhoFlower } from "@/components/Icons";
 import ExemplosChamada from "./ExemplosChamada";
+import ResumoApi from "./ResumoApi";
 import SwaggerViewer from "./SwaggerViewer";
 
 const REPO_URL = "https://github.com/unb-mds/2026-2-Cerradinho-API";
@@ -204,19 +206,22 @@ function CartaoFerramenta({
 export default function PortalDesenvolvedorPage() {
   return (
     <>
-      <header className="sticky top-0 z-30 flex flex-wrap items-center justify-between gap-x-6 gap-y-2 border-b border-border bg-surface/95 px-4 py-4 backdrop-blur md:px-16">
-        <Link
-          href="/desenvolvedores"
-          className="text-sm font-semibold text-foreground"
-        >
-          Cerradinho API
+      <header className="sticky top-0 z-30 flex flex-wrap items-center justify-between gap-x-6 gap-y-2 border-b border-white/10 bg-sidebar px-4 py-3.5 md:px-16">
+        <Link href="/desenvolvedores" className="flex items-center gap-2.5">
+          <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-sidebar-active">
+            <CerradinhoFlower className="h-6 w-6" />
+          </span>
+          <span className="text-sm font-semibold text-sidebar-foreground-active">Cerradinho</span>
+          <span className="rounded bg-sidebar-active px-1.5 py-0.5 font-mono text-[11px] font-semibold text-sidebar-foreground">
+            API v1
+          </span>
         </Link>
         <nav className="flex flex-wrap items-center gap-x-5 gap-y-1 text-sm font-semibold">
           {NAV.map(({ href, label }) => (
             <a
               key={href}
               href={href}
-              className="hidden text-muted hover:text-foreground sm:inline"
+              className="hidden text-sidebar-foreground transition-colors hover:text-sidebar-foreground-active sm:inline"
             >
               {label}
             </a>
@@ -225,44 +230,63 @@ export default function PortalDesenvolvedorPage() {
             href={REPO_URL}
             target="_blank"
             rel="noreferrer"
-            className="text-muted hover:text-foreground"
+            className="text-sidebar-foreground transition-colors hover:text-sidebar-foreground-active"
           >
             GitHub
           </a>
-          <Link href="/" className="text-brand hover:text-brand-dark">
-            Voltar ao app
+          <Link href="/" className="text-sidebar-foreground-active underline-offset-4 hover:underline">
+            Ver o app do Gama
           </Link>
         </nav>
       </header>
 
       <main className="flex-1">
-        <section className="border-b border-border bg-surface px-4 py-12 md:px-16 md:py-16">
-          <h1 className="text-3xl font-bold tracking-tight text-foreground md:text-[40px] md:leading-tight">
-            API aberta de dados da UnB
-          </h1>
-          <p className="mt-3 text-base text-muted">
-            Consulte disciplinas, professores, salas e cardápio do RU em JSON.
-          </p>
-          <div className="mt-6 max-w-xl">
-            <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-muted">
-              URL base
+        <section className="grid gap-10 bg-sidebar px-4 pb-14 pt-10 md:px-16 md:pb-20 md:pt-16 lg:grid-cols-[minmax(0,1.1fr)_minmax(0,1fr)] lg:items-center">
+          <div>
+            <h1 className="text-3xl font-bold tracking-tight text-balance text-sidebar-foreground-active md:text-[44px] md:leading-[1.1]">
+              API aberta de dados da UnB
+            </h1>
+            <p className="mt-4 max-w-xl text-base leading-relaxed text-sidebar-foreground">
+              Disciplinas, professores, salas vazias e o cardápio do RU, coletados de fontes públicas e servidos em
+              JSON. Use no seu app, bot ou script.
             </p>
-            <CodeBlock code={API_URL} />
+            <ResumoApi />
+            <div className="mt-7 max-w-xl">
+              <p className="mb-2 text-xs font-semibold text-sidebar-foreground">URL base</p>
+              <CodeBlock code={API_URL} />
+            </div>
+            <div className="mt-6 flex flex-wrap gap-3">
+              <a
+                href="#swagger"
+                className="rounded-md bg-sidebar-foreground-active px-4 py-3 text-sm font-semibold text-sidebar transition-colors hover:bg-white"
+              >
+                Experimentar no Swagger
+              </a>
+              <a
+                href="#sdk"
+                className="rounded-md border border-white/25 px-4 py-3 text-sm font-semibold text-sidebar-foreground-active transition-colors hover:bg-white/10"
+              >
+                Instalar o SDK
+              </a>
+            </div>
           </div>
-          <div className="mt-6 flex flex-wrap gap-3">
-            <a
-              href="#swagger"
-              className="rounded-md bg-brand px-4 py-3 text-sm font-medium text-brand-foreground transition-colors hover:bg-brand-dark"
-            >
-              Experimentar no Swagger
-            </a>
-            <a
-              href="#sdk"
-              className="rounded-md border border-brand px-4 py-3 text-sm font-medium text-brand transition-colors hover:bg-brand/10"
-            >
-              Instalar o SDK
-            </a>
-          </div>
+
+          <figure className="overflow-hidden rounded-xl border border-white/10 bg-black/25">
+            <div className="flex items-center gap-2 border-b border-white/10 px-4 py-3">
+              <span className="rounded bg-sidebar-active px-1.5 py-0.5 font-mono text-[11px] font-semibold text-sidebar-foreground">
+                GET
+              </span>
+              <code className="min-w-0 break-all font-mono text-xs text-sidebar-foreground-active">
+                /v1/salas/vazias?dia=quinta&amp;horario=14:00
+              </code>
+            </div>
+            <pre className="overflow-x-auto px-4 py-4 font-mono text-xs leading-relaxed text-sidebar-foreground">
+              <code>{RESPOSTA_EXEMPLO}</code>
+            </pre>
+            <figcaption className="border-t border-white/10 px-4 py-3 text-xs text-sidebar-foreground">
+              Exemplo de resposta, resumido. É a mesma chamada que alimenta a tela de Salas Vazias do app.
+            </figcaption>
+          </figure>
         </section>
 
         <Secao

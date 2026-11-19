@@ -1,12 +1,15 @@
 import Link from "next/link";
 import { ChevronRightIcon, GridIcon } from "@/components/Icons";
+import ChamadaApi from "@/components/ChamadaApi";
 
 interface PageHeaderProps {
   title: string;
   sub: string;
+  // A chamada da API que preenche a página; aparece logo abaixo do título.
+  api?: { caminho: string; nota?: string };
 }
 
-export default function PageHeader({ title, sub }: PageHeaderProps) {
+export default function PageHeader({ title, sub, api }: PageHeaderProps) {
   return (
     <div className="px-4 lg:px-10 pt-8">
       <div className="mb-3 flex items-center gap-1.5 text-[13px]">
@@ -18,6 +21,7 @@ export default function PageHeader({ title, sub }: PageHeaderProps) {
       </div>
       <h1 className="text-2xl font-bold tracking-tight text-foreground">{title}</h1>
       <p className="mt-1.5 text-sm text-muted">{sub}</p>
+      {api && <ChamadaApi caminho={api.caminho} nota={api.nota} />}
     </div>
   );
 }

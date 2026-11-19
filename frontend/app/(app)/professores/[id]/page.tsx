@@ -8,6 +8,7 @@ import { unidadesDasDisciplinas } from "@/hooks/useProfessores";
 import ProfessorAvatar from "@/components/ProfessorAvatar";
 import Badge from "@/components/Badge";
 import GradeSemanal from "@/components/GradeSemanal";
+import ChamadaApi from "@/components/ChamadaApi";
 import { blocosDaAgenda, turmasSemHorario } from "@/hooks/useAgendaProfessor";
 
 export default function AgendaProfessorPage() {
@@ -43,6 +44,7 @@ export default function AgendaProfessorPage() {
                             </div>
                         </div>
                     </div>
+                    <ChamadaApi caminho={`/professores/${id}/agenda`} />
 
                     <div className="mt-6">
                         {blocos.length > 0 ? (

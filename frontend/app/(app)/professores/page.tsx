@@ -13,7 +13,7 @@ import Link from "next/link";
 import ProfessorAvatar from "@/components/ProfessorAvatar";
 
 export default function ProfessoresPage() {
-  const { professores, loading, error } = useProfessores();
+  const { professores, caminho, loading, error } = useProfessores();
   const unidades = ["Todos", ...[... new Set(professores.flatMap((p) => p.unidades))].sort()];
   const [departamento, setDepartamento] = useState("Todos");
   const [busca, setBusca] = useState("");
@@ -34,7 +34,11 @@ export default function ProfessoresPage() {
 
   return (
     <main className="flex flex-1 flex-col pb-10">
-      <PageHeader title="Professores" sub={`${filtrados.length} de ${professores.length} docentes ativos`} />
+      <PageHeader
+        title="Professores"
+        sub={`${filtrados.length} de ${professores.length} docentes ativos`}
+        api={{ caminho, nota: "A API devolve os docentes da UnB inteira; este site mostra só os do campus Gama." }}
+      />
 
       <div className="px-4 lg:px-10 pt-4">
         <ApiStatus loading={loading} error={error} />

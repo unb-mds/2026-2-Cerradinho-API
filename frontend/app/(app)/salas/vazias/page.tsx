@@ -37,7 +37,7 @@ export default function SalasVaziasPage() {
 const MOMENTO: Record<"agora" | "proxima", string> = { agora: " (agora)", proxima: " (próxima aula)" };
 
 function SalasVazias() {
-    const { salas, loading, error, dia, horario, momento, temAulaAgora, setDia, setHorario, voltarParaAgora } = useSalasVazias();
+    const { salas, caminho, loading, error, dia, horario, momento, temAulaAgora, setDia, setHorario, voltarParaAgora } = useSalasVazias();
     const { visiveis, restantes, mostrarMais } = useMostrarMais(salas, `${dia}|${horario}`);
     const rotuloDia = Object.keys(DIAS).find((rotulo) => DIAS[rotulo] === dia) ?? "Segunda";
     const quando = `${rotuloDia}, ${horario}${momento ? MOMENTO[momento] : ""}`;
@@ -48,6 +48,7 @@ function SalasVazias() {
             <PageHeader
                 title="Salas Vazias"
                 sub={loading ? `Carregando · ${quando}` : `${contagem} · ${quando}`}
+                api={{ caminho, nota: "A API responde para todos os campi; este site mostra só as salas da FCTE." }}
             />
 
             <div className="px-4 lg:px-10 pt-4">

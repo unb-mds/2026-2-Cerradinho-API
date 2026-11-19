@@ -70,9 +70,11 @@ export function useSalasVazias() {
     const ir = (novoDia: string, novoHorario: string) =>
         router.replace(`${pathname}?dia=${novoDia}&horario=${novoHorario}`, { scroll: false });
 
-    const { data, loading, error } = useApiResource<Sala[]>(caminhoSalasVazias(dia, horario), []);
+    const caminho = caminhoSalasVazias(dia, horario);
+    const { data, loading, error } = useApiResource<Sala[]>(caminho, []);
     return {
         salas: data.filter((s) => predioDoGama(s.predio)),
+        caminho,
         loading,
         error,
         dia,

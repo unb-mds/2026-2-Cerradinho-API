@@ -24,7 +24,7 @@ function diaPublicadoMaisPerto(publicados: string[], escolhido: string): string 
 }
 
 export default function CardapioPage() {
-  const { cardapio, loading, error, inicio, ehSemanaAtual, semanaAnterior, proximaSemana, semanaAtual } =
+  const { cardapio, caminho, loading, error, inicio, ehSemanaAtual, semanaAnterior, proximaSemana, semanaAtual } =
     useCardapioSemana();
   const [dia, setDia] = useState<string | null>(null);
 
@@ -38,7 +38,7 @@ export default function CardapioPage() {
 
   return (
     <main className="flex flex-1 flex-col pb-10">
-      <PageHeader title="Cardápio" sub="Cardápio da semana · RU Darcy Ribeiro" />
+      <PageHeader title="Cardápio" sub="Cardápio da semana · RU Darcy Ribeiro" api={{ caminho }} />
       <p className="px-4 lg:px-10 pt-2 text-xs text-muted">
         O cardápio do RU do Gama ainda não está na API. Por enquanto, este é o do campus Darcy Ribeiro.
       </p>

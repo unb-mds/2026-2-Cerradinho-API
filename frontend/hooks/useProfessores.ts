@@ -29,5 +29,5 @@ export function useProfessores() {
   const { data, loading, error } = useApiResource<ProfessorAPI[]>("/professores", []);
   // Só o campus Gama: docentes com alguma disciplina da FCTE.
   const doGama = data.filter((p) => p.disciplinas.some(disciplinaDoGama));
-  return { professores: doGama.map(mapProfessor), loading, error };
+  return { professores: doGama.map(mapProfessor), caminho: "/professores", loading, error };
 }

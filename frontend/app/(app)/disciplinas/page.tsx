@@ -35,7 +35,7 @@ export default function DisciplinasPage() {
 
 function Disciplinas() {
   const params = useSearchParams();
-  const { disciplinas, loading, error } = useDisciplinas();
+  const { disciplinas, caminho, loading, error } = useDisciplinas();
   const departamentos = ["Todos", ...[...new Set(disciplinas.map((d) => d.departamento))].sort()];
   const [departamento, setDepartamento] = useState("Todos");
   const [dia, setDia] = useState("Todos");
@@ -66,7 +66,11 @@ function Disciplinas() {
 
   return (
     <main className="flex flex-1 flex-col pb-10">
-      <PageHeader title="Disciplinas" sub={`${filtradas.length} de ${disciplinas.length} turmas · semestre atual`} />
+      <PageHeader
+        title="Disciplinas"
+        sub={`${filtradas.length} de ${disciplinas.length} turmas · semestre atual`}
+        api={{ caminho, nota: "A API devolve as turmas da UnB inteira; este site mostra só as do campus Gama." }}
+      />
 
       <div className="px-4 lg:px-10 pt-4">
         <ApiStatus loading={loading} error={error} />
