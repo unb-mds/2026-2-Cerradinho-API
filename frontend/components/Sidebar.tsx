@@ -46,7 +46,7 @@ export default function Sidebar() {
             </span>
           </span>
           <span className="pl-10.5 text-[10px] uppercase tracking-wide text-sidebar-foreground">
-            UnB · Dados do Campus
+            UnB · Campus Gama
           </span>
         </Link>
 

@@ -1,5 +1,6 @@
 "use client";
 
+import { disciplinaDoGama, salaDoGama } from "@/lib/campus";
 import { useApiResource } from "./useApiResource";
 
 // Formato que a tela de Disciplinas consome (tabela, filtros, badges).
@@ -76,5 +77,7 @@ export function mapTurmaToDisciplina(turma: TurmaAPI): Disciplina {
 
 export function useDisciplinas() {
   const { data, loading, error } = useApiResource<TurmaAPI[]>("/disciplinas", []);
-  return { disciplinas: data.map(mapTurmaToDisciplina), loading, error };
+  // Só o campus Gama: disciplinas da FCTE e turmas de outros departamentos com aula em sala da FCTE.
+  const doGama = data.filter((t) => disciplinaDoGama(t.disciplina_codigo) || salaDoGama(t.sala.descricao));
+  return { disciplinas: doGama.map(mapTurmaToDisciplina), loading, error };
 }

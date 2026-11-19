@@ -1,5 +1,6 @@
 "use client";
 
+import { predioDoGama } from "@/lib/campus";
 import { useApiResource } from "./useApiResource";
 
 export interface Sala {
@@ -10,5 +11,5 @@ export interface Sala {
 
 export function useSalas() {
   const { data, loading, error } = useApiResource<Sala[]>("/salas", []);
-  return { salas: data, loading, error };
+  return { salas: data.filter((s) => predioDoGama(s.predio)), loading, error };
 }

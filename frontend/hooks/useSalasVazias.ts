@@ -1,5 +1,6 @@
 "use client";
 
+import { predioDoGama } from "@/lib/campus";
 import { useApiResource } from "./useApiResource";
 import { useState } from "react";
 import type { Sala } from "./useSalas";
@@ -36,7 +37,7 @@ export function useSalasVazias() {
     const [horario, setHorario] = useState("08:00");
 
     const { data, loading, error } = useApiResource<Sala[]>(caminhoSalasVazias(dia, horario), []);
-    return { salas: data, loading, error, dia, horario, setDia, setHorario };
+    return { salas: data.filter((s) => predioDoGama(s.predio)), loading, error, dia, horario, setDia, setHorario };
 }
 
 export function useSalasVaziasAgora() {
@@ -45,5 +46,5 @@ export function useSalasVaziasAgora() {
         caminhoSalasVazias(agora?.dia ?? "segunda", agora?.horario ?? "08:00"), [],
     );
 
-    return { quantidade: data.length, horario: agora?.horario ?? null, foraDoHorario: agora === null, loading, error };
+    return { quantidade: data.filter((s) => predioDoGama(s.predio)).length, horario: agora?.horario ?? null, foraDoHorario: agora === null, loading, error };
 }
