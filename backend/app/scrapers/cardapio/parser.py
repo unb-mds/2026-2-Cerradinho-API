@@ -130,11 +130,11 @@ def _posicoes_das_datas(palavras: list[dict]) -> tuple[list[tuple[float, date]],
     # datas ordenadas por x e o fim do cabecalho
     datas: dict[date, tuple[float, float]] = {}
     for palavra in palavras:
-        # desde 16/11 a data vem entre parenteses
-        texto = palavra["text"].strip("()")
-        if RE_DATA.fullmatch(texto):
+        # search igual ao corpo pois a data vem colada em outro texto
+        encontrada = RE_DATA.search(palavra["text"])
+        if encontrada:
             centro_x = (palavra["x0"] + palavra["x1"]) / 2
-            datas.setdefault(_string_para_data(texto), (centro_x, palavra["bottom"]))
+            datas.setdefault(_string_para_data(encontrada.group()), (centro_x, palavra["bottom"]))
 
     if not datas:
         raise ValueError("Não foi possível identificar as datas dos dias no cabeçalho.")

@@ -3,7 +3,12 @@ from pathlib import Path
 
 import pytest
 
-from app.scrapers.cardapio.parser import encontrar_pdf_da_semana, extrair_itens_cardapio, extrair_links_cardapio
+from app.scrapers.cardapio.parser import (
+    _posicoes_das_datas,
+    encontrar_pdf_da_semana,
+    extrair_itens_cardapio,
+    extrair_links_cardapio,
+)
 
 FIXTURES = Path(__file__).parent / "fixtures"
 
@@ -92,6 +97,20 @@ def test_extrair_itens_cardapio_atribui_o_prato_ao_dia_e_categoria_certos(segund
     itens = _itens_da_semana(segunda)
 
     assert _item(itens, segunda, refeicao, categoria) == esperado
+
+
+@pytest.mark.parametrize("texto", ["16/11/2026", "(16/11/2026)", "FEIRA(16/11/2026)", "[16/11/2026]", "Seg.16/11/2026"])
+def test_posicoes_das_datas_acha_a_data_colada_em_outro_texto(texto):
+    palavras = [
+        {"text": "SEGUNDA", "x0": 100, "x1": 140, "bottom": 50},
+        {"text": texto, "x0": 100, "x1": 160, "bottom": 60},
+        {"text": "17/11/2026", "x0": 200, "x1": 250, "bottom": 60},
+    ]
+
+    colunas, fim_cabecalho = _posicoes_das_datas(palavras)
+
+    assert [data_dia for _, data_dia in colunas] == [date(2026, 11, 16), date(2026, 11, 17)]
+    assert fim_cabecalho == 60
 
 
 def test_extrair_itens_cardapio_atribui_cada_dia_na_coluna_certa():
