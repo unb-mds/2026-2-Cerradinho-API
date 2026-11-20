@@ -74,6 +74,7 @@ Cada entrada deve conter: data, pessoa, ferramenta usada, o que foi pedido, o qu
 | 18/11/2026 | Arthur | Claude Code | Ajuste final do RF16: `raspar_disciplinas_varias_unidades` passa a devolver também as unidades que não responderam, `scrape_disciplinas_task` soma as que falharam ao persistir, e `log_success` grava o resultado da task em JSON como mensagem, resolve a lacuna "o log não informa qual unidade falhou", apontada na spec do RNF05 | Ajustado: a revisão de código achou 3 problemas na primeira versão, o `except` de falha ao persistir não adicionava a unidade em `unidades_com_falha` (o próprio objetivo do ajuste, sem teste cobrindo isso), e um teste de sabotagem passou a testar o caso errado sem querer; os 3 foram corrigidos, com 2 testes novos cobrindo o que faltava |
 | 17/11/2026 | Gabriel | Claude Code | Conferencia da sprint 9 e 10: levantamento das issues pendentes, rastreabilidade das specs da R2 conferida contra os PRs mergeados e comentários do cardápio encurtados. Na conferência da produção a IA achou a coleta de 16/11 falhando porque o RU passou a escrever a data do cabeçalho entre parênteses. | Ajustado: ajustei os erros encontrados |
 | 17/11/2026 | Gabriel | Claude Code | Atualização das skills em `.claude/skills/`. Cada afirmação foi conferida contra o código atual | Ajustado: coerencia e qualidade das skills |
+| 19/11/2026 | Gabriel | Claude Code | Paginação de `/v1/disciplinas` e salas vazias em blocos de 2h (PR #256) | Ajustado: salas e blocos definidos por mim |
 
 ## Observações gerais
 

@@ -4,6 +4,7 @@ Não existe fonte própria de salas: a tabela é preenchida por
 `app/domain/disciplinas.py` a partir da sala de cada turma capturada.
 """
 
+import re
 from collections import defaultdict
 
 from sqlalchemy.orm import Session
@@ -107,32 +108,65 @@ def listar_salas(session: Session) -> list[Espaco]:
     return [Espaco(id=sala.id, nome=sala.nome, predio=sala.predio) for sala in salas]
 
 
-def listar_salas_vazias(session: Session, dia: str, horario: str) -> list[Espaco]:
+def _minutos(horario: str) -> int:
+    horas, minutos = (int(parte) for parte in horario.split(":"))
+    return horas * 60 + minutos
+
+
+def _aulas_no_intervalo(horario: str, fim: str | None) -> set[tuple[str, str]]:
+    """Aulas da grade que começam em [horario, fim). Sem `fim`, só a aula
+    que começa exatamente em `horario` (vazio se não for início de aula)."""
+    if fim is None:
+        par = _localizar_turno_aula(horario)
+        return {par} if par is not None else set()
+    inicio, termino = _minutos(horario), _minutos(fim)
+    return {par for hora, par in _TURNO_AULA_POR_HORARIO.items() if inicio <= _minutos(hora) < termino}
+
+
+def _partes_do_nome(nome: str) -> set[str]:
+    """Salas que um nome cobre: "I9/I10" cobre I9 e I10, "S10  (120 VAGAS)"
+    é a S10 e "SALAS S4 /S4" é a S4."""
+    partes = set()
+    for parte in nome.upper().split("/"):
+        parte = re.sub(r"\(.*?\)", " ", parte)
+        parte = re.sub(r"^\s*SALAS?\s+", "", parte)
+        parte = " ".join(parte.split())
+        if parte:
+            partes.add(parte)
+    return partes
+
+
+def listar_salas_vazias(session: Session, dia: str, horario: str, fim: str | None = None) -> list[Espaco]:
     """Salas sem nenhuma turma cadastrada no dia/horário dados. `dia` é um dos
     nomes de `DIA_PARA_DIGITO`; `horario` é o início de uma aula, "HH:MM"
-    (ex. "14:00"). Dia ou horário fora da grade de aulas (sem turma possível)
+    (ex. "14:00"). Com `fim`, a sala precisa estar livre em todas as aulas que
+    começam entre `horario` e `fim` (ex. "14:00" a "15:50" cobre T2 e T3).
+    Uma turma numa sala combinada ("I9/I10") ocupa cada sala do nome, no mesmo
+    prédio. Dia ou horário fora da grade de aulas (sem turma possível)
     devolve todas as salas, em vez de erro."""
     dia_digito = DIA_PARA_DIGITO.get(dia)
-    turno_aula = _localizar_turno_aula(horario)
+    aulas = _aulas_no_intervalo(horario, fim)
 
     ocupadas: set[int] = set()
-    if dia_digito is not None and turno_aula is not None:
-        turno, aula = turno_aula
+    if dia_digito is not None and aulas:
         linhas = (
             session.query(Horario.codigo, Horario.sala_id)
             .filter(Horario.sala_id.isnot(None))
             .all()
         )
         for codigo, sala_id in linhas:
-            for dias, turno_codigo, aulas in decompor_codigo_horario(codigo):
-                if turno_codigo == turno and dia_digito in dias and aula in aulas:
+            for dias, turno_codigo, aulas_codigo in decompor_codigo_horario(codigo):
+                if dia_digito in dias and any((turno_codigo, aula) in aulas for aula in aulas_codigo):
                     ocupadas.add(sala_id)
                     break
 
-    salas = (
-        session.query(Sala)
-        .filter(Sala.id.notin_(ocupadas))
-        .order_by(Sala.predio, Sala.nome)
-        .all()
-    )
-    return [Espaco(id=sala.id, nome=sala.nome, predio=sala.predio) for sala in salas]
+    salas = session.query(Sala).order_by(Sala.predio, Sala.nome).all()
+    partes_ocupadas: set[tuple[str, str]] = {
+        (sala.predio, parte) for sala in salas if sala.id in ocupadas for parte in _partes_do_nome(sala.nome)
+    }
+    return [
+        Espaco(id=sala.id, nome=sala.nome, predio=sala.predio)
+        for sala in salas
+        if sala.id not in ocupadas
+        and not any((sala.predio, parte) in partes_ocupadas for parte in _partes_do_nome(sala.nome))
+    ]
