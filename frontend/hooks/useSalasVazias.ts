@@ -8,7 +8,7 @@ import type { Sala } from "./useSalas";
 export const HORARIOS = ["08:00", "10:00", "12:00", "14:00", "16:00"];
 const DURACAO_BLOCO = 110;
 
-const DIAS_API = [null, "segunda", "terca", "quarta", "quinta", "sexta", "sabado"];
+export const DIAS_API = [null, "segunda", "terca", "quarta", "quinta", "sexta", "sabado"];
 
 // so as salas i1 a i10 e s1 a s10 do campus gama aparecem no site
 const PREDIOS_DO_CAMPUS = ["FCTE", "FGA"];
@@ -31,7 +31,7 @@ export function fimDoBloco(horario: string) {
     return `${String(Math.floor(fim / 60)).padStart(2, "0")}:${String(fim % 60).padStart(2, "0")}`;
 }
 
-function caminhoSalasVazias(dia: string, horario: string) {
+export function caminhoSalasVazias(dia: string, horario: string) {
     return `/salas/vazias?dia=${dia}&horario=${horario}&fim=${fimDoBloco(horario)}`;
 }
 
@@ -44,6 +44,20 @@ export function aulaAgora(agora = new Date()): { dia: string; horario: string } 
     if (!horario || minutos >= minutosDoInicio(horario) + DURACAO_BLOCO) return null;
 
     return { dia, horario };
+}
+
+// Fora de um bloco, o próximo que começa (usado pela home).
+export function proximaAula(agora = new Date()): { dia: string; horario: string } {
+    const minutos = agora.getHours() * 60 + agora.getMinutes();
+    const hoje = DIAS_API[agora.getDay()];
+    const maisTarde = HORARIOS.find((h) => minutosDoInicio(h) > minutos);
+    if (hoje && maisTarde) return { dia: hoje, horario: maisTarde };
+
+    for (let i = 1; i <= 7; i++) {
+        const dia = DIAS_API[(agora.getDay() + i) % 7];
+        if (dia) return { dia, horario: HORARIOS[0] };
+    }
+    return { dia: "segunda", horario: HORARIOS[0] };
 }
 
 export const DIAS_DA_SEMANA = [
@@ -73,11 +87,21 @@ export function useSalasVazias() {
     return { dias, loading, error, horario, setHorario, hoje: DIAS_API[new Date().getDay()] };
 }
 
-export function useSalasVaziasAgora() {
-    const agora = aulaAgora();
-    const { data, loading, error } = useApiResource<Sala[]>(
-        caminhoSalasVazias(agora?.dia ?? "segunda", agora?.horario ?? "08:00"), [],
-    );
+// Home: salas livres no bloco de agora (ou no próximo, fora dele).
+// `agora` vem do navegador; null enquanto a página não hidratou, e aí não busca nada.
+export function useSalasLivresAgora(agora: Date | null) {
+    const emAula = agora ? aulaAgora(agora) : null;
+    const slot = agora ? (emAula ?? proximaAula(agora)) : null;
+    const caminho = slot ? caminhoSalasVazias(slot.dia, slot.horario) : null;
+    const { data, loading, error } = useApiResource<Sala[]>(caminho, []);
 
-    return { quantidade: doCampus(data).length, horario: agora?.horario ?? null, foraDoHorario: agora === null, loading, error };
+    return {
+        salas: doCampus(data),
+        slot,
+        caminho,
+        emAula: emAula !== null,
+        href: "/salas/vazias",
+        loading,
+        error,
+    };
 }

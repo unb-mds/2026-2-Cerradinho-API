@@ -83,13 +83,12 @@ function segundaDaSemana(hoje = new Date()): string {
 export function useCardapioSemana() {
   const [inicio, setInicio] = useState(() => segundaDaSemana());
 
-  const { data, loading, error } = useApiResource<CardapioSemanaAPI | null>(
-    `/cardapio/semana?data_inicio=${inicio}`,
-    null,
-  );
+  const caminho = `/cardapio/semana?data_inicio=${inicio}`;
+  const { data, loading, error } = useApiResource<CardapioSemanaAPI | null>(caminho, null);
 
   return {
     cardapio: mapDiasToCardapio(data?.dias ?? []),
+    caminho,
     loading,
     error,
     inicio,

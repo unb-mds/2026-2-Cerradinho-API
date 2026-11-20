@@ -3,7 +3,7 @@
 import ApiStatus from "@/components/ApiStatus";
 import PageHeader from "@/components/PageHeader";
 import { FilterBar, FilterSelect } from "@/components/Filters";
-import { useSalasVazias, HORARIOS, fimDoBloco } from "@/hooks/useSalasVazias";
+import { useSalasVazias, HORARIOS, fimDoBloco, caminhoSalasVazias } from "@/hooks/useSalasVazias";
 
 // usado tambem pela grade semanal do professor
 export const DIAS: Record<string, string> = {
@@ -26,7 +26,12 @@ export default function SalasVaziasPage() {
         <main className="flex flex-1 flex-col pb-10">
             <PageHeader
                 title="Salas Vazias"
+                href="/salas/vazias"
                 sub={loading ? "Carregando..." : `Salas sem aula das ${rotuloBloco}, de segunda a sábado`}
+                api={{
+                    caminho: caminhoSalasVazias(hoje ?? "segunda", horario),
+                    nota: "A página faz uma chamada por dia da semana. A API responde para todos os campi; este site mostra só as salas I1 a I10 e S1 a S10 da FCTE.",
+                }}
             />
 
             <div className="px-4 md:px-10 pt-4">

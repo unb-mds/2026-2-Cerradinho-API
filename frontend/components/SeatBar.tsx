@@ -6,7 +6,7 @@ interface SeatBarProps {
 export default function SeatBar({ ocupadas, total }: SeatBarProps) {
   const pct = total > 0 ? Math.min((ocupadas / total) * 100, 100) : 0;
   const cheia = ocupadas >= total;
-  const color = cheia ? "bg-accent" : pct >= 80 ? "bg-amber-500" : "bg-brand";
+  const color = cheia ? "bg-accent" : pct >= 80 ? "bg-warning" : "bg-brand";
 
   return (
     <div className="flex flex-col gap-1">

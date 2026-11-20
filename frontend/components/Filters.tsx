@@ -5,11 +5,12 @@ interface FilterBarProps {
   children: ReactNode;
   hasFilters: boolean;
   onClear: () => void;
+  clearLabel?: string;
 }
 
-export function FilterBar({ children, hasFilters, onClear }: FilterBarProps) {
+export function FilterBar({ children, hasFilters, onClear, clearLabel = "Limpar" }: FilterBarProps) {
   return (
-    <div className="px-4 md:px-10 pt-5">
+    <div className="px-4 lg:px-10 pt-5">
       <div className="flex flex-wrap items-center gap-4 rounded-xl border border-border bg-surface px-4 py-3.5 md:px-5">
         <div className="flex items-center gap-2 text-muted">
           <FilterIcon className="h-4 w-4" />
@@ -25,7 +26,7 @@ export function FilterBar({ children, hasFilters, onClear }: FilterBarProps) {
               onClick={onClear}
               className="text-xs font-semibold text-muted transition-colors hover:text-foreground"
             >
-              Limpar
+              {clearLabel}
             </button>
           </>
         )}
@@ -67,7 +68,7 @@ interface FilterPillsProps {
 
 export function FilterPills({ label, value, onChange, options }: FilterPillsProps) {
   return (
-    <div className="flex flex-col gap-1">
+    <div role="group" aria-label={label} className="flex flex-col gap-1">
       <span className="text-[10px] font-bold uppercase tracking-wide text-muted">{label}</span>
       <div className="flex flex-wrap gap-1">
         {options.map((option) => {
@@ -77,6 +78,7 @@ export function FilterPills({ label, value, onChange, options }: FilterPillsProp
               key={option}
               type="button"
               onClick={() => onChange(option)}
+              aria-pressed={active}
               className={`rounded-md px-2.5 py-1.5 text-xs font-semibold transition-colors ${
                 active ? "bg-brand text-brand-foreground" : "border border-border bg-background text-foreground"
               }`}
@@ -104,7 +106,9 @@ export function SearchInput({ value, onChange, placeholder }: SearchInputProps) 
         value={value}
         onChange={(e) => onChange(e.target.value)}
         placeholder={placeholder}
-        className="w-full rounded-lg border border-border bg-background py-2 pl-8 pr-3 text-sm text-foreground outline-none"
+        aria-label={placeholder.replace(/\.+$/, "")}
+        type="search"
+        className="w-full rounded-lg border border-border bg-background py-2 pl-8 pr-3 text-sm text-foreground placeholder:text-muted focus:border-brand focus:outline-2 focus:outline-brand/30"
       />
     </div>
   );

@@ -1,5 +1,6 @@
 "use client";
 
+import { disciplinaDoGama } from "@/lib/campus";
 import { useApiResource } from "./useApiResource";
 
 interface ProfessorAPI {
@@ -26,5 +27,7 @@ function mapProfessor(p: ProfessorAPI): Professor {
 
 export function useProfessores() {
   const { data, loading, error } = useApiResource<ProfessorAPI[]>("/professores", []);
-  return { professores: data.map(mapProfessor), loading, error };
+  // Só o campus Gama: docentes com alguma disciplina da FCTE.
+  const doGama = data.filter((p) => p.disciplinas.some(disciplinaDoGama));
+  return { professores: doGama.map(mapProfessor), caminho: "/professores", loading, error };
 }

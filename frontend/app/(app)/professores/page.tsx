@@ -7,13 +7,14 @@ import { useMostrarMais } from "@/hooks/useMostrarMais";
 import MostrarMais from "@/components/MostrarMais";
 import ApiStatus from "@/components/ApiStatus";
 import PageHeader from "@/components/PageHeader";
+import EstadoVazio from "@/components/EstadoVazio";
 import { FilterBar, FilterSelect, SearchInput } from "@/components/Filters";
 import Badge from "@/components/Badge";
 import Link from "next/link";
 import ProfessorAvatar from "@/components/ProfessorAvatar";
 
 export default function ProfessoresPage() {
-  const { professores, loading, error } = useProfessores();
+  const { professores, caminho, loading, error } = useProfessores();
   const unidades = ["Todos", ...[... new Set(professores.flatMap((p) => p.unidades))].sort()];
   const [departamento, setDepartamento] = useState("Todos");
   const [busca, setBusca] = useState("");
@@ -34,23 +35,26 @@ export default function ProfessoresPage() {
 
   return (
     <main className="flex flex-1 flex-col pb-10">
-      <PageHeader title="Professores" sub={`${filtrados.length} de ${professores.length} docentes ativos`} />
+      <PageHeader
+        title="Professores"
+        href="/professores"
+        sub={`${filtrados.length} de ${professores.length} docentes ativos`}
+        api={{ caminho, nota: "A API devolve os docentes da UnB inteira; este site mostra só os do campus Gama." }}
+      />
 
-      <div className="px-4 md:px-10 pt-4">
+      <div className="px-4 lg:px-10 pt-4">
         <ApiStatus loading={loading} error={error} />
       </div>
 
       <FilterBar hasFilters={hasFilters} onClear={limparFiltros}>
         <SearchInput value={busca} onChange={setBusca} placeholder="Buscar por nome ou disciplina..." />
-        <FilterSelect label="Unidade" value={departamento} onChange={setDepartamento} options={unidades} />
+        <FilterSelect label="Departamento" value={departamento} onChange={setDepartamento} options={unidades} />
       </FilterBar>
 
-      <div className="px-4 md:px-10 pt-5">
-        <ul className="divide-y divide-border rounded-xl border border-border bg-surface md:hidden">
+      <div className="px-4 lg:px-10 pt-5">
+        <ul className="divide-y divide-border rounded-xl border border-border bg-surface xl:hidden">
           {filtrados.length === 0 ? (
-            <li className="px-4 py-12 text-center text-sm text-muted">
-              {loading || error ? "" : "Nenhum professor encontrado."}
-            </li>
+            <li>{!loading && !error && <EstadoVazio>Nenhum professor com esses filtros. Tente outro nome ou limpe os filtros.</EstadoVazio>}</li>
           ) : (
             visiveis.map((p) => (
               <li key={p.id} className="flex flex-col gap-2.5 px-4 py-3.5">
@@ -74,20 +78,20 @@ export default function ProfessoresPage() {
             ))
           )}
         </ul>
-        <div className="hidden overflow-x-auto rounded-xl border border-border bg-surface md:block">
+        <div className="hidden overflow-x-auto rounded-xl border border-border bg-surface xl:block">
           <table className="w-full border-collapse text-sm">
             <thead>
               <tr className="border-b border-border bg-background text-left text-[10px] font-bold uppercase tracking-wide text-muted">
                 <th className="px-4 py-3">Professor(a)</th>
-                <th className="px-4 py-3">Unidade</th>
+                <th className="px-4 py-3">Departamento</th>
                 <th className="px-4 py-3">Disciplinas</th>
               </tr>
             </thead>
             <tbody>
               {filtrados.length === 0 ? (
                 <tr>
-                  <td colSpan={3} className="px-6 py-12 text-center text-sm text-muted">
-                    {loading || error ? "" : "Nenhum professor encontrado."}
+                  <td colSpan={3}>
+                    {!loading && !error && <EstadoVazio>Nenhum professor com esses filtros. Tente outro nome ou limpe os filtros.</EstadoVazio>}
                   </td>
                 </tr>
               ) : (

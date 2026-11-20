@@ -8,6 +8,8 @@ import { unidadesDasDisciplinas } from "@/hooks/useProfessores";
 import ProfessorAvatar from "@/components/ProfessorAvatar";
 import Badge from "@/components/Badge";
 import GradeSemanal from "@/components/GradeSemanal";
+import ChamadaApi from "@/components/ChamadaApi";
+import EstadoVazio from "@/components/EstadoVazio";
 import { blocosDaAgenda, turmasSemHorario } from "@/hooks/useAgendaProfessor";
 
 export default function AgendaProfessorPage() {
@@ -19,7 +21,7 @@ export default function AgendaProfessorPage() {
     const semHorario = agenda ? turmasSemHorario(agenda) : [];
 
     return (
-        <main className="flex flex-1 flex-col px-4 md:px-10 py-9">
+        <main className="flex flex-1 flex-col px-4 lg:px-10 py-9">
             <Link href="/professores"
                 className="self-start rounded-lg border border-border bg-surface px-3.5 py-2 text-sm font-semibold text-brand transition-colors hover:bg-background"
             >
@@ -43,14 +45,15 @@ export default function AgendaProfessorPage() {
                             </div>
                         </div>
                     </div>
+                    <ChamadaApi caminho={`/professores/${id}/agenda`} />
 
                     <div className="mt-6">
                         {blocos.length > 0 ? (
                             <GradeSemanal blocos={blocos} />
                         ) : (
-                            <p className="rounded-xl border border-border bg-surface px-6 py-12 text-center text-sm text-muted">
-                                Nenhum horário cadastrado para este professor.
-                            </p>
+                            <div className="rounded-xl border border-border bg-surface">
+                                <EstadoVazio>Nenhum horário cadastrado para este professor neste semestre.</EstadoVazio>
+                            </div>
                         )}
                     </div>
 

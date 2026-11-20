@@ -1,9 +1,11 @@
 "use client";
 
-import { useState } from "react";
+import { Suspense, useState } from "react";
+import { useSearchParams } from "next/navigation";
 import { useDisciplinas } from "@/hooks/useDisciplinas";
 import ApiStatus from "@/components/ApiStatus";
 import PageHeader from "@/components/PageHeader";
+import EstadoVazio from "@/components/EstadoVazio";
 import { FilterBar, FilterPills, FilterSelect, SearchInput } from "@/components/Filters";
 import Badge from "@/components/Badge";
 import SeatBar from "@/components/SeatBar";
@@ -15,13 +17,35 @@ import MostrarMais from "@/components/MostrarMais";
 const DIAS = ["Todos", "Seg", "Ter", "Qua", "Qui", "Sex", "Sáb"];
 const HORARIOS = ["Todos", "08:00", "10:00", "12:00", "14:00", "16:00", "18:00", "19:00", "20:50"];
 
+// A busca vem da URL (/disciplinas?busca=cálculo), que é por onde a busca da home chega,
+// e volta pra ela enquanto o aluno digita, pra o link poder ser compartilhado.
+function gravarBuscaNaUrl(busca: string) {
+  const url = new URL(window.location.href);
+  if (busca) url.searchParams.set("busca", busca);
+  else url.searchParams.delete("busca");
+  window.history.replaceState(null, "", url);
+}
+
 export default function DisciplinasPage() {
-  const { disciplinas, loading, error } = useDisciplinas();
+  return (
+    <Suspense fallback={<main><PageHeader title="Disciplinas" sub="Carregando..." href="/disciplinas" /></main>}>
+      <Disciplinas />
+    </Suspense>
+  );
+}
+
+function Disciplinas() {
+  const params = useSearchParams();
+  const { disciplinas, caminho, loading, error } = useDisciplinas();
   const departamentos = ["Todos", ...[...new Set(disciplinas.map((d) => d.departamento))].sort()];
   const [departamento, setDepartamento] = useState("Todos");
   const [dia, setDia] = useState("Todos");
   const [horario, setHorario] = useState("Todos");
-  const [busca, setBusca] = useState("");
+  const [busca, setBuscaEstado] = useState(() => params.get("busca") ?? "");
+  const setBusca = (valor: string) => {
+    setBuscaEstado(valor);
+    gravarBuscaNaUrl(valor);
+  };
 
   const filtradas = disciplinas.filter((d) => {
     const matchDepartamento = departamento === "Todos" || d.departamento === departamento;
@@ -43,25 +67,28 @@ export default function DisciplinasPage() {
 
   return (
     <main className="flex flex-1 flex-col pb-10">
-      <PageHeader title="Disciplinas" sub={`${filtradas.length} de ${disciplinas.length} turmas · semestre atual`} />
+      <PageHeader
+        title="Disciplinas"
+        href="/disciplinas"
+        sub={`${filtradas.length} de ${disciplinas.length} turmas · semestre atual`}
+        api={{ caminho, nota: "A API devolve as turmas da UnB inteira; este site mostra só as do campus Gama." }}
+      />
 
-      <div className="px-4 md:px-10 pt-4">
+      <div className="px-4 lg:px-10 pt-4">
         <ApiStatus loading={loading} error={error} />
       </div>
 
       <FilterBar hasFilters={hasFilters} onClear={limparFiltros}>
         <SearchInput value={busca} onChange={setBusca} placeholder="Buscar por nome, código ou professor..." />
-        <FilterSelect label="Unidade" value={departamento} onChange={setDepartamento} options={departamentos} />
+        <FilterSelect label="Departamento" value={departamento} onChange={setDepartamento} options={departamentos} />
         <FilterPills label="Dia" value={dia} onChange={setDia} options={DIAS} />
         <FilterSelect label="Horário" value={horario} onChange={setHorario} options={HORARIOS} />
       </FilterBar>
 
-      <div className="px-4 md:px-10 pt-5">
-        <ul className="divide-y divide-border rounded-xl border border-border bg-surface md:hidden">
+      <div className="px-4 lg:px-10 pt-5">
+        <ul className="divide-y divide-border rounded-xl border border-border bg-surface xl:hidden">
           {filtradas.length === 0 ? (
-            <li className="px-4 py-12 text-center text-sm text-muted">
-              {loading || error ? "" : "Nenhuma disciplina encontrada."}
-            </li>
+            <li>{!loading && !error && <EstadoVazio>Nenhuma turma com esses filtros. Tente outro termo ou limpe os filtros.</EstadoVazio>}</li>
           ) : (
             visiveis.map((d) => (
               <li key={d.codigo + d.turma}>
@@ -70,7 +97,7 @@ export default function DisciplinasPage() {
             ))
           )}
         </ul>
-        <div className="hidden overflow-x-auto rounded-xl border border-border bg-surface md:block">
+        <div className="hidden overflow-x-auto rounded-xl border border-border bg-surface xl:block">
           <table className="w-full border-collapse text-sm">
             <thead>
               <tr className="border-b border-border bg-background text-left text-[10px] font-bold uppercase tracking-wide text-muted">
@@ -87,8 +114,8 @@ export default function DisciplinasPage() {
             <tbody>
               {filtradas.length === 0 ? (
                 <tr>
-                  <td colSpan={8} className="px-6 py-12 text-center text-sm text-muted">
-                    {loading || error ? "" : "Nenhuma disciplina encontrada."}
+                  <td colSpan={8}>
+                    {!loading && !error && <EstadoVazio>Nenhuma turma com esses filtros. Tente outro termo ou limpe os filtros.</EstadoVazio>}
                   </td>
                 </tr>
               ) : (
@@ -112,7 +139,7 @@ export default function DisciplinasPage() {
                       <td className="whitespace-nowrap px-4 py-3.5 font-mono text-xs text-foreground">
                         {d.horario}
                       </td>
-                      <td className="whitespace-nowrap px-4 py-3.5 font-mono text-xs text-muted">{d.sala}</td>
+                      <td className="max-w-48 px-4 py-3.5 font-mono text-xs text-muted">{d.sala}</td>
                       <td className="px-4 py-3.5">
                         <SeatBar ocupadas={d.vagasOcupadas} total={d.vagas} />
                       </td>

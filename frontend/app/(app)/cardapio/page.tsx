@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useCardapioSemana, somarDias, hojeISO, nomeDoDia } from "@/hooks/useCardapioSemana";
 import ApiStatus from "@/components/ApiStatus";
 import PageHeader from "@/components/PageHeader";
+import EstadoVazio from "@/components/EstadoVazio";
 import { FilterBar, FilterPills } from "@/components/Filters";
 import Badge from "@/components/Badge";
 
@@ -14,8 +15,17 @@ function formatarData(data: string): string {
 
 const DIAS_DA_SEMANA = ["Segunda", "Terça", "Quarta", "Quinta", "Sexta", "Sábado", "Domingo"];
 
+const BOTAO = "rounded-lg border border-border bg-surface px-3 py-1.5 text-sm text-foreground hover:bg-background";
+
+// Dia com cardápio mais perto do escolhido: o próximo depois dele, ou o último antes.
+function diaPublicadoMaisPerto(publicados: string[], escolhido: string): string | undefined {
+  const i = DIAS_DA_SEMANA.indexOf(escolhido);
+  const ordem = (d: string) => DIAS_DA_SEMANA.indexOf(d);
+  return publicados.find((d) => ordem(d) > i) ?? [...publicados].reverse().find((d) => ordem(d) < i);
+}
+
 export default function CardapioPage() {
-  const { cardapio, loading, error, inicio, ehSemanaAtual, semanaAnterior, proximaSemana, semanaAtual } =
+  const { cardapio, caminho, loading, error, inicio, ehSemanaAtual, semanaAnterior, proximaSemana, semanaAtual } =
     useCardapioSemana();
   const [dia, setDia] = useState<string | null>(null);
 
@@ -23,26 +33,32 @@ export default function CardapioPage() {
   const dias = ["Todos", ...DIAS_DA_SEMANA];
   const diaAtivo = dia ?? (ehSemanaAtual ? nomeHoje : "Todos");
   const filtrado = diaAtivo === "Todos" ? cardapio : cardapio.filter((c) => c.dia === diaAtivo);
+  const diasPublicados = DIAS_DA_SEMANA.filter((d) => cardapio.some((c) => c.dia === d));
+  const sugestao = diaAtivo === "Todos" ? undefined : diaPublicadoMaisPerto(diasPublicados, diaAtivo);
+  const dataDoDia = (d: string) => formatarData(somarDias(inicio, DIAS_DA_SEMANA.indexOf(d)));
 
   return (
     <main className="flex flex-1 flex-col pb-10">
-      <PageHeader title="Cardápio" sub="Cardápio da semana · Restaurante Universitário" />
+      <PageHeader title="Cardápio" sub="Cardápio da semana · RU Darcy Ribeiro" href="/cardapio" api={{ caminho }} />
+      <p className="px-4 lg:px-10 pt-2 text-xs text-muted">
+        O cardápio do RU do Gama ainda não está na API. Por enquanto, este é o do campus Darcy Ribeiro.
+      </p>
 
-      <div className="px-4 md:px-10 pt-4">
+      <div className="px-4 lg:px-10 pt-4">
         <ApiStatus loading={loading} error={error} />
       </div>
 
-      <div className="flex flex-wrap items-center gap-3 px-4 md:px-10 pt-4">
-        <button type="button" onClick={() => { setDia(null); semanaAnterior(); }} className="rounded-lg border border-border bg-surface px-3 py-1.5 text-sm text-foreground hover:bg-background">
+      <div className="flex flex-wrap items-center gap-3 px-4 lg:px-10 pt-4">
+        <button type="button" onClick={() => { setDia(null); semanaAnterior(); }} className={BOTAO}>
           ← Anterior
         </button>
         <span className="text-sm font-medium text-foreground">
           {formatarData(inicio)} a {formatarData(somarDias(inicio, 6))}
         </span>
-        <button type="button" onClick={() => { setDia(null); proximaSemana(); }} className="rounded-lg border border-border bg-surface px-3 py-1.5 text-sm text-foreground hover:bg-background">
+        <button type="button" onClick={() => { setDia(null); proximaSemana(); }} className={BOTAO}>
           Próxima →
         </button>
-        <button type="button" onClick={() => { setDia(null); semanaAtual(); }} className="rounded-lg border border-border bg-surface px-3 py-1.5 text-sm text-foreground hover:bg-background">
+        <button type="button" onClick={() => { setDia(null); semanaAtual(); }} className={BOTAO}>
           Hoje
         </button>
 
@@ -51,13 +67,35 @@ export default function CardapioPage() {
         <FilterPills label="Dia" value={diaAtivo} onChange={setDia} options={dias} />
       </FilterBar>
 
-      <div className="flex flex-col gap-4 px-4 md:px-10 pt-5">
+      <div className="flex flex-col gap-4 px-4 lg:px-10 pt-5">
         {!loading && !error && filtrado.length === 0 && (
-          <p className="rounded-xl border border-border bg-surface px-6 py-12 text-center text-sm text-muted">
-            {diaAtivo === "Todos"
-              ? "Nenhum cardápio publicado para essa semana."
-              : `Sem cardápio publicado para ${diaAtivo}, ${formatarData(somarDias(inicio, DIAS_DA_SEMANA.indexOf(diaAtivo)))}.`}
-          </p>
+          <div className="rounded-xl border border-border bg-surface">
+            {cardapio.length === 0 ? (
+              <EstadoVazio
+                acao={
+                  <button type="button" onClick={() => { setDia(null); semanaAnterior(); }} className={BOTAO}>
+                    ← Ver a semana anterior
+                  </button>
+                }
+              >
+                {ehSemanaAtual
+                  ? "O RU ainda não publicou o cardápio desta semana."
+                  : "Nenhum cardápio publicado para essa semana."}
+              </EstadoVazio>
+            ) : (
+              <EstadoVazio
+                acao={
+                  sugestao && (
+                    <button type="button" onClick={() => setDia(sugestao)} className={BOTAO}>
+                      Ver {sugestao}, {dataDoDia(sugestao)} →
+                    </button>
+                  )
+                }
+              >
+                Sem cardápio publicado para {diaAtivo}, {dataDoDia(diaAtivo)}.
+              </EstadoVazio>
+            )}
+          </div>
         )}
         {filtrado.map((c) => (
           <div key={`${c.data}-${c.refeicao}`} className="overflow-hidden rounded-xl border border-border bg-surface">
