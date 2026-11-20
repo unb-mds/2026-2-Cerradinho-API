@@ -98,6 +98,8 @@ nav:
       - Atas de reunião: scrum/atas.md
       - Checklist Release 1: scrum/checklist-release-1.md
       - Release notes:
+          - v1.4: releases/v1.4.md
+          - v1.3: releases/v1.3.md
           - v1.2: releases/v1.2.md
   - Estudos:
       - Git e GitHub: estudos/estudo-git-github.md
