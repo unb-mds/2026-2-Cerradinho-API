@@ -4,6 +4,7 @@ import { BookIcon, BowlIcon, DoorOpenIcon, UserIcon } from "@/components/Icons";
 // escritas por extenso pra o Tailwind enxergar.
 //   cor: ícone e detalhe em fundo claro · viva: na sidebar verde-escura
 //   fundo: tinta suave atrás do ícone · borda: marca do item ativo na navegação
+//   faixa/faixaTexto: a faixa colorida no topo da página do módulo
 // `curto` é o rótulo da barra inferior do celular, onde cada item tem ~1/5 da largura.
 export const MODULOS = [
   {
@@ -15,6 +16,8 @@ export const MODULOS = [
     viva: "text-buriti-viva",
     fundo: "bg-buriti/12",
     borda: "border-buriti-viva",
+    faixa: "bg-faixa-buriti",
+    faixaTexto: "text-faixa-texto-claro",
   },
   {
     href: "/cardapio",
@@ -25,6 +28,8 @@ export const MODULOS = [
     viva: "text-ipe-viva",
     fundo: "bg-ipe/15",
     borda: "border-ipe-viva",
+    faixa: "bg-faixa-ipe",
+    faixaTexto: "text-faixa-texto-escuro",
   },
   {
     href: "/professores",
@@ -35,6 +40,8 @@ export const MODULOS = [
     viva: "text-terra-viva",
     fundo: "bg-terra/12",
     borda: "border-terra-viva",
+    faixa: "bg-faixa-terra",
+    faixaTexto: "text-faixa-texto-claro",
   },
   {
     href: "/salas/vazias",
@@ -45,6 +52,8 @@ export const MODULOS = [
     viva: "text-caliandra-viva",
     fundo: "bg-caliandra/12",
     borda: "border-caliandra-viva",
+    faixa: "bg-faixa-caliandra",
+    faixaTexto: "text-faixa-texto-claro",
   },
 ] as const;
 

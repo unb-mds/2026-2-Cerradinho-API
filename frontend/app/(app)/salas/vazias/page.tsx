@@ -51,8 +51,8 @@ function SalasVazias() {
                     <>
                         {`${loading ? "Carregando" : contagem} · ${rotuloDia}, ${horario}`}
                         {momento === "agora" && (
-                            <span className="flex items-center gap-1.5 font-semibold text-caliandra">
-                                <PontoAgora /> agora
+                            <span className="flex items-center gap-1.5 font-bold">
+                                <PontoAgora claro /> agora
                             </span>
                         )}
                         {momento === "proxima" && <span>(próxima aula)</span>}

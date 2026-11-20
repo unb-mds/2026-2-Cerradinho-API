@@ -30,6 +30,15 @@
   --ipe-viva: #f0c24b;
   --terra-viva: #ec8a5c;
   --caliandra-viva: #f4809f;
+
+  /* Faixa do topo de cada módulo, na cor dele e igual nos dois modos
+     (o texto por cima passa de 4.5:1 em todas). */
+  --faixa-buriti: #2a7449;
+  --faixa-ipe: #f0c24b;
+  --faixa-terra: #b04a22;
+  --faixa-caliandra: #b02a52;
+  --faixa-texto-claro: #f7f4ee;
+  --faixa-texto-escuro: #252d18;
 }
 
 @theme inline {
@@ -59,6 +68,12 @@
   --color-ipe-viva: var(--ipe-viva);
   --color-terra-viva: var(--terra-viva);
   --color-caliandra-viva: var(--caliandra-viva);
+  --color-faixa-buriti: var(--faixa-buriti);
+  --color-faixa-ipe: var(--faixa-ipe);
+  --color-faixa-terra: var(--faixa-terra);
+  --color-faixa-caliandra: var(--faixa-caliandra);
+  --color-faixa-texto-claro: var(--faixa-texto-claro);
+  --color-faixa-texto-escuro: var(--faixa-texto-escuro);
   --font-sans: var(--font-dm-sans);
   --font-mono: var(--font-dm-mono);
 }
