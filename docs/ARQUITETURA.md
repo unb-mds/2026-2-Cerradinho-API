@@ -28,7 +28,7 @@ flowchart TB
     Cerradinho -->|raspa o cardápio semanal em PDF| RU
 ```
 
-As personas (Estudante, Dev de outra squad) estão detalhadas no [Documento de Visão](DOCUMENTO-VISAO.md). Eventos e editais entram como fontes externas adicionais na Release 2 (ver [REQUISITOS.md](REQUISITOS.md)).
+As personas (Estudante, Dev de outra squad) estão detalhadas no [Documento de Visão](DOCUMENTO-VISAO.md). Eventos e editais estavam previstos como fontes da Release 2 e saíram do escopo com a saída do Ítalo (ver [REQUISITOS.md](REQUISITOS.md)).
 
 ## Nível 2 — Container
 

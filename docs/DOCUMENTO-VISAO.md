@@ -53,7 +53,7 @@ Síntese de conversas informais com estudantes de graduação da FCTE e integran
 | Saber sala/horário de disciplina rapidamente | Alta | SIGAA lento, interface antiga (JSF) | Endpoint de disciplinas com sala e horário |
 | Saber o que tem no RU sem abrir o site | Média | Site do RU pouco usado no celular | Endpoint de cardápio diário/semanal |
 | Saber qual sala está livre para estudar | Alta | Não existe hoje, decisão informal ("na sorte") | RF17, salas vazias |
-| Não perder prazo de edital | Média | Editais centralizados mas difíceis de acompanhar | Endpoint de editais |
+| Não perder prazo de edital | Média | Editais centralizados mas difíceis de acompanhar | Endpoint de editais, fora do escopo da R2 |
 | Reaproveitar dado de UnB sem scraping próprio | Alta (para squads) | Scraping feito do zero em projetos anteriores, descartado depois | SDK/CLI (RF13) |
 
 ## 4. Visão geral do produto
@@ -68,7 +68,6 @@ O Cerradinho é um sistema novo, autocontido (monorepo), que não substitui nenh
 |---|---|
 | Consulta de disciplinas, professores e salas | Elimina a necessidade de navegar o SIGAA público |
 | Consulta de cardápio do RU (diário e semanal) | Resposta rápida sem visitar o site do RU |
-| Consulta de eventos e editais institucionais | Centraliza informação hoje espalhada em notícias e portais de pós |
 | Busca de salas vazias por horário | Funcionalidade nova, que não existe em nenhum sistema da UnB hoje |
 | Agenda do professor | Visão consolidada que hoje exige cruzar múltiplas turmas manualmente |
 | SDK e CLI Python | Permite que outras squads integrem sem reimplementar scraping |
