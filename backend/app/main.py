@@ -41,6 +41,10 @@ app.add_middleware(
     allow_origins=settings.cors_origins,
     allow_methods=["GET"],
     allow_headers=["*"],
+    # Sem isso o navegador recebe o X-Total-Count (RF10) mas o JS do front
+    # não consegue ler - só os headers "safelisted" do CORS são expostos
+    # por padrão, e X-Total-Count não é um deles.
+    expose_headers=["X-Total-Count"],
 )
 
 app.include_router(disciplinas.router, prefix="/v1")

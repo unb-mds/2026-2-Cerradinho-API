@@ -34,10 +34,13 @@ def _turma_capturada(**overrides) -> TurmaCapturada:
 async def _raspagem_falsa(nivel, ano, periodo, unidades):
     # simula o retorno de raspar_disciplinas_varias_unidades pra duas
     # unidades, sem precisar subir Playwright/rede nenhuma
-    return {
+    return (
+        {
         "FCTE": [_turma_capturada()],
         "FUP": [_turma_capturada(disciplina_codigo="FUP0001", disciplina_nome="Outra Disciplina", numero="02")],
-    }
+    },
+    [],
+)
 
 
 def test_scrape_disciplinas_task_persiste_turmas_de_cada_unidade(monkeypatch):
@@ -51,7 +54,7 @@ def test_scrape_disciplinas_task_persiste_turmas_de_cada_unidade(monkeypatch):
 
     total = scraping_task.scrape_disciplinas_task.run(nivel="G", ano="2026", periodo="2")
 
-    assert total == 2
+    assert total["turmas_persistidas"] == 2
     turmas = session.query(Turma).all()
     assert {t.unidade for t in turmas} == {"FCTE", "FUP"}
 
@@ -73,7 +76,8 @@ def test_scrape_disciplinas_task_unidade_com_falha_nao_derruba_as_outras(monkeyp
 
     total = scraping_task.scrape_disciplinas_task.run(nivel="G", ano="2026", periodo="2")
 
-    assert total == 1
+    assert total["turmas_persistidas"] == 1
+    assert total["unidades_com_falha"] == ["FUP"]
     turmas = session.query(Turma).all()
     assert {t.unidade for t in turmas} == {"FCTE"}
 
@@ -85,7 +89,7 @@ def test_scrape_disciplinas_task_varre_todas_as_unidades_por_padrao(monkeypatch)
 
     async def raspagem_espia(nivel, ano, periodo, unidades):
         unidades_recebidas["valor"] = unidades
-        return {}
+        return {}, []
 
     session = _in_memory_session()
     monkeypatch.setattr(scraping_task, "SessionLocal", lambda: session)

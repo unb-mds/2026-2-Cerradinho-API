@@ -1,15 +1,11 @@
 "use client";
 
-import { Suspense } from "react";
 import ApiStatus from "@/components/ApiStatus";
 import PageHeader from "@/components/PageHeader";
-import EstadoVazio from "@/components/EstadoVazio";
-import PontoAgora from "@/components/PontoAgora";
-import { FilterBar, FilterPills, FilterSelect } from "@/components/Filters";
-import { useSalasVazias, HORARIOS } from "@/hooks/useSalasVazias";
-import { useMostrarMais } from "@/hooks/useMostrarMais";
-import MostrarMais from "@/components/MostrarMais";
+import { FilterBar, FilterSelect } from "@/components/Filters";
+import { useSalasVazias, HORARIOS, fimDoBloco, caminhoSalasVazias } from "@/hooks/useSalasVazias";
 
+// usado tambem pela grade semanal do professor
 export const DIAS: Record<string, string> = {
     Segunda: "segunda",
     Terça: "terca",
@@ -19,104 +15,69 @@ export const DIAS: Record<string, string> = {
     Sábado: "sabado",
 };
 
+// "08:00 às 09:50"
+const BLOCOS: Record<string, string> = Object.fromEntries(HORARIOS.map((h) => [`${h} às ${fimDoBloco(h)}`, h]));
 
-// Dia e horário vêm da URL (useSearchParams), que só existe no navegador:
-// o Suspense deixa o build pré-renderizar o resto e mostra o cabeçalho enquanto isso.
 export default function SalasVaziasPage() {
-    return (
-        <Suspense
-            fallback={
-                <main className="flex flex-1 flex-col pb-10">
-                    <PageHeader title="Salas Vazias" sub="Carregando..." href="/salas/vazias" />
-                </main>
-            }
-        >
-            <SalasVazias />
-        </Suspense>
-    );
-}
-
-function SalasVazias() {
-    const { salas, caminho, loading, error, dia, horario, momento, temAulaAgora, setDia, setHorario, voltarParaAgora } = useSalasVazias();
-    const { visiveis, restantes, mostrarMais } = useMostrarMais(salas, `${dia}|${horario}`);
-    const rotuloDia = Object.keys(DIAS).find((rotulo) => DIAS[rotulo] === dia) ?? "Segunda";
-    const contagem = salas.length === 1 ? "1 sala livre" : `${salas.length} salas livres`;
+    const { dias, loading, error, horario, setHorario, hoje } = useSalasVazias();
+    const rotuloBloco = Object.keys(BLOCOS).find((rotulo) => BLOCOS[rotulo] === horario) ?? "";
 
     return (
         <main className="flex flex-1 flex-col pb-10">
             <PageHeader
                 title="Salas Vazias"
                 href="/salas/vazias"
-                sub={
-                    <>
-                        {`${loading ? "Carregando" : contagem} · ${rotuloDia}, ${horario}`}
-                        {momento === "agora" && (
-                            <span className="flex items-center gap-1.5 font-bold">
-                                <PontoAgora claro /> agora
-                            </span>
-                        )}
-                        {momento === "proxima" && <span>(próxima aula)</span>}
-                    </>
-                }
-                api={{ caminho, nota: "A API responde para todos os campi; este site mostra só as salas da FCTE." }}
+                sub={loading ? "Carregando..." : `Salas sem aula das ${rotuloBloco}, de segunda a sábado`}
+                api={{
+                    caminho: caminhoSalasVazias(hoje ?? "segunda", horario),
+                    nota: "A página faz uma chamada por dia da semana. A API responde para todos os campi; este site mostra só as salas I1 a I10 e S1 a S10 da FCTE.",
+                }}
             />
 
-            <div className="px-4 lg:px-10 pt-4">
+            <div className="px-4 md:px-10 pt-4">
                 <ApiStatus loading={loading} error={error} />
             </div>
 
-            <FilterBar hasFilters={momento === null} onClear={voltarParaAgora} clearLabel={temAulaAgora ? "Agora" : "Próxima aula"}>
-                <FilterPills
-                    label="Dia"
-                    value={rotuloDia}
-                    onChange={(rotulo) => setDia(DIAS[rotulo])}
-                    options={Object.keys(DIAS)}
-                />
-                <FilterSelect label="Horário" value={horario} onChange={setHorario} options={HORARIOS} />
+            <FilterBar hasFilters={false} onClear={() => { }}>
+                <FilterSelect label="Horário" value={rotuloBloco} onChange={(rotulo) => setHorario(BLOCOS[rotulo])} options={Object.keys(BLOCOS)} />
             </FilterBar>
-            <p className="px-4 lg:px-10 pt-4 text-xs text-muted">
-                Vazia quer dizer sem aula cadastrada no SIGAA. Reserva informal e eventos não aparecem aqui.
+            <p className="px-4 md:px-10 pt-4 text-xs text-muted">
+                Só aparecem as salas I1 a I10 e S1 a S10 da FCTE, em blocos de duas aulas das 8h às 17h50. Vazia quer dizer sem aula cadastrada no SIGAA no bloco inteiro. Reserva informal e eventos não aparecem aqui.
             </p>
 
-            <div className="px-4 lg:px-10 pt-5">
-                <ul className="divide-y divide-border rounded-xl border border-border bg-surface xl:hidden">
-                    {salas.length === 0 ? (
-                        <li>{!loading && !error && <EstadoVazio>Todas as salas da FCTE têm aula nesse horário. Tente o horário seguinte.</EstadoVazio>}</li>
-                    ) : (
-                        visiveis.map((s) => (
-                            <li key={s.id} className="flex items-center justify-between gap-3 px-4 py-3">
-                                <span className="font-mono text-sm font-semibold text-brand">{s.nome}</span>
-                            </li>
-                        ))
-                    )}
-                </ul>
-                <div className="hidden overflow-x-auto rounded-xl border border-border bg-surface xl:block">
-                    <table className="w-full border-collapse text-sm">
-                        <thead>
-                            <tr className="border-b border-border bg-background text-left text-[10px] font-bold uppercase tracking-wide text-muted">
-                                <th className="px-4 py-3">Sala</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {salas.length === 0 ? (
-                                <tr>
-                                    <td>
-                                        {!loading && !error && <EstadoVazio>Todas as salas da FCTE têm aula nesse horário. Tente o horário seguinte.</EstadoVazio>}
-                                    </td>
-                                </tr>
-                            ) : (
-                                visiveis.map((s) => (
-                                    <tr key={s.id} className="border-t border-border">
-                                        <td className="whitespace-nowrap px-4 py-3.5 font-mono text-sm font-semibold text-brand">
-                                            {s.nome}
-                                        </td>
-                                    </tr>
-                                ))
-                            )}
-                        </tbody>
-                    </table>
-                </div>
-                <MostrarMais restantes={restantes} onClick={mostrarMais} />
+            <div className="grid grid-cols-1 gap-4 px-4 pt-5 sm:grid-cols-2 md:px-10 xl:grid-cols-3">
+                {dias.map(({ dia, rotulo, salas }) => (
+                    <section
+                        key={dia}
+                        className={`rounded-xl border bg-surface ${dia === hoje ? "border-brand" : "border-border"}`}
+                    >
+                        <header className="flex items-baseline justify-between gap-3 border-b border-border px-4 py-3">
+                            <h2 className="text-sm font-bold text-foreground">
+                                {rotulo}
+                                {dia === hoje && <span className="ml-2 text-[10px] font-bold uppercase tracking-wide text-brand">hoje</span>}
+                            </h2>
+                            <span className="text-xs text-muted">
+                                {loading || error ? "" : `${salas.length} ${salas.length === 1 ? "sala" : "salas"}`}
+                            </span>
+                        </header>
+                        {loading || error ? (
+                            <p className="px-4 py-6 text-sm text-muted">{loading ? "Carregando..." : "-"}</p>
+                        ) : salas.length === 0 ? (
+                            <p className="px-4 py-6 text-sm text-muted">Nenhuma sala vazia nesse horário.</p>
+                        ) : (
+                            <ul className="flex flex-wrap gap-2 px-4 py-4">
+                                {salas.map((s) => (
+                                    <li
+                                        key={s.id}
+                                        className="rounded-md border border-border bg-background px-2.5 py-1 font-mono text-sm font-semibold text-brand"
+                                    >
+                                        {s.nome}
+                                    </li>
+                                ))}
+                            </ul>
+                        )}
+                    </section>
+                ))}
             </div>
         </main>
     );

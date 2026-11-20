@@ -18,11 +18,17 @@ the spec in `specs/RF13-*.md`).
 
 ## Rules
 
-- **Generate the client layer from the OpenAPI spec FastAPI already produces (RF11)**,
-  the way `start-new-sdk-project` does, instead of hand-writing HTTP calls per endpoint —
-  the schema is the source of truth, and regenerating beats manually keeping a
-  hand-written client in sync every time a router changes.
-- **CLI argument parsing on top of the generated client uses `Typer`**, not hand-rolled
+- **The low-level client is generated from the OpenAPI spec FastAPI already produces
+  (RF11)**, with `openapi-python-client` instead of Speakeasy, into
+  `sdk/cerradinho_sdk/_gerado/`. Never edit `_gerado/` by hand: after a router or schema
+  change, run `sdk/scripts/gerar_cliente.sh` and commit the result.
+- `CerradinhoClient` (`sdk/cerradinho_sdk/client.py`) is hand-written on top of the
+  generated code, one method per `/v1/` endpoint, with `ProfessorNaoEncontrado` for 404
+  and `RespostaInesperada` for any status outside the contract. A new endpoint needs a
+  new method here too.
+- **The CLI (`sdk/cerradinho_sdk/cli.py`, command `cerradinho`) uses `Typer`** and
+  calls `CerradinhoClient`, one command per client method, with no HTTP calls of its
+  own. The API address comes from `CERRADINHO_API_URL`. Argument parsing is not hand-rolled
   `argparse`/`sys.argv` parsing — see "Preferir bibliotecas prontas" in
   `docs/ARQUITETURA.md`, which calls this out by name as the intended example.
 - The SDK is a **thin client**: it wraps `/v1/` endpoints (RF10) and mirrors the schemas
@@ -32,4 +38,5 @@ the spec in `specs/RF13-*.md`).
 - Version the SDK against the API version it targets (RF12) — a breaking `/v1/` → `/v2/`
   change needs a corresponding SDK major version, not a silent compatibility shim.
 - Ship the SDK with its own tests against a mocked/recorded API response, not a live
-  call to the deployed API in CI.
+  call to the deployed API in CI. `sdk/tests/test_client.py` and `sdk/tests/test_cli.py`
+  use `respx` for this.

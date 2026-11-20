@@ -3,14 +3,24 @@ from pathlib import Path
 
 import pytest
 
-from app.scrapers.cardapio.parser import encontrar_pdf_da_semana, extrair_itens_cardapio, extrair_links_cardapio
+from app.scrapers.cardapio.parser import (
+    _posicoes_das_datas,
+    encontrar_pdf_da_semana,
+    extrair_itens_cardapio,
+    extrair_links_cardapio,
+)
 
 FIXTURES = Path(__file__).parent / "fixtures"
 
-# Um PDF real por semana, cada um com a tabela montada de um jeito
-# (ver a docstring de app/scrapers/cardapio/parser.py). A data é a
-# segunda-feira da semana.
-SEMANAS = [date(2026, 9, 14), date(2026, 9, 21), date(2026, 9, 28), date(2026, 10, 5), date(2026, 10, 12)]
+# um pdf real por semana cada um com um layout ver specs/RF06
+SEMANAS = [
+    date(2026, 9, 14),
+    date(2026, 9, 21),
+    date(2026, 9, 28),
+    date(2026, 10, 5),
+    date(2026, 10, 12),
+    date(2026, 11, 16),
+]
 
 
 def _itens_da_semana(segunda: date):
@@ -79,12 +89,28 @@ def test_extrair_itens_cardapio_le_as_tres_refeicoes_nos_sete_dias(segunda):
         (date(2026, 9, 28), "almoco", "PRATO PRINCIPAL PADRÃO", "Carne ao molho"),
         (date(2026, 10, 5), "almoco", "PRATO PRINCIPAL PADRÃO", "Frango assado com manjericão"),
         (date(2026, 10, 12), "jantar", "PRATO PRINCIPAL PADRÃO", "Suíno ao molho barbecue de figo"),
+        # data entre parenteses no cabecalho
+        (date(2026, 11, 16), "almoco", "PRATO PRINCIPAL PADRÃO", "Frango com creme de milho"),
     ],
 )
 def test_extrair_itens_cardapio_atribui_o_prato_ao_dia_e_categoria_certos(segunda, refeicao, categoria, esperado):
     itens = _itens_da_semana(segunda)
 
     assert _item(itens, segunda, refeicao, categoria) == esperado
+
+
+@pytest.mark.parametrize("texto", ["16/11/2026", "(16/11/2026)", "FEIRA(16/11/2026)", "[16/11/2026]", "Seg.16/11/2026"])
+def test_posicoes_das_datas_acha_a_data_colada_em_outro_texto(texto):
+    palavras = [
+        {"text": "SEGUNDA", "x0": 100, "x1": 140, "bottom": 50},
+        {"text": texto, "x0": 100, "x1": 160, "bottom": 60},
+        {"text": "17/11/2026", "x0": 200, "x1": 250, "bottom": 60},
+    ]
+
+    colunas, fim_cabecalho = _posicoes_das_datas(palavras)
+
+    assert [data_dia for _, data_dia in colunas] == [date(2026, 11, 16), date(2026, 11, 17)]
+    assert fim_cabecalho == 60
 
 
 def test_extrair_itens_cardapio_atribui_cada_dia_na_coluna_certa():

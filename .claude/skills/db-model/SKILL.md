@@ -1,6 +1,6 @@
 ---
 name: db-model
-description: Add or change a SQLAlchemy model in backend/app/models/ or an Alembic migration. Use when persisting a new domain (disciplina, professor, sala, cardapio, evento, edital) or altering an existing table.
+description: Add or change a SQLAlchemy model in backend/app/models/ or an Alembic migration. Use when persisting a new domain (disciplina, professor, sala, cardapio, execucao log) or altering an existing table.
 ---
 
 # Database model & migration

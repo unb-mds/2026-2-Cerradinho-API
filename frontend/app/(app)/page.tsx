@@ -6,7 +6,7 @@ import type { ReactNode } from "react";
 import { useAgora } from "@/hooks/useAgora";
 import { useDisciplinas } from "@/hooks/useDisciplinas";
 import { useProfessores } from "@/hooks/useProfessores";
-import { DIAS_API, useSalasLivresAgora } from "@/hooks/useSalasVazias";
+import { DIAS_API, fimDoBloco, useSalasLivresAgora } from "@/hooks/useSalasVazias";
 import { hojeISO, useCardapioSemana, type CardapioRefeicao } from "@/hooks/useCardapioSemana";
 import ApiStatus from "@/components/ApiStatus";
 import { ChevronRightIcon, SearchIcon } from "@/components/Icons";
@@ -63,7 +63,7 @@ export default function Home() {
             {agora &&
               (salas.emAula && salas.slot ? (
                 <span className="flex items-center gap-1.5 font-semibold text-caliandra">
-                  <PontoAgora /> aula das {salas.slot.horario}
+                  <PontoAgora /> das {salas.slot.horario} às {fimDoBloco(salas.slot.horario)}
                 </span>
               ) : (
                 <span>· fora do horário de aula</span>
@@ -77,11 +77,11 @@ export default function Home() {
         <section className="flex flex-col gap-4 rounded-xl border border-border bg-surface p-5 md:p-6">
           <div className="flex items-baseline justify-between gap-3">
             <TituloModulo href="/salas/vazias">
-              {salas.emAula ? "Salas livres agora" : "Salas livres na próxima aula"}
+              {salas.emAula ? "Salas livres agora" : "Salas livres no próximo bloco"}
             </TituloModulo>
             {salas.slot && (
               <span className="font-mono text-xs text-muted">
-                {NOME_DIA[salas.slot.dia]}, {salas.slot.horario}
+                {NOME_DIA[salas.slot.dia]}, {salas.slot.horario} às {fimDoBloco(salas.slot.horario)}
               </span>
             )}
           </div>
@@ -157,7 +157,7 @@ export default function Home() {
         <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
           <Atalho href="/disciplinas" numero={carregandoDisciplinas ? "–" : String(disciplinas.length)} rotulo="turmas no semestre" />
           <Atalho href="/professores" numero={carregandoProfessores ? "–" : String(professores.length)} rotulo="professores" />
-          <Atalho href="/salas/vazias" rotulo="Salas vazias por dia e horário" />
+          <Atalho href="/salas/vazias" rotulo="Salas vazias da semana em blocos de 2h" />
           <Atalho href="/cardapio" rotulo="Cardápio da semana" />
         </div>
       </section>
@@ -172,7 +172,7 @@ export default function Home() {
         </div>
         <div className="flex flex-col gap-1.5">
           <code className="w-fit max-w-full overflow-x-auto rounded-lg bg-white/10 px-3 py-2 font-mono text-xs text-sidebar-foreground-active">
-            GET /v1/salas/vazias?dia={salas.slot?.dia ?? "quinta"}&amp;horario={salas.slot?.horario ?? "14:00"}
+            GET /v1{salas.caminho ?? "/salas/vazias?dia=quinta&horario=14:00&fim=15:50"}
           </code>
           <span className="text-xs">A mesma chamada que preenche as salas livres lá em cima.</span>
         </div>

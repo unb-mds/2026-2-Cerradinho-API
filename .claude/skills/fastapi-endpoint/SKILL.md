@@ -32,9 +32,10 @@ Endpoints live in `backend/app/routers/`, one module per domain, mounted under `
 - **DB access goes through a repository/model layer** (SQLAlchemy), not raw queries
   inlined in the route function — same repository pattern `fastapi-templates` uses for
   generic CRUD. See the `db-model` skill.
-- Prefer **async route handlers and async DB sessions** (the template's core pattern)
-  once the DB layer is async-capable — don't mix sync `Session` calls into an `async def`
-  route.
+- Routes are plain `def` handlers with a sync SQLAlchemy `Session` from
+  `Depends(get_db)`, unlike the async pattern in `fastapi-templates`. Keep new routes the
+  same way, and never call the sync `Session` from an `async def` route (it would block
+  the event loop).
 - Every new route needs OpenAPI-visible docs (RF11) — FastAPI generates this from type
   hints, docstrings, and `response_model`; don't suppress it or leave a route
   undocumented with `include_in_schema=False` unless there's a real reason.
@@ -47,7 +48,14 @@ Endpoints live in `backend/app/routers/`, one module per domain, mounted under `
 
 ## Rate limiting & cache
 
-Both RNF01 (rate limit, `slowapi`) and RNF02 (cache, Redis) are applied **at the API
-layer**, not the DB layer — Postgres stays the single source of truth. When adding an
-endpoint that's expensive or hit often (e.g. salas vazias, cardápio), check whether it
-should carry a cache decorator before assuming a DB index is the fix.
+Both RNF01 (rate limit) and RNF02 (cache) are applied **at the API layer**, not the DB
+layer — Postgres stays the single source of truth.
+
+- **Rate limit:** `slowapi` with a global default of 60 requests per minute per IP,
+  configured in `app/core/rate_limit.py` and applied to every route by the middleware
+  in `app/main.py`. A new route is covered automatically.
+- **Cache:** wrap the domain call in `resposta_cacheada(chave, ttl, calcular, tipo)` from
+  `app/core/cache.py` (see `routers/cardapio.py`). Keys follow `cache:v1:<dominio>...`,
+  with `TTL_SEMANAL` for disciplinas, professores and salas and `TTL_DIARIO` for
+  cardápio. The Celery task that refreshes that data must invalidate the same key or
+  prefix (see the `scheduled-task` skill), or the route keeps serving the previous run.

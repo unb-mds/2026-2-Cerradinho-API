@@ -15,6 +15,13 @@ from app.schemas.api.sala import Espaco
 
 _DIA_POR_DIGITO = {digito: dia for dia, digito in DIA_PARA_DIGITO.items()}
 
+# O SIGAA usa esse nome exato quando a turma ainda não tem docente definido
+# (ver app/domain/disciplinas.py::_get_ou_cria_professor). Não é um professor
+# de verdade: é um só registro acumulando todas as turmas sem docente (hoje,
+# mais de 150 disciplinas), o que torna a agenda dele ilegível - achado do
+# Daniel revisando a tela de agenda (PR #238).
+DOCENTE_PLACEHOLDER = "A DEFINIR DOCENTE"
+
 
 def _professor_para_resposta(professor: Professor) -> Docente:
     codigos = sorted({turma.disciplina.codigo for turma in professor.turmas})
@@ -38,7 +45,12 @@ def listar_professores(
 
     Devolve (página, total) - `total` é a contagem depois do filtro por
     nome, antes de `limite`/`offset`, pro cabeçalho `X-Total-Count`."""
-    professores = session.query(Professor).order_by(Professor.nome).all()
+    professores = (
+        session.query(Professor)
+        .filter(Professor.nome != DOCENTE_PLACEHOLDER)
+        .order_by(Professor.nome)
+        .all()
+    )
     if nome:
         termos = normalizar_busca(nome).split()
         professores = [p for p in professores if all(termo in normalizar_busca(p.nome) for termo in termos)]

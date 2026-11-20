@@ -41,5 +41,5 @@ O script não recria monitor com o mesmo nome. A chave principal (*Main API Key*
 
 ## Rastreabilidade
 
-- **PRs:** [#239](https://github.com/unb-mds/2026-2-Cerradinho-API/pull/239) (rota `/health` e estudo do UptimeRobot).
+- **PRs:** [#239](https://github.com/unb-mds/2026-2-Cerradinho-API/pull/239) (rota `/health` e estudo do UptimeRobot), [#245](https://github.com/unb-mds/2026-2-Cerradinho-API/pull/245) (monitores do UptimeRobot).
 - **Testes:** [`tests/routers/test_saude_router.py`](https://github.com/unb-mds/2026-2-Cerradinho-API/blob/dev/backend/tests/routers/test_saude_router.py), [`tests/scripts/test_uptimerobot.py`](https://github.com/unb-mds/2026-2-Cerradinho-API/blob/dev/backend/tests/scripts/test_uptimerobot.py)
