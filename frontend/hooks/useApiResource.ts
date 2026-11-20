@@ -4,6 +4,20 @@ import { isAxiosError } from "axios";
 import { useEffect, useState } from "react";
 import { api } from "@/lib/api";
 
+// Duas telas (ou dois hooks na mesma tela) pedindo o mesmo path ao mesmo tempo
+// compartilham uma requisição só - a home e Professores pedem /disciplinas, que
+// é grande, por dois hooks. Só junta pedidos em andamento; nada fica em cache.
+const emAndamento = new Map<string, Promise<unknown>>();
+
+function buscar<T>(path: string): Promise<T> {
+  let pedido = emAndamento.get(path);
+  if (!pedido) {
+    pedido = api.get<T>(path).then((res) => res.data).finally(() => emAndamento.delete(path));
+    emAndamento.set(path, pedido);
+  }
+  return pedido as Promise<T>;
+}
+
 interface ResourceState<T> {
   data: T;
   loading: boolean;
@@ -31,10 +45,9 @@ export function useApiResource<T>(path: string | null, mock: T): ResourceState<T
     if (path === null) return;
     let active = true;
 
-    api
-      .get<T>(path)
-      .then((res) => {
-        if (active) setState({ path, data: res.data, error: null, status: null });
+    buscar<T>(path)
+      .then((data) => {
+        if (active) setState({ path, data, error: null, status: null });
       })
       .catch((erro: unknown) => {
         if (active) {
