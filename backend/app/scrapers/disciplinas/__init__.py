@@ -28,7 +28,7 @@ async def raspar_disciplinas_varias_unidades(
     ano: str,
     periodo: str,
     unidades: list[str] | None = None,
-) -> dict[str, list[Turma]]:
+) -> tuple[dict[str, list[Turma]], list[str]]:
     """Mesma coisa, para várias unidades de uma vez. Se `unidades` for
     None, varre todas as unidades listadas no formulário do SIGAA.
 
@@ -55,6 +55,8 @@ async def raspar_disciplinas_varias_unidades(
     if unidades and not html_por_unidade:
         raise ErroFonteIndisponivel(f"Nenhuma das {len(unidades)} unidade(s) respondeu à busca no SIGAA.")
 
+    unidades_com_falha = [codigo for codigo in unidades if codigo not in html_por_unidade]
+
     turmas_por_unidade = {
         codigo_unidade: parse_turmas(html)
         for codigo_unidade, html in html_por_unidade.items()
@@ -64,4 +66,4 @@ async def raspar_disciplinas_varias_unidades(
             f"Nenhuma turma encontrada nas {len(turmas_por_unidade)} unidade(s) que responderam: "
             "o layout do resultado pode ter mudado."
         )
-    return turmas_por_unidade
+    return turmas_por_unidade, unidades_com_falha
