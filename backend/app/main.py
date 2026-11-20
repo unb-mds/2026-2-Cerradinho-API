@@ -1,5 +1,6 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.middleware.gzip import GZipMiddleware
 from slowapi import _rate_limit_exceeded_handler
 from slowapi.errors import RateLimitExceeded
 from slowapi.middleware import SlowAPIASGIMiddleware
@@ -46,6 +47,11 @@ app.add_middleware(
     # por padrão, e X-Total-Count não é um deles.
     expose_headers=["X-Total-Count"],
 )
+
+# Comprime as respostas para quem manda Accept-Encoding: gzip (navegadores,
+# requests/httpx do SDK). /v1/disciplinas sem limite tem uns 2,4 MB e cai para
+# uns 240 KB. Respostas pequenas (menos de 1 KB) não compensam e vão sem compressão.
+app.add_middleware(GZipMiddleware, minimum_size=1000)
 
 app.include_router(disciplinas.router, prefix="/v1")
 app.include_router(cardapio.router, prefix="/v1")
