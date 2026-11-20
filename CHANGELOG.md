@@ -4,6 +4,26 @@ Mudanças relevantes do Cerradinho, por release. O formato segue o [Keep a Chang
 
 ## [Não lançado]
 
+Sprint 11 da Release 2. Na entrega de 25/11, esta seção vira `[Release_2] - 2026-11-25`.
+
+### Adicionado
+
+- `fim` opcional em `GET /v1/salas/vazias`, para pedir as salas livres num intervalo inteiro (RF17, #256).
+- Home "Agora no Gama" no site, com as salas livres no bloco de agora, o RU de hoje e a busca de disciplinas (#257).
+- Chamada `GET /v1/...` de cada tela visível no site, com Copiar, Ver JSON e Docs (#257).
+- Unidades do SIGAA que falharam aparecem na mensagem de `GET /v1/execucoes` (RF16, #255).
+
+### Alterado
+
+- Salas Vazias mostra a semana inteira em blocos de 2h, das 8h às 17h50, só com as salas I1 a I10 e S1 a S10 da FCTE (RF17, #256).
+- O site mostra só o campus Gama. A API continua servindo a UnB inteira (#257).
+
+### Corrigido
+
+- `GET /v1/disciplinas?limite=10` levando cerca de 9,5s, porque montava todas as turmas para devolver uma página. Agora pagina no banco e responde em cerca de 20ms (RF01, #256).
+- Turma em sala combinada (`I9/I10`) não ocupava as salas individuais em `GET /v1/salas/vazias` (RF17, #256).
+- Produção sem cardápio de 16 a 19/11, porque o servidor não tinha a correção do #252. Corrigido com o deploy de 20/11 e o hotfix na `main` (#258).
+
 ## [1.4] - 2026-11-18
 
 Sprints 8 a 10 da Release 2 (09/11 a 18/11/2026).

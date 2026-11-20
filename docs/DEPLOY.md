@@ -110,6 +110,7 @@ Depois de cada merge na `main`:
 
 ```bash
 cd 2026-2-Cerradinho-API
+git switch main
 git pull
 docker compose -f docker-compose.prod.yml up -d --build
 ```
