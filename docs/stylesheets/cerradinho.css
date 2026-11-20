@@ -1,0 +1,26 @@
+/* Verde do Cerradinho, o mesmo do frontend (frontend/app/globals.css). */
+:root {
+  --md-primary-fg-color: #4e5e2c;
+  --md-primary-fg-color--light: #6b7d42;
+  --md-primary-fg-color--dark: #3a4821;
+  --md-primary-bg-color: #f2efe9;
+  --md-primary-bg-color--light: #f2efe9b3;
+  --md-accent-fg-color: #3a4821;
+  --md-accent-fg-color--transparent: #4e5e2c1a;
+  --md-typeset-a-color: #4e5e2c;
+}
+
+[data-md-color-scheme="slate"] {
+  --md-primary-fg-color: #252d18;
+  --md-primary-fg-color--light: #3a4821;
+  --md-primary-fg-color--dark: #12150c;
+  --md-accent-fg-color: #aebf8a;
+  --md-accent-fg-color--transparent: #93a86a1a;
+  --md-typeset-a-color: #93a86a;
+}
+
+/* A flor tem estames finos: um pouco maior que o ícone padrão. */
+.md-header__button.md-logo img {
+  height: 2.4rem;
+  width: auto;
+}

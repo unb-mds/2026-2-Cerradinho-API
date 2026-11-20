@@ -10,20 +10,22 @@ docs_dir: docs
 theme:
   name: material
   language: pt-BR
+  logo: assets/logo.svg
+  favicon: assets/favicon.svg
   icon:
     repo: fontawesome/brands/github
   palette:
     - media: "(prefers-color-scheme: light)"
       scheme: default
-      primary: green
-      accent: green
+      primary: custom
+      accent: custom
       toggle:
         icon: material/weather-night
         name: Mudar para modo escuro
     - media: "(prefers-color-scheme: dark)"
       scheme: slate
-      primary: green
-      accent: green
+      primary: custom
+      accent: custom
       toggle:
         icon: material/weather-sunny
         name: Mudar para modo claro
@@ -110,3 +112,6 @@ nav:
       - Pytest e mocking: estudos/estudo-pytest-mocking.md
       - Schemathesis: estudos/estudo-schemathesis.md
       - Postman e testes de API: estudos/estudo-postman-api.md
+
+extra_css:
+  - stylesheets/cerradinho.css
