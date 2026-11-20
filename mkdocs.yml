@@ -50,7 +50,11 @@ markdown_extensions:
       permalink: true
   - pymdownx.details
   - pymdownx.highlight
-  - pymdownx.superfences
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format
   - pymdownx.tabbed:
       alternate_style: true
 
@@ -60,6 +64,7 @@ nav:
       - Índice completo: indice-completo.md
   - Produto:
       - Documento de Visão: DOCUMENTO-VISAO.md
+      - Telas e navegação: produto/telas.md
       - Requisitos: REQUISITOS.md
       - Especificação (/specs): specs/README.md
   - Arquitetura:

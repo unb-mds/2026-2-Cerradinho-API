@@ -41,7 +41,7 @@ Fora da lista: routers e schemas, cobertos pelos testes de contrato (RNF04), e m
 
 ### Teste de mutação
 
-Ferramenta: **cosmic-ray 8.7.0**, a escolhida no [estudo de teste de mutação](../docs/estudos/estudo-teste-de-mutacao.md) por rodar no Windows e no Linux. O script `backend/scripts/mutacao.py` roda um módulo crítico por vez, cada um com os testes que o exercitam, e sai com erro se algum ficar abaixo de 50%:
+Ferramenta: **cosmic-ray 8.7.0**, a escolhida no [estudo de teste de mutação](https://github.com/unb-mds/2026-2-Cerradinho-API/blob/dev/docs/estudos/estudo-teste-de-mutacao.md) por rodar no Windows e no Linux. O script `backend/scripts/mutacao.py` roda um módulo crítico por vez, cada um com os testes que o exercitam, e sai com erro se algum ficar abaixo de 50%:
 
 ```bash
 cd backend

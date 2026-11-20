@@ -27,6 +27,7 @@ A documentação interativa da API (Swagger) fica em `/docs` com o projeto rodan
 ## Como navegar esta documentação
 
 - **[Produto](DOCUMENTO-VISAO.md)** — por que o Cerradinho existe, pra quem, e o que ele entrega: visão de produto e requisitos.
+- **[Telas e navegação](produto/telas.md)** — o site do campus Gama em prints, no computador e no celular, e o caminho entre as telas.
 - **[Arquitetura](ARQUITETURA.md)** — como o sistema é construído: componentes, camadas, as decisões de arquitetura (ADRs) e a ficha de cada fonte de dado com seus riscos.
 - **[Processo](PROCESSO.md)** — como o time trabalha: papéis, ritos do Scrum e Definition of Done.
 - **[Gestão](scrum/sprint-planning.md)** — o dia a dia do Scrum: planejamento de sprints, atas de reunião e o checklist da release.
