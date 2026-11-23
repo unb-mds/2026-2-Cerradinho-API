@@ -52,6 +52,8 @@ export default function Home() {
   const hoje = agora ? NOME_DIA[DIAS_API[agora.getDay()] ?? ""] : undefined;
   const dataDeHoje = agora ? `${hoje ?? "Domingo"}, ${dataCurta(agora)}` : "Carregando…";
 
+  // O RU do Gama não abre no fim de semana (o PDF do Darcy, que a API lê, tem os sete dias).
+  const fimDeSemana = agora ? agora.getDay() === 0 || agora.getDay() === 6 : false;
   const ruHoje = agora ? cardapio.filter((c) => c.data === hojeISO(agora) && c.refeicao !== "Café da manhã") : [];
 
   return (
@@ -110,22 +112,31 @@ export default function Home() {
           {carregandoCardapio || !agora ? (
             <p className="text-sm text-muted">Carregando…</p>
           ) : ruHoje.length === 0 ? (
-            <p className="text-sm text-muted">O RU ainda não publicou o cardápio de hoje.</p>
+            <p className="text-sm text-muted">
+              {fimDeSemana ? "O RU do Gama não abre no fim de semana." : "O RU ainda não publicou o cardápio de hoje."}
+            </p>
           ) : (
-            <dl className="flex flex-col gap-3">
-              {ruHoje.map((r) => {
-                const { principal, vegetariano } = pratos(r);
-                return (
-                  <div key={r.refeicao} className="grid grid-cols-[4.5rem_1fr] gap-3">
-                    <dt className="text-xs font-semibold text-muted">{r.refeicao}</dt>
-                    <dd className="text-sm text-foreground">
-                      {principal ?? r.itens[0]?.item}
-                      {vegetariano && <span className="block text-xs text-muted">Vegetariano: {vegetariano}</span>}
-                    </dd>
-                  </div>
-                );
-              })}
-            </dl>
+            <>
+              {fimDeSemana && (
+                <p className="text-sm text-foreground">
+                  O RU do Gama não abre no fim de semana. <span className="text-muted">No Darcy Ribeiro:</span>
+                </p>
+              )}
+              <dl className="flex flex-col gap-3">
+                {ruHoje.map((r) => {
+                  const { principal, vegetariano } = pratos(r);
+                  return (
+                    <div key={r.refeicao} className="grid grid-cols-[4.5rem_1fr] gap-3">
+                      <dt className="text-xs font-semibold text-muted">{r.refeicao}</dt>
+                      <dd className="text-sm text-foreground">
+                        {principal ?? r.itens[0]?.item}
+                        {vegetariano && <span className="block text-xs text-muted">Vegetariano: {vegetariano}</span>}
+                      </dd>
+                    </div>
+                  );
+                })}
+              </dl>
+            </>
           )}
           <LinkSeta href="/cardapio">Ver cardápio da semana</LinkSeta>
         </section>

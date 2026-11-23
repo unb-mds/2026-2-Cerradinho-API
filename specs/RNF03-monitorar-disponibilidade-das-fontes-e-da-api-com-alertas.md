@@ -24,7 +24,7 @@ Monitores no UptimeRobot (plano gratuito), criados pelo script [`backend/scripts
 | `[FONTE] RU cardápio refeitório` | Palavra-chave: alerta se "Cardápio" sumir | `https://ru.unb.br/cardapio-refeitorio/` | 15 min |
 
 - **Alerta:** e-mail para os contatos de alerta da conta. Todos os contatos são ligados aos monitores na criação.
-- **Fonte x nosso serviço:** o prefixo `[API]` ou `[FONTE]` vai no nome do monitor e, por isso, no assunto do e-mail. Com `[FONTE]`, não há nada a fazer no código: a API segue servindo o último dado coletado e o scraper tenta de novo no próximo agendamento. Com `[API]`, o incidente é nosso: olhar o deploy na AWS ([DEPLOY.md](../docs/DEPLOY.md)).
+- **Fonte x nosso serviço:** o prefixo `[API]` ou `[FONTE]` vai no nome do monitor e, por isso, no assunto do e-mail. Com `[FONTE]`, não há nada a fazer no código: a API segue servindo o último dado coletado e o scraper tenta de novo no próximo agendamento. Com `[API]`, o incidente é nosso: olhar o deploy na AWS ([DEPLOY.md](https://github.com/unb-mds/2026-2-Cerradinho-API/blob/dev/docs/DEPLOY.md)).
 - **Por que `/health`:** a rota roda `SELECT 1` no banco e devolve 503 sem ele. O `/docs` e as rotas com cache no Redis responderiam 200 com o banco fora do ar.
 - **Fontes iguais às da coleta:** um teste compara as URLs dos monitores `[FONTE]` com as constantes dos scrapers. Se um scraper mudar de URL, o teste falha até o monitor acompanhar.
 
@@ -37,7 +37,7 @@ UPTIMEROBOT_API_KEY=<chave principal> python -m scripts.uptimerobot
 
 O script não recria monitor com o mesmo nome. A chave principal (*Main API Key*) fica na seção de API do painel do UptimeRobot e não vai para o repositório.
 
-**Fora do escopo do UptimeRobot:** frescor do dado (RU servindo cardápio antigo com 200) e worker do Celery parado. Os dois aparecem no log de execução (`/v1/execucoes`, RF16). Detalhes no [estudo do UptimeRobot](../docs/estudos/estudo-uptimerobot.md) e no [plano de monitoramento](../docs/fontes/plano-de-monitoramento.md).
+**Fora do escopo do UptimeRobot:** frescor do dado (RU servindo cardápio antigo com 200) e worker do Celery parado. Os dois aparecem no log de execução (`/v1/execucoes`, RF16). Detalhes no [estudo do UptimeRobot](https://github.com/unb-mds/2026-2-Cerradinho-API/blob/dev/docs/estudos/estudo-uptimerobot.md) e no [plano de monitoramento](https://github.com/unb-mds/2026-2-Cerradinho-API/blob/dev/docs/fontes/plano-de-monitoramento.md).
 
 ## Rastreabilidade
 

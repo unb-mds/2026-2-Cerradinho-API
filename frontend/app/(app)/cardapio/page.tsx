@@ -15,6 +15,9 @@ function formatarData(data: string): string {
 
 const DIAS_DA_SEMANA = ["Segunda", "Terça", "Quarta", "Quinta", "Sexta", "Sábado", "Domingo"];
 
+// O RU do Gama não abre no fim de semana; o PDF do Darcy Ribeiro, que a API lê, tem os sete dias.
+const FIM_DE_SEMANA = ["Sábado", "Domingo"];
+
 const BOTAO = "rounded-lg border border-border bg-surface px-3 py-1.5 text-sm text-foreground hover:bg-background";
 
 // Dia com cardápio mais perto do escolhido: o próximo depois dele, ou o último antes.
@@ -68,6 +71,12 @@ export default function CardapioPage() {
       </FilterBar>
 
       <div className="flex flex-col gap-4 px-4 lg:px-10 pt-5">
+        {FIM_DE_SEMANA.includes(diaAtivo) && (
+          <p className="rounded-xl border border-border bg-surface px-4 py-3 text-sm text-foreground md:px-6">
+            <span className="font-semibold">O RU do Gama não abre no fim de semana.</span>{" "}
+            <span className="text-muted">O cardápio abaixo é o do Darcy Ribeiro, para quem estiver no Plano.</span>
+          </p>
+        )}
         {!loading && !error && filtrado.length === 0 && (
           <div className="rounded-xl border border-border bg-surface">
             {cardapio.length === 0 ? (
@@ -103,6 +112,7 @@ export default function CardapioPage() {
               <div className="font-bold text-foreground">{c.dia}, {formatarData(c.data)}</div>
               {c.data === hojeISO() && <Badge>Hoje</Badge>}
               <Badge>{c.refeicao}</Badge>
+              {FIM_DE_SEMANA.includes(c.dia) && diaAtivo === "Todos" && <Badge>Só no Darcy Ribeiro</Badge>}
             </div>
             <ul className="divide-y divide-border">
               {c.itens.map((item, i) => (

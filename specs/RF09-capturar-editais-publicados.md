@@ -4,6 +4,8 @@
 |---|---|---|
 | R2 | Ninguém | [#48](https://github.com/unb-mds/2026-2-Cerradinho-API/issues/48) |
 
+> **Fora do escopo.** Este requisito era do Ítalo, que saiu do projeto no início da Release 2, e não será implementado. A spec fica como registro.
+
 **Critérios de aceitação**
 - O scraper captura título, data de publicação, link original e órgão responsável de cada edital listado no portal público.
 - Edital sem link funcional não é persistido (um edital sem fonte verificável não é um dado confiável).

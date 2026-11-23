@@ -16,8 +16,8 @@ API pública que consolida dados da UnB hoje espalhados em vários sistemas: dis
 | Professores | Mesma página das turmas | Vem junto da turma, sem fonte própria |
 | Salas/Prédios | Sem fonte própria | Derivado das turmas (RF05) |
 | Cardápio do RU | ru.unb.br/cardapio e ru.unb.br/cardapio-refeitorio | PDF semanal por campus. O RU alterna qual das duas páginas atualiza, então o scraper consulta ambas. Ficha: [`fontes/ru-cardapio.md`](fontes/ru-cardapio.md) |
-| Eventos | noticias.unb.br/agenda | Agenda institucional pública |
-| Editais | Portal público do SIGAA (pós-graduação) | Centralizado |
+| Eventos | noticias.unb.br/agenda | Fora do escopo da R2. Agenda institucional pública |
+| Editais | Portal público do SIGAA (pós-graduação) | Fora do escopo da R2. Centralizado |
 | Cursos/Estrutura curricular | sigaa.unb.br/sigaa/public/curso | Complemento possível, ainda não usado |
 | Dados abertos | dadosabertos.unb.br (CKAN) | Complemento possível, ainda não usado. Turmas desatualizadas desde 2022 |
 

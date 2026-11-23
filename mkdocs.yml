@@ -10,20 +10,22 @@ docs_dir: docs
 theme:
   name: material
   language: pt-BR
+  logo: assets/logo.svg
+  favicon: assets/favicon.svg
   icon:
     repo: fontawesome/brands/github
   palette:
     - media: "(prefers-color-scheme: light)"
       scheme: default
-      primary: green
-      accent: green
+      primary: custom
+      accent: custom
       toggle:
         icon: material/weather-night
         name: Mudar para modo escuro
     - media: "(prefers-color-scheme: dark)"
       scheme: slate
-      primary: green
-      accent: green
+      primary: custom
+      accent: custom
       toggle:
         icon: material/weather-sunny
         name: Mudar para modo claro
@@ -50,7 +52,11 @@ markdown_extensions:
       permalink: true
   - pymdownx.details
   - pymdownx.highlight
-  - pymdownx.superfences
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format
   - pymdownx.tabbed:
       alternate_style: true
 
@@ -60,6 +66,7 @@ nav:
       - Índice completo: indice-completo.md
   - Produto:
       - Documento de Visão: DOCUMENTO-VISAO.md
+      - Telas e navegação: produto/telas.md
       - Requisitos: REQUISITOS.md
       - Especificação (/specs): specs/README.md
   - Arquitetura:
@@ -92,6 +99,7 @@ nav:
       - Checklist Release 1: scrum/checklist-release-1.md
       - Release notes:
           - v1.4: releases/v1.4.md
+          - v1.3: releases/v1.3.md
           - v1.2: releases/v1.2.md
   - Estudos:
       - Git e GitHub: estudos/estudo-git-github.md
@@ -106,3 +114,6 @@ nav:
       - Pytest e mocking: estudos/estudo-pytest-mocking.md
       - Schemathesis: estudos/estudo-schemathesis.md
       - Postman e testes de API: estudos/estudo-postman-api.md
+
+extra_css:
+  - stylesheets/cerradinho.css
