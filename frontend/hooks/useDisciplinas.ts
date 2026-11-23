@@ -12,6 +12,8 @@ export interface Disciplina {
   professor: string;
   dias: string;
   horario: string;
+  // Início e fim (em minutos) de cada aula da semana, pro filtro de horário.
+  aulas: { inicio: number; fim: number }[];
   sala: string;
   vagas: number;
   vagasOcupadas: number;
@@ -52,6 +54,24 @@ function extrairHorario(descricao: string): string {
   return match ? `${match[1]}–${match[2]}` : descricao;
 }
 
+export function emMinutos(hora: string): number {
+  const [h, m] = hora.split(":").map(Number);
+  return h * 60 + m;
+}
+
+function extrairAula(descricao: string): { inicio: number; fim: number } | null {
+  const match = descricao.match(/(\d{2}:\d{2}) às (\d{2}:\d{2})/);
+  return match ? { inicio: emMinutos(match[1]), fim: emMinutos(match[2]) } : null;
+}
+
+// Mesmo horário em todos os dias: "08:00–09:50". Horários diferentes por dia:
+// "Seg 08:00–09:50 · Qua 14:00–15:50" (antes só aparecia o primeiro).
+function descreverHorario(horarios: TurmaAPI["horarios"]): string {
+  const faixas = [...new Set(horarios.map((h) => extrairHorario(h.descricao)))];
+  if (faixas.length <= 1) return faixas[0] ?? "-";
+  return horarios.map((h) => `${extrairDias(h.descricao).join("/")} ${extrairHorario(h.descricao)}`).join(" · ");
+}
+
 // disciplina_codigo vem como "CIC0004" — as letras antes do primeiro dígito são o departamento.
 function extrairDepartamento(disciplinaCodigo: string): string {
   return disciplinaCodigo.replace(/\d.*$/, "");
@@ -68,7 +88,8 @@ export function mapTurmaToDisciplina(turma: TurmaAPI): Disciplina {
     departamento: extrairDepartamento(turma.disciplina_codigo),
     professor: turma.professores.map((p) => p.nome).join(", ") || "A definir",
     dias: dias || "-",
-    horario: turma.horarios[0] ? extrairHorario(turma.horarios[0].descricao) : "-",
+    horario: descreverHorario(turma.horarios),
+    aulas: turma.horarios.map((h) => extrairAula(h.descricao)).filter((a) => a !== null),
     sala: turma.sala.descricao,
     vagas: turma.vagas_ofertadas,
     vagasOcupadas: turma.vagas_ocupadas,
