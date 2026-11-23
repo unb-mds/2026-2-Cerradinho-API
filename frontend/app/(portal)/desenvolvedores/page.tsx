@@ -9,10 +9,11 @@ import ResumoApi from "./ResumoApi";
 import SwaggerViewer from "./SwaggerViewer";
 
 const REPO_URL = "https://github.com/unb-mds/2026-2-Cerradinho-API";
-const DOCS_URL = `${REPO_URL}/tree/main/docs`;
+// Site de documentação do time (MkDocs no GitHub Pages).
+const DOCS_URL = "https://unb-mds.github.io/2026-2-Cerradinho-API/";
 
-// O SDK e a CLI ainda não estão no PyPI nem na main: instalam direto da pasta
-// sdk/ da dev. Quando a release 2 entrar na main, trocar pra "main".
+// O SDK e a CLI ainda não estão no PyPI nem na main (lá a pasta sdk/ só tem o
+// .gitkeep): instalam direto da pasta sdk/ da dev. Quando o sdk/ chegar na main, trocar pra "main".
 const BRANCH_SDK = "dev";
 const SDK_URL = `${REPO_URL}/tree/${BRANCH_SDK}/sdk`;
 const SDK_INSTALACAO = `pip install "git+${REPO_URL}.git@${BRANCH_SDK}#subdirectory=sdk"`;
@@ -44,12 +45,12 @@ const ENDPOINTS = [
   {
     caminho: "/disciplinas",
     descricao:
-      "Lista as turmas do período, com professores, horários, sala e vagas",
+      "Lista as turmas do período, com professores, horários, sala e vagas. Filtros busca (código, nome ou professor) e departamento; paginação com limite e offset, com o total no cabeçalho X-Total-Count",
   },
   {
     caminho: "/professores?nome=",
     descricao:
-      "Lista professores; busca parcial por nome, sem diferenciar acentos",
+      "Lista professores; busca parcial por nome, sem diferenciar acentos. Paginação com limite e offset",
   },
   {
     caminho: "/professores/{id}/agenda",
@@ -57,8 +58,8 @@ const ENDPOINTS = [
   },
   { caminho: "/salas", descricao: "Lista as salas que têm aula no período" },
   {
-    caminho: "/salas/vazias?dia=&horario=",
-    descricao: "Salas livres em um dia e horário",
+    caminho: "/salas/vazias?dia=&horario=&fim=",
+    descricao: "Salas livres em um dia, numa aula ou num bloco de aulas (com fim)",
   },
   {
     caminho: "/cardapio/semana?data_inicio=",
@@ -85,13 +86,19 @@ const PARAMETROS_SALAS_VAZIAS = [
   {
     nome: "horario",
     tipo: "texto (HH:MM)",
-    descricao: "Horário de início da aula, ex.: 08:00",
+    descricao: "Horário de início da aula, ex.: 14:00",
+  },
+  {
+    nome: "fim",
+    tipo: "texto (HH:MM), opcional",
+    descricao:
+      "Fim do bloco, ex.: 15:50. Com ele, a sala precisa estar livre em todas as aulas entre horario e fim. Sem ele, vale só a aula que começa em horario",
   },
 ];
 
 const RESPOSTA_EXEMPLO = `[
-  { "id": 7, "nome": "I9/I10", "predio": "FCTE" },
-  { "id": 12, "nome": "S1", "predio": "UAC" }
+  { "id": 163, "nome": "I1", "predio": "FCTE" },
+  { "id": 179, "nome": "I5", "predio": "FCTE" }
 ]`;
 
 const NAV = [
@@ -282,14 +289,14 @@ export default function PortalDesenvolvedorPage() {
                 GET
               </span>
               <code className="min-w-0 break-all font-mono text-xs text-sidebar-foreground-active">
-                /v1/salas/vazias?dia=quinta&amp;horario=14:00
+                /v1/salas/vazias?dia=segunda&amp;horario=14:00&amp;fim=15:50
               </code>
             </div>
             <pre className="overflow-x-auto px-4 py-4 font-mono text-xs leading-relaxed text-sidebar-foreground">
               <code>{RESPOSTA_EXEMPLO}</code>
             </pre>
             <figcaption className="border-t border-white/10 px-4 py-3 text-xs text-sidebar-foreground">
-              Exemplo de resposta, resumido. É a mesma chamada que alimenta a tela de Salas Vazias do app.
+              Exemplo de resposta, resumido. É a mesma chamada que a tela de Salas Vazias do app faz para cada dia.
             </figcaption>
           </figure>
         </section>
