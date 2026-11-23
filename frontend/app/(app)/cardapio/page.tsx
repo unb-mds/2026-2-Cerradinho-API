@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { useCardapioSemana, somarDias, hojeISO, nomeDoDia } from "@/hooks/useCardapioSemana";
+import { useCardapioSemana, somarDias, nomeDoDia } from "@/hooks/useCardapioSemana";
 import ApiStatus from "@/components/ApiStatus";
 import PageHeader from "@/components/PageHeader";
 import EstadoVazio from "@/components/EstadoVazio";
@@ -15,7 +15,7 @@ function formatarData(data: string): string {
 
 const DIAS_DA_SEMANA = ["Segunda", "Terça", "Quarta", "Quinta", "Sexta", "Sábado", "Domingo"];
 
-// O RU do Gama não abre no fim de semana; o PDF do Darcy Ribeiro, que a API lê, tem os sete dias.
+// O RU do Gama não abre no fim de semana; o cardápio da API tem os sete dias, que valem para os outros campi.
 const FIM_DE_SEMANA = ["Sábado", "Domingo"];
 
 const BOTAO = "rounded-lg border border-border bg-surface px-3 py-1.5 text-sm text-foreground hover:bg-background";
@@ -28,24 +28,21 @@ function diaPublicadoMaisPerto(publicados: string[], escolhido: string): string 
 }
 
 export default function CardapioPage() {
-  const { cardapio, caminho, loading, error, inicio, ehSemanaAtual, semanaAnterior, proximaSemana, semanaAtual } =
+  const { cardapio, caminho, loading, error, inicio, hoje, ehSemanaAtual, semanaAnterior, proximaSemana, semanaAtual } =
     useCardapioSemana();
   const [dia, setDia] = useState<string | null>(null);
 
-  const nomeHoje = nomeDoDia(hojeISO());
+  const nomeHoje = hoje ? nomeDoDia(hoje) : null;
   const dias = ["Todos", ...DIAS_DA_SEMANA];
-  const diaAtivo = dia ?? (ehSemanaAtual ? nomeHoje : "Todos");
+  const diaAtivo = dia ?? (ehSemanaAtual && nomeHoje ? nomeHoje : "Todos");
   const filtrado = diaAtivo === "Todos" ? cardapio : cardapio.filter((c) => c.dia === diaAtivo);
   const diasPublicados = DIAS_DA_SEMANA.filter((d) => cardapio.some((c) => c.dia === d));
   const sugestao = diaAtivo === "Todos" ? undefined : diaPublicadoMaisPerto(diasPublicados, diaAtivo);
-  const dataDoDia = (d: string) => formatarData(somarDias(inicio, DIAS_DA_SEMANA.indexOf(d)));
+  const dataDoDia = (d: string) => (inicio ? formatarData(somarDias(inicio, DIAS_DA_SEMANA.indexOf(d))) : "");
 
   return (
     <main className="flex flex-1 flex-col pb-10">
-      <PageHeader title="Cardápio" sub="Cardápio da semana · RU Darcy Ribeiro" href="/cardapio" api={{ caminho }} />
-      <p className="px-4 lg:px-10 pt-2 text-xs text-muted">
-        O cardápio do RU do Gama ainda não está na API. Por enquanto, este é o do campus Darcy Ribeiro.
-      </p>
+      <PageHeader title="Cardápio" sub="Cardápio da semana · RU UnB" href="/cardapio" api={{ caminho: caminho ?? "/cardapio/semana" }} />
 
       <div className="px-4 lg:px-10 pt-4">
         <ApiStatus loading={loading} error={error} />
@@ -56,7 +53,7 @@ export default function CardapioPage() {
           ← Anterior
         </button>
         <span className="text-sm font-medium text-foreground">
-          {formatarData(inicio)} a {formatarData(somarDias(inicio, 6))}
+          {inicio ? `${formatarData(inicio)} a ${formatarData(somarDias(inicio, 6))}` : "Carregando…"}
         </span>
         <button type="button" onClick={() => { setDia(null); proximaSemana(); }} className={BOTAO}>
           Próxima →
@@ -74,7 +71,7 @@ export default function CardapioPage() {
         {FIM_DE_SEMANA.includes(diaAtivo) && (
           <p className="rounded-xl border border-border bg-surface px-4 py-3 text-sm text-foreground md:px-6">
             <span className="font-semibold">O RU do Gama não abre no fim de semana.</span>{" "}
-            <span className="text-muted">O cardápio abaixo é o do Darcy Ribeiro, para quem estiver no Plano.</span>
+            <span className="text-muted">O cardápio abaixo vale para os outros campi.</span>
           </p>
         )}
         {!loading && !error && filtrado.length === 0 && (
@@ -110,9 +107,9 @@ export default function CardapioPage() {
           <div key={`${c.data}-${c.refeicao}`} className="overflow-hidden rounded-xl border border-border bg-surface">
             <div className="flex flex-wrap items-center gap-3 bg-background px-4 py-4 md:px-6">
               <div className="font-bold text-foreground">{c.dia}, {formatarData(c.data)}</div>
-              {c.data === hojeISO() && <Badge>Hoje</Badge>}
+              {c.data === hoje && <Badge>Hoje</Badge>}
               <Badge>{c.refeicao}</Badge>
-              {FIM_DE_SEMANA.includes(c.dia) && diaAtivo === "Todos" && <Badge>Só no Darcy Ribeiro</Badge>}
+              {FIM_DE_SEMANA.includes(c.dia) && diaAtivo === "Todos" && <Badge>Só nos outros campi</Badge>}
             </div>
             <ul className="divide-y divide-border">
               {c.itens.map((item, i) => (

@@ -1,6 +1,7 @@
 "use client";
 
 import { useApiResource } from "./useApiResource";
+import { useAgora } from "./useAgora";
 import { useState } from "react";
 import type { Sala } from "./useSalas";
 
@@ -72,6 +73,8 @@ export const DIAS_DA_SEMANA = [
 // uma chamada por dia pra mostrar a semana inteira no bloco escolhido
 export function useSalasVazias() {
     const [horario, setHorario] = useState("08:00");
+    // "hoje" vem do navegador: na pré-renderização é null, senão a data do build quebrava a hidratação.
+    const agora = useAgora();
 
     const segunda = useApiResource<Sala[]>(caminhoSalasVazias("segunda", horario), []);
     const terca = useApiResource<Sala[]>(caminhoSalasVazias("terca", horario), []);
@@ -84,7 +87,7 @@ export function useSalasVazias() {
     const dias = DIAS_DA_SEMANA.map(({ dia, rotulo }, i) => ({ dia, rotulo, salas: doCampus(respostas[i].data) }));
     const loading = respostas.some((r) => r.loading);
     const error = respostas.find((r) => r.error)?.error ?? null;
-    return { dias, loading, error, horario, setHorario, hoje: DIAS_API[new Date().getDay()] };
+    return { dias, loading, error, horario, setHorario, hoje: agora ? DIAS_API[agora.getDay()] : null };
 }
 
 // Home: salas livres no bloco de agora (ou no próximo, fora dele).

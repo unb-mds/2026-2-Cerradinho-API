@@ -52,7 +52,7 @@ export default function Home() {
   const hoje = agora ? NOME_DIA[DIAS_API[agora.getDay()] ?? ""] : undefined;
   const dataDeHoje = agora ? `${hoje ?? "Domingo"}, ${dataCurta(agora)}` : "Carregando…";
 
-  // O RU do Gama não abre no fim de semana (o PDF do Darcy, que a API lê, tem os sete dias).
+  // O RU do Gama não abre no fim de semana; o cardápio da API tem os sete dias, que valem para os outros campi.
   const fimDeSemana = agora ? agora.getDay() === 0 || agora.getDay() === 6 : false;
   const ruHoje = agora ? cardapio.filter((c) => c.data === hojeISO(agora) && c.refeicao !== "Café da manhã") : [];
 
@@ -107,7 +107,7 @@ export default function Home() {
         <section className="flex flex-col gap-4 rounded-xl border border-border bg-surface p-5 md:p-6">
           <div>
             <TituloModulo href="/cardapio">RU hoje</TituloModulo>
-            <p className="mt-1 text-xs text-muted">Darcy Ribeiro · o cardápio do Gama ainda não está na API</p>
+            <p className="mt-1 text-xs text-muted">RU UnB</p>
           </div>
           {carregandoCardapio || !agora ? (
             <p className="text-sm text-muted">Carregando…</p>
@@ -119,7 +119,7 @@ export default function Home() {
             <>
               {fimDeSemana && (
                 <p className="text-sm text-foreground">
-                  O RU do Gama não abre no fim de semana. <span className="text-muted">No Darcy Ribeiro:</span>
+                  O RU do Gama não abre no fim de semana. <span className="text-muted">Nos outros campi:</span>
                 </p>
               )}
               <dl className="flex flex-col gap-3">

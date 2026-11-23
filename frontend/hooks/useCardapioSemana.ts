@@ -1,6 +1,7 @@
 "use client";
 
 import { useApiResource } from "./useApiResource";
+import { useAgora } from "./useAgora";
 import { useState } from "react";
 
 // Formato que a API real devolve (espelha backend/app/schemas/api/cardapio.py:CardapioSemana,
@@ -72,7 +73,7 @@ export function mapDiasToCardapio(dias: CardapioDiaAPI[]): CardapioRefeicao[] {
 }
 
 
-function segundaDaSemana(hoje = new Date()): string {
+function segundaDaSemana(hoje: Date): string {
   const segunda = new Date(hoje);
   segunda.setDate(hoje.getDate() - ((hoje.getDay() + 6) % 7));
   const mes = String(segunda.getMonth() + 1).padStart(2, "0");
@@ -80,10 +81,15 @@ function segundaDaSemana(hoje = new Date()): string {
   return `${segunda.getFullYear()}-${mes}-${dia}`;
 }
 
+// A semana parte da data do navegador (useAgora), que é null na pré-renderização:
+// calcular "hoje" no build dava erro de hidratação, porque a data do build não é a do aluno.
+// Enquanto ela não chega, `inicio`, `hoje` e `caminho` ficam null e nada é buscado.
 export function useCardapioSemana() {
-  const [inicio, setInicio] = useState(() => segundaDaSemana());
+  const agora = useAgora();
+  const [semanas, setSemanas] = useState(0); // semanas de distância da atual
 
-  const caminho = `/cardapio/semana?data_inicio=${inicio}`;
+  const inicio = agora ? somarDias(segundaDaSemana(agora), 7 * semanas) : null;
+  const caminho = inicio ? `/cardapio/semana?data_inicio=${inicio}` : null;
   const { data, loading, error } = useApiResource<CardapioSemanaAPI | null>(caminho, null);
 
   return {
@@ -92,10 +98,11 @@ export function useCardapioSemana() {
     loading,
     error,
     inicio,
-    ehSemanaAtual: inicio === segundaDaSemana(),
-    semanaAnterior: () => setInicio((atual) => somarDias(atual, -7)),
-    proximaSemana: () => setInicio((atual) => somarDias(atual, 7)),
-    semanaAtual: () => setInicio(segundaDaSemana()),
+    hoje: agora ? hojeISO(agora) : null,
+    ehSemanaAtual: semanas === 0,
+    semanaAnterior: () => setSemanas((s) => s - 1),
+    proximaSemana: () => setSemanas((s) => s + 1),
+    semanaAtual: () => setSemanas(0),
   };
 }
 
