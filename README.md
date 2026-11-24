@@ -1,5 +1,9 @@
 # Cerradinho
 
+<p align="center">
+  <img src="docs/assets/banner.png" alt="Cerradinho API" width="760">
+</p>
+
 [![CI](https://github.com/unb-mds/2026-2-Cerradinho-API/actions/workflows/ci.yml/badge.svg?branch=dev)](https://github.com/unb-mds/2026-2-Cerradinho-API/actions/workflows/ci.yml)
 [![Docs](https://img.shields.io/badge/docs-GitHub%20Pages-blue)](https://unb-mds.github.io/2026-2-Cerradinho-API/)
 [![Licença MIT](https://img.shields.io/badge/licen%C3%A7a-MIT-green)](LICENSE)
