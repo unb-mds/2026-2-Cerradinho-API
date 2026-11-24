@@ -22,16 +22,13 @@ Closes #
 1.
 2.
 
-## Checklist antes de pedir revisão
+## Checklist
 
-- [ ] Segue o padrão de commits (Conventional Commits)
-- [ ] Segue a separação de camadas da arquitetura (scraper não tem lógica de API, lógica de negócio não fica no router)
-- [ ] Testes adicionados/atualizados, se aplicável
-- [ ] Documentação atualizada, se aplicável (README, ARQUITETURA.md)
-- [ ] Se o PR implementa, testa ou muda um requisito, a spec em `specs/` foi atualizada (critérios e rastreabilidade com este PR e os testes)
-- [ ] Se usou IA neste PR (implementação, testes, docs, refatoração), está registrado em `AI-USAGE.md`
-- [ ] Pipeline de CI está verde (lint, testes, SAST) — obrigatório antes do merge, é porta de qualidade da disciplina
-- [ ] Se este PR envolveu decisão de arquitetura relevante, existe um ADR em `docs/adr/`
+- [ ] Li o [CONTRIBUTING.md](https://github.com/unb-mds/2026-2-Cerradinho-API/blob/dev/CONTRIBUTING.md) e segui o padrão de commits
+- [ ] O código respeita a separação de camadas (scraper não tem lógica de API, regra de negócio não fica no router)
+- [ ] Testes adicionados ou atualizados, se aplicável
+- [ ] Documentação atualizada, se aplicável
+- [ ] O CI está verde (lint, testes e SAST)
 
 ## Screenshots (se for mudança visual)
 

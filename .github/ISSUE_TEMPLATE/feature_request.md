@@ -1,25 +1,16 @@
 ---
 name: ✨ Feature
-about: Nova funcionalidade com RF/RNF associado em specs/
+about: Uma ideia de funcionalidade nova
 title: "[FEAT] "
 labels: feature
 assignees: ''
 ---
 
-**Descrição** (referencie o RF/RNF, ex: RF01)
+**Qual problema isso resolve**
 
 
-**Motivação**
+**Como você imagina a solução**
 
 
-**ADR relacionado** (se houver, em docs/adr/)
+**Alternativas que você considerou**
 
-
-**Release:** R1 / R2
-**Tamanho:** S / M / L / XL
-
-**Critério de aceitação**
-- [ ]
-- [ ]
-
-**Fora do escopo**
