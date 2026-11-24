@@ -211,11 +211,15 @@ def salas_vazias(
     ctx: typer.Context,
     dia: Annotated[DiaSemana, typer.Argument(help="Dia da semana.")],
     horario: Annotated[str, typer.Argument(help="Início da aula, no formato HH:MM, ex. 14:00.")],
+    fim: Annotated[
+        str | None,
+        typer.Option(help="Fim do intervalo (HH:MM): a sala precisa estar livre de horario até fim, ex. 15:50."),
+    ] = None,
 ) -> None:
     """Salas sem turma no dia e horário dados (RF17)."""
     opcoes: Opcoes = ctx.obj
     with _cliente(opcoes) as cliente:
-        espacos = cliente.listar_salas_vazias(dia, horario)
+        espacos = cliente.listar_salas_vazias(dia, horario, fim)
     _imprimir(opcoes, espacos, lambda: _tabela_de_salas(espacos))
 
 

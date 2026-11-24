@@ -171,6 +171,16 @@ def test_salas_vazias_repassa_dia_e_horario(cerradinho):
 
 
 @respx.mock
+def test_salas_vazias_repassa_fim_do_intervalo(cerradinho):
+    rota = _get("/v1/salas/vazias", json=[])
+
+    resultado = cerradinho("salas-vazias", "segunda", "14:00", "--fim", "15:50")
+
+    assert resultado.exit_code == 0
+    assert rota.calls.last.request.url.params["fim"] == "15:50"
+
+
+@respx.mock
 def test_dia_invalido_e_recusado_antes_de_chamar_a_api(cerradinho):
     rota = _get("/v1/salas/vazias", json=[])
 
