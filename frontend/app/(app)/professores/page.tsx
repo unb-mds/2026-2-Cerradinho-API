@@ -102,7 +102,7 @@ export default function ProfessoresPage() {
                         <ProfessorAvatar nome={p.nome} />
                         <Link
                           href={`/professores/${p.id}`}
-                          className="font-semibold text-foreground hover:text-brand hover:underLine"
+                          className="font-semibold text-foreground hover:text-brand hover:underline"
                         >
                           {p.nome}
                         </Link>

@@ -21,7 +21,7 @@ export default function PageHeader({ title, sub, href, api }: PageHeaderProps) {
         <div className="px-4 pb-6 pt-5 lg:px-10 lg:pb-7 lg:pt-6">
           <div className="mb-4 flex items-center gap-1.5 text-[13px]">
             <Link href="/" className="flex items-center gap-1 opacity-90 transition-opacity hover:opacity-100 hover:underline">
-              <GridIcon className="h-3.5 w-3.5" /> Visão Geral
+              <GridIcon className="h-3.5 w-3.5" /> Agora no Gama
             </Link>
             <ChevronRightIcon className="h-3 w-3 opacity-70" />
             <span className="font-semibold">{title}</span>
