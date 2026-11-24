@@ -14,7 +14,7 @@ import Link from "next/link";
 import ProfessorAvatar from "@/components/ProfessorAvatar";
 
 export default function ProfessoresPage() {
-  const { professores, caminho, loading, error } = useProfessores();
+  const { professores, nomeDaDisciplina, caminho, loading, error } = useProfessores();
   const unidades = ["Todos", ...[... new Set(professores.flatMap((p) => p.unidades))].sort()];
   const [departamento, setDepartamento] = useState("Todos");
   const [busca, setBusca] = useState("");
@@ -70,7 +70,7 @@ export default function ProfessoresPage() {
                   ))}
                   {p.disciplinas.map((codigo) => (
                     <Badge key={codigo} tone="brand">
-                      {codigo}
+                      {codigo} {nomeDaDisciplina[codigo]}
                     </Badge>
                   ))}
                 </div>
@@ -119,7 +119,7 @@ export default function ProfessoresPage() {
                       <div className="flex flex-wrap gap-1.5">
                         {p.disciplinas.map((codigo) => (
                           <Badge key={codigo} tone="brand">
-                            {codigo}
+                            {codigo} {nomeDaDisciplina[codigo]}
                           </Badge>
                         ))}
                       </div>
