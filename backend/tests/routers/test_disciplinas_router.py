@@ -29,8 +29,19 @@ def test_listar_disciplinas_retorna_turmas_persistidas(client, db_session):
     assert len(body) == 1
     assert body[0]["disciplina_codigo"] == "FGA0242"
     assert body[0]["sala"] == {"descricao": "FCTE - I9/I10"}
-    assert body[0]["professores"] == [{"nome": "Ana Souza"}]
+    assert body[0]["professores"][0]["nome"] == "Ana Souza"
+    assert isinstance(body[0]["professores"][0]["id"], int)
     assert body[0]["horarios"] == [{"codigo": "6T2345", "descricao": "Sexta-feira 14:00 às 17:50"}]
+
+
+def test_listar_disciplinas_professor_tem_o_mesmo_id_de_v1_professores(client, db_session):
+    persistir_turma(db_session, _turma_capturada(), unidade="FCTE")
+    db_session.commit()
+
+    id_na_disciplina = client.get("/v1/disciplinas").json()[0]["professores"][0]["id"]
+    id_no_professor = client.get("/v1/professores").json()[0]["id"]
+
+    assert id_na_disciplina == id_no_professor
 
 
 def test_listar_disciplinas_sem_sala_devolve_descricao_vazia(client, db_session):

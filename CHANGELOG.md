@@ -13,6 +13,7 @@ Sprint 11 da Release 2. Na entrega de 25/11, esta seção vira `[Release_2] - 20
 - Chamada `GET /v1/...` de cada tela visível no site, com Copiar, Ver JSON e Docs (#257).
 - Unidades do SIGAA que falharam aparecem na mensagem de `GET /v1/execucoes` (RF16, #255).
 - SDK ganha o `fim` de `GET /v1/salas/vazias`, que tinha ficado de fora quando a rota ganhou o parâmetro no #256 (RF13).
+- `id` do professor em cada turma de `GET /v1/disciplinas`, o mesmo de `GET /v1/professores` — pedido do Daniel, que cruzava turma e professor pelo nome no front, sem dar pra linkar direto pra agenda (RF01).
 
 ### Alterado
 
