@@ -8,13 +8,14 @@ from ...client import AuthenticatedClient, Client
 from ...models.dia_semana import DiaSemana
 from ...models.espaco import Espaco
 from ...models.http_validation_error import HTTPValidationError
-from ...types import UNSET, Response
+from ...types import UNSET, Response, Unset
 
 
 def _get_kwargs(
     *,
     dia: DiaSemana,
     horario: str,
+    fim: str | Unset = UNSET,
 ) -> dict[str, Any]:
 
     params: dict[str, Any] = {}
@@ -23,6 +24,8 @@ def _get_kwargs(
     params["dia"] = json_dia
 
     params["horario"] = horario
+
+    params["fim"] = fim
 
     params = {k: v for k, v in params.items() if v is not UNSET and v is not None}
 
@@ -75,6 +78,7 @@ def sync_detailed(
     client: AuthenticatedClient | Client,
     dia: DiaSemana,
     horario: str,
+    fim: str | Unset = UNSET,
 ) -> Response[HTTPValidationError | list[Espaco]]:
     """Listar salas vazias por dia e horário
 
@@ -85,6 +89,7 @@ def sync_detailed(
     Args:
         dia (DiaSemana):
         horario (str): Início de uma aula, no formato HH:MM
+        fim (str): Fim do intervalo, no formato HH:MM. Sem ele, vale só a aula que começa em `horario`
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -97,6 +102,7 @@ def sync_detailed(
     kwargs = _get_kwargs(
         dia=dia,
         horario=horario,
+        fim=fim,
     )
 
     response = client.get_httpx_client().request(
@@ -111,6 +117,7 @@ def sync(
     client: AuthenticatedClient | Client,
     dia: DiaSemana,
     horario: str,
+    fim: str | Unset = UNSET,
 ) -> HTTPValidationError | list[Espaco] | None:
     """Listar salas vazias por dia e horário
 
@@ -121,6 +128,7 @@ def sync(
     Args:
         dia (DiaSemana):
         horario (str): Início de uma aula, no formato HH:MM
+        fim (str): Fim do intervalo, no formato HH:MM. Sem ele, vale só a aula que começa em `horario`
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -134,6 +142,7 @@ def sync(
         client=client,
         dia=dia,
         horario=horario,
+        fim=fim,
     ).parsed
 
 
@@ -142,6 +151,7 @@ async def asyncio_detailed(
     client: AuthenticatedClient | Client,
     dia: DiaSemana,
     horario: str,
+    fim: str | Unset = UNSET,
 ) -> Response[HTTPValidationError | list[Espaco]]:
     """Listar salas vazias por dia e horário
 
@@ -152,6 +162,7 @@ async def asyncio_detailed(
     Args:
         dia (DiaSemana):
         horario (str): Início de uma aula, no formato HH:MM
+        fim (str): Fim do intervalo, no formato HH:MM. Sem ele, vale só a aula que começa em `horario`
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -164,6 +175,7 @@ async def asyncio_detailed(
     kwargs = _get_kwargs(
         dia=dia,
         horario=horario,
+        fim=fim,
     )
 
     response = await client.get_async_httpx_client().request(**kwargs)
@@ -176,6 +188,7 @@ async def asyncio(
     client: AuthenticatedClient | Client,
     dia: DiaSemana,
     horario: str,
+    fim: str | Unset = UNSET,
 ) -> HTTPValidationError | list[Espaco] | None:
     """Listar salas vazias por dia e horário
 
@@ -186,6 +199,7 @@ async def asyncio(
     Args:
         dia (DiaSemana):
         horario (str): Início de uma aula, no formato HH:MM
+        fim (str): Fim do intervalo, no formato HH:MM. Sem ele, vale só a aula que começa em `horario`
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -200,5 +214,6 @@ async def asyncio(
             client=client,
             dia=dia,
             horario=horario,
+            fim=fim,
         )
     ).parsed

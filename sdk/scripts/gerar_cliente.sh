@@ -72,4 +72,15 @@ echo "Formatando e verificando o código gerado..."
 # de verdade.
 "$PYTHON" -m ruff check --fix --ignore E501 "$SDK_DIR/cerradinho_sdk/_gerado"
 
+# O gerador detecta se `httpx2` está instalado no ambiente e, se estiver,
+# gera código importando httpx2 em vez de httpx - mesmo o sdk/pyproject.toml
+# pedindo httpx (não httpx2). Isso quebra o SDK pra todo mundo que não tiver
+# httpx2 instalado (ninguém, hoje). Falha alto em vez de commitar isso.
+if grep -rl "^import httpx2\|httpx2\." "$SDK_DIR/cerradinho_sdk/_gerado" >/dev/null 2>&1; then
+    echo "O código gerado importa 'httpx2', mas o sdk/pyproject.toml declara 'httpx'." >&2
+    echo "O ambiente de '$PYTHON' provavelmente tem o pacote httpx2 instalado - remova-o" >&2
+    echo "(ou gere num venv limpo, só com as deps de sdk/pyproject.toml) e rode de novo." >&2
+    exit 1
+fi
+
 echo "Cliente regenerado em $SDK_DIR/cerradinho_sdk/_gerado"
