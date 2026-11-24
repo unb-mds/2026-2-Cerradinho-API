@@ -1,37 +1,32 @@
 # Cerradinho
 
-API aberta da UnB — dados institucionais reunidos num só lugar: disciplinas, professores, salas e cardápio do RU, coletados automaticamente por scrapers agendados a partir só de fontes públicas.
+API aberta com os dados públicos da UnB. Disciplinas, turmas, professores, salas vazias e o cardápio do RU numa API REST só, documentada e atualizada sozinha por scrapers agendados.
 
-Projeto da disciplina de Métodos de Desenvolvimento de Software (MDS), UnB FCTE, 2026/2.
+!!! warning "Não é um serviço oficial da UnB"
+    Os dados são copiados do SIGAA e do site do RU e podem estar desatualizados ou incompletos. Para matrícula e decisões importantes, confira sempre a fonte oficial.
 
-## Visão geral
+## Comece por aqui
 
-O Cerradinho não produz dado próprio. Os dados hoje ficam espalhados em vários sistemas da UnB — SIGAA, site do RU — cada um com sua própria interface, sem API pública. O Cerradinho raspa essas fontes, normaliza o resultado, e expõe tudo por uma API REST única, versionada e documentada.
+- **Quero usar os dados.** A [documentação interativa da API](https://api.3-147-228-104.sslip.io/docs) tem todas as rotas, e o [portal do desenvolvedor](https://3-147-228-104.sslip.io/desenvolvedores) tem exemplos em curl, Python e JavaScript. Para Python, há o [SDK e a CLI](https://github.com/unb-mds/2026-2-Cerradinho-API/blob/dev/sdk/README.md).
+- **Quero entender como funciona.** A [Arquitetura](ARQUITETURA.md) mostra os componentes e o fluxo da coleta, e as [decisões de arquitetura](adr/0001-base-tecnica-backend.md) explicam o porquê de cada escolha.
+- **Quero contribuir.** O [guia de contribuição](https://github.com/unb-mds/2026-2-Cerradinho-API/blob/dev/CONTRIBUTING.md) explica como preparar o ambiente, rodar os testes e abrir um pull request.
 
-## Para quem é
+## A API é o produto, o site é um exemplo
 
-- **Estudantes**, que consultam turmas, salas e cardápio pelo site, sem abrir o SIGAA e o site do RU.
-- **Devs de outras squads**, que usam os dados nos próprios projetos pela API, sem refazer scraping.
+O Cerradinho é a API. O [site](https://3-147-228-104.sslip.io) é só uma demonstração do que dá para construir com esses dados, pensada para o campus Gama, e usa apenas as rotas públicas de `/v1`. Qualquer pessoa pode construir outra aplicação, para outro campus ou outro uso, com a API, o SDK ou a CLI.
 
-## O que já funciona
+## O que a API oferece
 
-| Domínio | Rota | Fonte | Atualização |
+| Rota | O que devolve | Fonte | Atualização |
 |---|---|---|---|
-| Disciplinas e turmas | `GET /v1/disciplinas` | SIGAA público | Semanal |
-| Professores | `GET /v1/professores` | Derivado das turmas | Semanal |
-| Salas e prédios | `GET /v1/salas` | Derivado das turmas | Semanal |
-| Cardápio do RU | `GET /v1/cardapio/semana` | PDF semanal do RU | Diária |
-
-A documentação interativa da API (Swagger) fica em `/docs` com o projeto rodando localmente.
-
-## Como navegar esta documentação
-
-- **[Produto](DOCUMENTO-VISAO.md)** — por que o Cerradinho existe, pra quem, e o que ele entrega: visão de produto e requisitos.
-- **[Telas e navegação](produto/telas.md)** — o site do campus Gama em prints, no computador e no celular, e o caminho entre as telas.
-- **[Arquitetura](ARQUITETURA.md)** — como o sistema é construído: componentes, camadas, as decisões de arquitetura (ADRs) e a ficha de cada fonte de dado com seus riscos.
-- **[Processo](PROCESSO.md)** — como o time trabalha: papéis, ritos do Scrum e Definition of Done.
-- **[Gestão](scrum/sprint-planning.md)** — o dia a dia do Scrum: planejamento de sprints, atas de reunião e o checklist da release.
-- **[Estudos](estudos/estudo-git-github.md)** — o material que cada pessoa produziu antes de começar sua parte, da fundamentação técnica até as ferramentas usadas.
+| `GET /v1/disciplinas` | Turmas com horário, sala e professores | SIGAA | Semanal |
+| `GET /v1/professores` | Docentes e as disciplinas de cada um | Derivado das turmas | Semanal |
+| `GET /v1/professores/{id}/agenda` | Agenda semanal do professor | Derivado das turmas | Semanal |
+| `GET /v1/salas` | Salas e prédios | Derivado das turmas | Semanal |
+| `GET /v1/salas/vazias` | Salas sem aula num dia e horário | Derivado das turmas | Semanal |
+| `GET /v1/cardapio/semana` | Cardápio do RU por dia e refeição | PDF do RU | Diária |
+| `GET /v1/resumo` | Contagens de turmas, disciplinas, professores e salas | Derivado | Semanal |
+| `GET /v1/execucoes` | Histórico das coletas | Próprio | A cada coleta |
 
 ## Stack
 
@@ -41,21 +36,14 @@ A documentação interativa da API (Swagger) fica em `/docs` com o projeto rodan
 | Agendamento | Celery, Redis |
 | Banco | PostgreSQL 16, SQLAlchemy 2, Alembic |
 | API | FastAPI, Pydantic |
-| Frontend | Next.js, Axios, Tailwind |
+| Site de demonstração | Next.js, Tailwind |
+| SDK e CLI | httpx, Typer |
 | Qualidade | pytest, schemathesis, ruff, bandit, GitHub Actions |
 
-## Time
+## Histórico do projeto
 
-| Pessoa | Papel |
-|---|---|
-| Gabriel | Product Owner; Banco de Dados |
-| Vitor | Scrum Master; Backend |
-| Daniel | Frontend |
-| Arthur | Backend; Agendamento e Cache |
-| João Paulo | QA; Testes e CI |
-
-O Ítalo participou da Release 1 e saiu do projeto no início da Release 2.
+O Cerradinho começou em 2026 como projeto de estudantes da UnB FCTE. A visão de produto, os requisitos, o processo, as atas e os estudos dessa fase ficam na seção [Histórico](DOCUMENTO-VISAO.md), como registro.
 
 ---
 
-Código-fonte, issues e pull requests: [github.com/unb-mds/2026-2-Cerradinho-API](https://github.com/unb-mds/2026-2-Cerradinho-API). Como rodar o projeto localmente está no [README do repositório](https://github.com/unb-mds/2026-2-Cerradinho-API#como-rodar).
+Código-fonte, issues e pull requests em [github.com/unb-mds/2026-2-Cerradinho-API](https://github.com/unb-mds/2026-2-Cerradinho-API). Licença MIT.

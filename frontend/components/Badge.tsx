@@ -14,7 +14,7 @@ const TONES = {
 export default function Badge({ children, tone = "muted" }: BadgeProps) {
   return (
     <span
-      className={`inline-block whitespace-nowrap rounded-md px-2 py-0.5 font-mono text-[11px] font-semibold ${TONES[tone]}`}
+      className={`inline-block max-w-full truncate whitespace-nowrap rounded-md px-2 py-0.5 font-mono text-[11px] font-semibold ${TONES[tone]}`}
     >
       {children}
     </span>

@@ -135,7 +135,7 @@ export default function GradeSemanal({ blocos }: { blocos: BlocoDaGrade[] }) {
                                     return (
                                         <div
                                             key={chaveDoBloco(b)}
-                                            title={[`${b.codigo} · Turma ${b.numero}`, `${b.inicio}–${b.fim}`, b.sala].filter(Boolean).join("\n")}
+                                            title={[`${b.codigo} · ${b.nome}`, `Turma ${b.numero}`, `${b.inicio}–${b.fim}`, b.sala].filter(Boolean).join("\n")}
                                             style={estilo}
                                             className={`absolute overflow-hidden rounded-lg border border-border bg-muted-bg ${espacamento}`}
                                         >
@@ -145,8 +145,10 @@ export default function GradeSemanal({ blocos }: { blocos: BlocoDaGrade[] }) {
                                                 </div>
                                             ) : (
                                                 <>
-                                                    <div className="truncate font-mono text-xs font-semibold text-foreground">{b.codigo}</div>
-                                                    <div className="truncate text-xs text-foreground">Turma {b.numero}</div>
+                                                    <div className="truncate font-mono text-xs font-semibold text-foreground">
+                                                        {b.codigo} · T{b.numero}
+                                                    </div>
+                                                    <div className="truncate text-xs text-foreground">{b.nome}</div>
                                                 </>
                                             )}
                                             {b.sala && <div className="truncate font-mono text-[10px] text-muted">{b.sala}</div>}
@@ -163,7 +165,7 @@ export default function GradeSemanal({ blocos }: { blocos: BlocoDaGrade[] }) {
                                         onClick={() => setAberta(selecionada ? null : c)}
                                         aria-expanded={selecionada}
                                         aria-controls="grade-turmas-simultaneas"
-                                        title={[`${c.blocos.length} turmas · ${c.inicio}–${c.fim}`, ...c.blocos.map((b) => `${b.codigo} · Turma ${b.numero}`)].join("\n")}
+                                        title={[`${c.blocos.length} turmas · ${c.inicio}–${c.fim}`, ...c.blocos.map((b) => `${b.codigo} ${b.nome} · Turma ${b.numero}`)].join("\n")}
                                         style={estilo}
                                         className={`absolute overflow-hidden rounded-lg border text-left transition-colors ${espacamento} ${
                                             selecionada
@@ -206,7 +208,8 @@ export default function GradeSemanal({ blocos }: { blocos: BlocoDaGrade[] }) {
                         {aberta.blocos.map((b) => (
                             <li key={chaveDoBloco(b)} className="flex items-center gap-3 border-t border-border px-4 py-2.5 first:border-t-0">
                                 <span className="font-mono text-xs font-semibold text-brand">{b.codigo}</span>
-                                <span className="text-foreground">Turma {b.numero}</span>
+                                <span className="text-foreground">{b.nome}</span>
+                                <span className="text-xs text-muted">Turma {b.numero}</span>
                                 {b.sala && <span className="ml-auto font-mono text-xs text-muted">{b.sala}</span>}
                             </li>
                         ))}
@@ -241,7 +244,7 @@ function ListaPorDia({ celulas }: { celulas: Celula[] }) {
                                     </span>
                                     <span className="flex flex-col gap-0.5">
                                         <span className="text-sm text-foreground">
-                                            <span className="font-mono text-xs font-semibold text-brand">{b.codigo}</span> · Turma {b.numero}
+                                            <span className="font-mono text-xs font-semibold text-brand">{b.codigo}</span> {b.nome} · Turma {b.numero}
                                         </span>
                                         {b.sala && <span className="font-mono text-xs text-muted">{b.sala}</span>}
                                     </span>

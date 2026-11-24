@@ -1,23 +1,16 @@
 ---
 name: 📄 Documentação
-about: Criação ou atualização de documentação (requisitos, arquitetura, ADR, README...)
+about: Algo faltando, errado ou confuso na documentação
 title: "[DOCS] "
 labels: documentation
 assignees: ''
 ---
 
-**Descrição**
+**Qual documento ou página**
 
 
-**Área** (requisitos, arquitetura, ADR, README, processo...)
+**O que está faltando, errado ou confuso**
 
 
-**Motivação**
+**Sugestão**
 
-
-**Release:** R1 / R2
-**Tamanho:** S / M / L / XL
-
-**Critério de aceitação**
-- [ ]
-- [ ]

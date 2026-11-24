@@ -404,7 +404,7 @@ export default function PortalDesenvolvedorPage() {
             rel="noreferrer"
             className="hover:text-brand"
           >
-            Docs da equipe
+            Documentação do projeto
           </a>
         </div>
       </footer>
