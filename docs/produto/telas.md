@@ -108,7 +108,7 @@ Chamada: `GET /v1/salas/vazias?dia=...&horario=...&fim=...`, uma por dia da sema
 
 ## Cardápio
 
-O cardápio da semana, com café da manhã, almoço e jantar, aberto no dia de hoje. Dá para navegar entre semanas e filtrar por dia. Por enquanto, a API traz o cardápio do RU Darcy Ribeiro, e a tela avisa isso.
+O cardápio da semana, com café da manhã, almoço e jantar, aberto no dia de hoje. Dá para navegar entre semanas e filtrar por dia.
 
 Chamada: `GET /v1/cardapio/semana?data_inicio=...`
 

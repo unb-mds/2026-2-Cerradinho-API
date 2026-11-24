@@ -12,6 +12,7 @@ Sprint 11 da Release 2. Na entrega de 25/11, esta seção vira `[Release_2] - 20
 - Home "Agora no Gama" no site, com as salas livres no bloco de agora, o RU de hoje e a busca de disciplinas (#257).
 - Chamada `GET /v1/...` de cada tela visível no site, com Copiar, Ver JSON e Docs (#257).
 - Unidades do SIGAA que falharam aparecem na mensagem de `GET /v1/execucoes` (RF16, #255).
+- SDK ganha o `fim` de `GET /v1/salas/vazias`, que tinha ficado de fora quando a rota ganhou o parâmetro no #256 (RF13).
 
 ### Alterado
 
@@ -23,6 +24,7 @@ Sprint 11 da Release 2. Na entrega de 25/11, esta seção vira `[Release_2] - 20
 - `GET /v1/disciplinas?limite=10` levando cerca de 9,5s, porque montava todas as turmas para devolver uma página. Agora pagina no banco e responde em cerca de 20ms (RF01, #256).
 - Turma em sala combinada (`I9/I10`) não ocupava as salas individuais em `GET /v1/salas/vazias` (RF17, #256).
 - Produção sem cardápio de 16 a 19/11, porque o servidor não tinha a correção do #252. Corrigido com o deploy de 20/11 e o hotfix na `main` (#258).
+- `sdk/scripts/gerar_cliente.sh` podia regerar o cliente importando `httpx2` em vez de `httpx` (o `sdk/pyproject.toml` só declara `httpx`), se o ambiente que roda o gerador tivesse o pacote `httpx2` instalado por qualquer outra dependência. O script agora falha alto em vez de deixar passar (RF13).
 
 ## [1.4] - 2026-11-18
 

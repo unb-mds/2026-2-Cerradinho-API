@@ -175,13 +175,13 @@ class CerradinhoClient:
             raise RespostaInesperada(resposta.status_code, resposta.parsed)
         return resposta.parsed
 
-    def listar_salas_vazias(self, dia: DiaSemana | str, horario: str, fim: str | None = None) -> list[Espaco]:
+    def listar_salas_vazias(self, dia: DiaSemana | str, horario: str, *, fim: str | None = None) -> list[Espaco]:
         """Salas sem nenhuma turma cadastrada no dia/horário dados (RF17).
 
         `dia` é um dos nomes de `DiaSemana` ("segunda", "terca", ...); `horario`
         é o início de uma aula, no formato "HH:MM" (ex. "14:00"). Com `fim`, a
         sala precisa estar livre em todas as aulas que começam entre `horario`
-        e `fim` (ex. de "14:00" a "15:50")."""
+        e `fim` (ex. "14:00" a "15:50" cobre duas aulas)."""
         self._verificar_aberto()
         resposta = _salas_vazias.sync_detailed(
             client=self._cliente,

@@ -2,7 +2,7 @@
 
 import { Suspense, useState } from "react";
 import { useSearchParams } from "next/navigation";
-import { useDisciplinas } from "@/hooks/useDisciplinas";
+import { emMinutos, useDisciplinas } from "@/hooks/useDisciplinas";
 import ApiStatus from "@/components/ApiStatus";
 import PageHeader from "@/components/PageHeader";
 import EstadoVazio from "@/components/EstadoVazio";
@@ -15,7 +15,8 @@ import { useMostrarMais } from "@/hooks/useMostrarMais";
 import MostrarMais from "@/components/MostrarMais";
 
 const DIAS = ["Todos", "Seg", "Ter", "Qua", "Qui", "Sex", "Sáb"];
-const HORARIOS = ["Todos", "08:00", "10:00", "12:00", "14:00", "16:00", "18:00", "19:00", "20:50"];
+// Inícios de aula do Gama (não há turma à noite na FCTE).
+const HORARIOS = ["Todos", "08:00", "10:00", "12:00", "14:00", "16:00", "18:00"];
 
 // A busca vem da URL (/disciplinas?busca=cálculo), que é por onde a busca da home chega,
 // e volta pra ela enquanto o aluno digita, pra o link poder ser compartilhado.
@@ -50,7 +51,8 @@ function Disciplinas() {
   const filtradas = disciplinas.filter((d) => {
     const matchDepartamento = departamento === "Todos" || d.departamento === departamento;
     const matchDia = dia === "Todos" || d.dias.includes(dia);
-    const matchHorario = horario === "Todos" || d.horario.startsWith(horario);
+    // Turma com aula nesse horário em algum dia da semana, não só no primeiro.
+    const matchHorario = horario === "Todos" || d.aulas.some((a) => a.inicio <= emMinutos(horario) && emMinutos(horario) < a.fim);
     const matchBusca = casaBusca(busca, d.nome, d.codigo, d.professor);
     return matchDepartamento && matchDia && matchHorario && matchBusca;
   });

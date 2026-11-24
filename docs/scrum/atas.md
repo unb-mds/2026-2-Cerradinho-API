@@ -218,3 +218,23 @@ Registro das reuniões do time: presença, o que foi feito e o que ficou combina
 **Pendências / próximos passos (Sprint 10, 15/11 a 21/11):** Vitor faz os ajustes finais de salas vazias e agenda e os exemplos do SDK (já em andamento, PR #250). Daniel fecha as telas finais e o GitPage com a visão de produto. Arthur faz os ajustes finais de cache, rate limit e log de execução. Gabriel deixa a produção estável e fecha o cardápio semanal — e ainda carrega as duas issues da Sprint 9. João Paulo fecha a cobertura/mutação/sabotagem do RNF09 (adiantado no #248) e os contratos completos do RNF04. RF20 continua sem issue própria — pendente de alguém com permissão criar.
 
 ---
+
+### Segunda-feira, 23/11 — Review da Sprint 10 e planning da Sprint 11
+
+**Presentes:** Vitor, Arthur, Gabriel, Daniel, João Paulo
+
+**Progresso:**
+
+- **Vitor**: fechou os ajustes finais de salas vazias e agenda e os exemplos do SDK (issues #207/#208, PR #250) — removeu o `"A DEFINIR DOCENTE"` da listagem de professores, expôs o `X-Total-Count` no CORS e cobriu os 8 domínios da API no exemplo do SDK. Revisou e aprovou o PR #249 do Arthur (só documentação, sem achado) e o #251 do Daniel, que resolveu o caso das 12 turmas simultâneas na agenda que eu tinha reportado na revisão do próprio #250 — o Daniel agrupou turmas com o mesmo horário num bloco só, com lista expansível.
+
+- **Daniel**: entregou o recorte do frontend pro campus Gama (PR #257) — a home virou "Agora no Gama" (salas livres agora, cardápio do dia, busca de disciplinas), cada tela passou a mostrar a chamada `GET /v1/...` real por trás dela, e corrigiu o caso das 12 turmas simultâneas na agenda (#251). Continuou no PR #260: lista de professores do Gama cruzando `/professores` com `/disciplinas` (de 114 pra 128 docentes), avisos de RU fechado no fim de semana no Gama, e a página de telas/navegação do site de documentação com os prints de produção. Fechou com um pente fino pré-feature-freeze no PR #261: cardápio virou "RU UnB" (os campi são praticamente iguais), corrigiu um erro de hidratação real em Cardápio/Salas Vazias (React #418, calculando "hoje" na pré-renderização em vez de esperar a hora do navegador) e o filtro de horário de Disciplinas, que só olhava o primeiro horário da turma.
+
+- **Gabriel**: corrigiu o parser do cardápio do RU, que tinha quebrado em produção desde 16/11 porque o PDF passou a trazer a data entre parênteses — PR #252 (dev) e #258 (levado pra `main`). Reescreveu `GET /v1/disciplinas` pra paginar no banco em vez de em Python (`limite=10` caiu de ~9,5s pra ~20ms) e `GET /v1/salas/vazias` pra semana inteira em blocos de 2h com o parâmetro `fim` — PR #256, fechando parte das minhas issues #207/#216. Corrigiu o `/v1/resumo` que ainda contava o `"A DEFINIR DOCENTE"` depois que eu tirei ele da listagem de professores — PR #254. Preparou o repositório pra contribuição externa (badges no README, CONTRIBUTING com fluxo de fork, SECURITY.md) — PR #253. Publicou a release note da v1.4 — PR #259. Fechou as duas issues da Sprint 9 (#203, #204).
+
+- **Arthur**: o log de execução passa a informar quais unidades falharam na raspagem de disciplinas, não só o total persistido — PR #255.
+
+- **João Paulo**: sem PR desde o #248 (16/11). RF04 (contratos completos) não avançou esta sprint.
+
+**Pendências / próximos passos (Sprint 11, 22/11 a 25/11 — entrega da R2):** Vitor corrige os bugs que faltarem em disciplinas/features derivadas/SDK e confere CI verde (#216), e fecha a retrospectiva final com as métricas da R2 — velocity, issues e PRs por sprint (#217). Daniel fecha os slides da apresentação final. Arthur confere que a API e o frontend estão acessíveis em produção. Gabriel escreve a release note da R2, mergeia a `dev` na `main` e cria a tag da release. João Paulo confere o checklist final do board contra a entrega, com CI verde e SAST sem achado alto no commit da entrega. RF20 continua sem issue própria.
+
+---

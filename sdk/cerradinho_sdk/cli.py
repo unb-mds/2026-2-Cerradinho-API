@@ -219,7 +219,7 @@ def salas_vazias(
     """Salas sem turma no dia e horário dados (RF17)."""
     opcoes: Opcoes = ctx.obj
     with _cliente(opcoes) as cliente:
-        espacos = cliente.listar_salas_vazias(dia, horario, fim)
+        espacos = cliente.listar_salas_vazias(dia, horario, fim=fim)
     _imprimir(opcoes, espacos, lambda: _tabela_de_salas(espacos))
 
 

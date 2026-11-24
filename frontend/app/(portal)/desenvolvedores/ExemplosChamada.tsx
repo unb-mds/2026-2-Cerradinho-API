@@ -12,13 +12,13 @@ const ABAS: { id: Linguagem; label: string }[] = [
 ];
 
 function exemplos(baseUrl: string): Record<Linguagem, string> {
-  const url = `${baseUrl}/salas/vazias?dia=segunda&horario=08:00`;
+  const url = `${baseUrl}/salas/vazias?dia=segunda&horario=14:00&fim=15:50`;
   return {
     curl: `curl "${url}"`,
     python: [
       "import requests",
       "",
-      `resposta = requests.get("${baseUrl}/salas/vazias", params={"dia": "segunda", "horario": "08:00"})`,
+      `resposta = requests.get("${baseUrl}/salas/vazias", params={"dia": "segunda", "horario": "14:00", "fim": "15:50"})`,
       "salas = resposta.json()",
     ].join("\n"),
     javascript: [

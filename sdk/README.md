@@ -18,7 +18,6 @@ from cerradinho_sdk import CerradinhoClient, ProfessorNaoEncontrado
 with CerradinhoClient("https://api.<ip>.sslip.io") as cerradinho:
     turmas = cerradinho.listar_disciplinas()
     salas_vazias = cerradinho.listar_salas_vazias(dia="segunda", horario="14:00")
-    livres_a_tarde = cerradinho.listar_salas_vazias(dia="segunda", horario="14:00", fim="17:50")
     cardapio = cerradinho.obter_cardapio_semana()
     resumo = cerradinho.obter_resumo()  # só as contagens, sem baixar a lista inteira
 
@@ -38,6 +37,13 @@ with CerradinhoClient("https://api.<ip>.sslip.io") as cerradinho:
 O total depois do filtro vem no cabeçalho `X-Total-Count` da resposta HTTP,
 que esta versão do SDK não expõe — pagine conferindo se a página voltou
 mais curta que o `limite` pedido.
+
+`listar_salas_vazias` aceita `fim`, pra cobrir mais de uma aula de uma vez
+(ex. `fim="15:50"` cobre as aulas que começam entre `horario` e `fim`):
+
+```python
+    vazias_na_tarde = cerradinho.listar_salas_vazias(dia="segunda", horario="14:00", fim="17:50")
+```
 
 `base_url` é obrigatório — não tem um padrão de produção embutido (o IP da instância ainda não é fixo, ver `docs/DEPLOY.md`). Pra testar contra um ambiente local:
 
