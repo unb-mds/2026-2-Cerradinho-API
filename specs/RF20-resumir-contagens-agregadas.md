@@ -2,7 +2,7 @@
 
 | Release | Responsável | Issue |
 |---|---|---|
-| R2 | Vitor | pendente — ver observação na rastreabilidade |
+| R2 | Vitor | [#263](https://github.com/unb-mds/2026-2-Cerradinho-API/issues/263) |
 
 **Critérios de aceitação**
 - `GET /v1/resumo` devolve o total de turmas, disciplinas, professores e salas, sem a lista de cada um.
@@ -15,4 +15,3 @@
 
 - **PRs:** [#241](https://github.com/unb-mds/2026-2-Cerradinho-API/pull/241)
 - **Testes:** [`tests/routers/test_resumo_router.py`](https://github.com/unb-mds/2026-2-Cerradinho-API/blob/dev/backend/tests/routers/test_resumo_router.py)
-- **Observação:** issue própria não foi criada ainda (ação de escrita externa bloqueada nesta sessão) — criar e atualizar esta linha antes do PR.

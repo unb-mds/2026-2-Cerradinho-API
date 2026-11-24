@@ -37,6 +37,7 @@ export function turmasSemHorario(agenda: Agenda): TurmaAgenda[] {
 
 export interface BlocoDaGrade {
   codigo: string;
+  nome: string;
   numero: string;
   dia: string;
   inicio: string;
@@ -66,6 +67,7 @@ export function blocosDaAgenda(agenda: Agenda): BlocoDaGrade[] {
       if (!existente) {
         blocos.set(chave, {
           codigo: turma.disciplina_codigo,
+          nome: turma.disciplina_nome,
           numero: turma.numero,
           dia: h.dia,
           inicio: h.inicio,

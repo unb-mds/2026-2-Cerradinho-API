@@ -10,7 +10,7 @@ Não abra issue pública para falha de segurança, porque ela fica visível para
 
 Use o [reporte privado do GitHub](https://github.com/unb-mds/2026-2-Cerradinho-API/security/advisories/new), na aba Security do repositório. Conte o que encontrou, como reproduzir e qual o impacto que você imagina.
 
-O time responde em até 7 dias. Como é um projeto de disciplina feito por estudantes, não há prazo garantido para a correção, mas falhas confirmadas têm prioridade sobre qualquer outra tarefa.
+Quem mantém o projeto responde em até 7 dias. Como é um projeto mantido por voluntários, não há prazo garantido para a correção, mas falhas confirmadas têm prioridade sobre qualquer outra tarefa.
 
 ## Escopo
 

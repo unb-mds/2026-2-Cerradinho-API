@@ -1,23 +1,20 @@
 ---
 name: 🐛 Bug
-about: Um comportamento incorreto no sistema
+about: Algo funcionando errado na API, no site, no SDK ou na CLI
 title: "[BUG] "
 labels: bug
 assignees: ''
 ---
 
-**Descrição**
+**O que aconteceu**
 
 
 **Como reproduzir**
 1.
 2.
 
-**Esperado vs. atual**
+**O que era esperado**
 
 
-**Release:** R1 / R2
-**Tamanho:** S / M / L / XL
+**Onde** (API, site, SDK, CLI) e, se for a API, a rota e os parâmetros usados
 
-**Critério de aceitação**
-- [ ]
