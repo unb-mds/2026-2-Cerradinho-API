@@ -169,7 +169,17 @@ def test_listar_salas_vazias(cerradinho):
 
     assert rota.calls.last.request.url.params["dia"] == "segunda"
     assert rota.calls.last.request.url.params["horario"] == "14:00"
+    assert "fim" not in rota.calls.last.request.url.params
     assert [s.nome for s in vazias] == ["MOCAP"]
+
+
+@respx.mock
+def test_listar_salas_vazias_passa_fim(cerradinho):
+    rota = respx.get(f"{BASE_URL}/v1/salas/vazias").mock(return_value=httpx.Response(200, json=[]))
+
+    cerradinho.listar_salas_vazias(dia="segunda", horario="14:00", fim="17:50")
+
+    assert rota.calls.last.request.url.params["fim"] == "17:50"
 
 
 @respx.mock
