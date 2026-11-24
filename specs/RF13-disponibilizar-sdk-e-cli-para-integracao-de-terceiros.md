@@ -18,5 +18,5 @@
 
 ## Rastreabilidade
 
-- **PRs:** [#241](https://github.com/unb-mds/2026-2-Cerradinho-API/pull/241) (SDK), [#245](https://github.com/unb-mds/2026-2-Cerradinho-API/pull/245) (CLI)
+- **PRs:** [#241](https://github.com/unb-mds/2026-2-Cerradinho-API/pull/241) (SDK), [#245](https://github.com/unb-mds/2026-2-Cerradinho-API/pull/245) (CLI), [#262](https://github.com/unb-mds/2026-2-Cerradinho-API/pull/262) (`fim` de salas vazias, proteção do script de geração)
 - **Testes:** [`sdk/tests/test_client.py`](https://github.com/unb-mds/2026-2-Cerradinho-API/blob/dev/sdk/tests/test_client.py) — contra respostas HTTP mockadas (`respx`), validado também de ponta a ponta contra o backend real antes do commit; [`sdk/tests/test_cli.py`](https://github.com/unb-mds/2026-2-Cerradinho-API/blob/dev/sdk/tests/test_cli.py) — CLI e SDK juntos, contra HTTP mockado (`respx`).
