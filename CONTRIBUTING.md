@@ -1,11 +1,11 @@
 # Como contribuir
 
-Obrigado pelo interesse no Cerradinho. Toda contribuição ajuda, seja código, documentação, um bug reportado ou um dado errado que você encontrou. Quem participa segue o [Código de Conduta](CODE_OF_CONDUCT.md).
+Obrigado pelo interesse no Cerradinho. Toda contribuição ajuda, seja código, documentação, um bug reportado ou um dado errado que você encontrou. Quem participa segue o [Código de Conduta](https://github.com/unb-mds/2026-2-Cerradinho-API/blob/dev/CODE_OF_CONDUCT.md).
 
 ## Antes de começar
 
 - **Bug ou dado errado:** abra uma [issue](https://github.com/unb-mds/2026-2-Cerradinho-API/issues/new/choose) contando o que aconteceu e como reproduzir.
-- **Falha de segurança:** não abra issue pública. Siga a [política de segurança](SECURITY.md).
+- **Falha de segurança:** não abra issue pública. Siga a [política de segurança](https://github.com/unb-mds/2026-2-Cerradinho-API/blob/dev/SECURITY.md).
 - **Ideia nova:** abra uma issue de feature e espere uma resposta antes de escrever o código, assim ninguém faz trabalho repetido ou fora do escopo.
 - **Quer só programar?** Procure as issues com [`good first issue`](https://github.com/unb-mds/2026-2-Cerradinho-API/labels/good%20first%20issue) e comente que vai pegar.
 
@@ -39,7 +39,7 @@ ruff check .
 bandit -r app -lll
 ```
 
-Os testes de integração precisam do Postgres do `docker compose up` e são pulados sem ele. Os detalhes estão no [README do backend](backend/README.md).
+Os testes de integração precisam do Postgres do `docker compose up` e são pulados sem ele. Os detalhes estão no [README do backend](https://github.com/unb-mds/2026-2-Cerradinho-API/blob/dev/backend/README.md).
 
 ### Frontend (site)
 
@@ -61,7 +61,7 @@ pytest
 ruff check .
 ```
 
-Se o contrato da API mudar, regenere o cliente com `sdk/scripts/gerar_cliente.sh`. O [README do SDK](sdk/README.md) explica como.
+Se o contrato da API mudar, regenere o cliente com `sdk/scripts/gerar_cliente.sh`. O [README do SDK](https://github.com/unb-mds/2026-2-Cerradinho-API/blob/dev/sdk/README.md) explica como.
 
 ## Commits
 
@@ -84,7 +84,7 @@ tipo: descrição curta
 
 Exemplos: `feat: adiciona endpoints /v1/professores e /v1/salas`, `fix: aceita a data entre parenteses no pdf do cardapio do RU`.
 
-Mudança que quebra quem já usa a API leva `!` depois do tipo (`feat!: ...`) e precisa ser discutida numa issue antes, porque a API é versionada ([ADR 0005](docs/adr/0005-api-versionada-desde-o-inicio.md)).
+Mudança que quebra quem já usa a API leva `!` depois do tipo (`feat!: ...`) e precisa ser discutida numa issue antes, porque a API é versionada ([ADR 0005](https://github.com/unb-mds/2026-2-Cerradinho-API/blob/dev/docs/adr/0005-api-versionada-desde-o-inicio.md)).
 
 ## Pull requests
 
@@ -98,7 +98,7 @@ Mudança que quebra quem já usa a API leva `!` depois do tipo (`feat!: ...`) e 
 
 ### Onde cada coisa fica
 
-- **Scrapers** só acessam a fonte. **Parsers** só transformam o conteúdo no contrato Pydantic. **Routers** só recebem a requisição e chamam o domínio. A tabela completa está nos [componentes do backend](docs/ARQUITETURA.md#nivel-3-componente).
+- **Scrapers** só acessam a fonte. **Parsers** só transformam o conteúdo no contrato Pydantic. **Routers** só recebem a requisição e chamam o domínio. A tabela completa está nos [componentes do backend](https://github.com/unb-mds/2026-2-Cerradinho-API/blob/dev/docs/ARQUITETURA.md#nivel-3-componente).
 - Regra de negócio, como normalizar o nome de um professor ou calcular salas vazias, fica em `app/domain/`, num lugar só.
 - Consulta ao banco passa pelo domínio e pelos models SQLAlchemy, nunca direto no router.
 - No frontend, chamada à API fica nos hooks de `frontend/hooks/`, fora dos componentes visuais.
@@ -112,7 +112,7 @@ Mudança que quebra quem já usa a API leva `!` depois do tipo (`feat!: ...`) e 
 
 ### Dependências
 
-Antes de escrever algo do zero, veja se existe um pacote mantido que resolve, como `slowapi` para rate limit ou `Typer` para a CLI. Dependência nova precisa ser conferida: se o pacote existe, é mantido e é confiável. Troca de tecnologia relevante ganha um [ADR](docs/adr/template.md).
+Antes de escrever algo do zero, veja se existe um pacote mantido que resolve, como `slowapi` para rate limit ou `Typer` para a CLI. Dependência nova precisa ser conferida: se o pacote existe, é mantido e é confiável. Troca de tecnologia relevante ganha um [ADR](https://github.com/unb-mds/2026-2-Cerradinho-API/blob/dev/docs/adr/template.md).
 
 ### Testes
 
