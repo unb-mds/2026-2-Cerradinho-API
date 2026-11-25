@@ -83,13 +83,15 @@ def sync_detailed(
     """Listar salas vazias por dia e horário
 
      Lista as salas sem nenhuma turma cadastrada no dia e horário dados (RF17). `horario` é o início de
-    uma aula, no formato "HH:MM" (ex.: "14:00"). "Vazia" é só "sem aula cadastrada via RF01" — não
-    reflete reserva informal, evento ou uso fora da grade de disciplinas.
+    uma aula, no formato "HH:MM" (ex.: "14:00"). Com `fim`, a sala precisa estar livre em todas as aulas
+    que começam entre `horario` e `fim` (ex.: de "14:00" a "15:50"). "Vazia" é só "sem aula cadastrada
+    via RF01" — não reflete reserva informal, evento ou uso fora da grade de disciplinas.
 
     Args:
         dia (DiaSemana):
         horario (str): Início de uma aula, no formato HH:MM
-        fim (str): Fim do intervalo, no formato HH:MM. Sem ele, vale só a aula que começa em `horario`
+        fim (str | Unset): Fim do intervalo, no formato HH:MM. Sem ele, vale só a aula que começa
+            em `horario`
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -122,13 +124,15 @@ def sync(
     """Listar salas vazias por dia e horário
 
      Lista as salas sem nenhuma turma cadastrada no dia e horário dados (RF17). `horario` é o início de
-    uma aula, no formato "HH:MM" (ex.: "14:00"). "Vazia" é só "sem aula cadastrada via RF01" — não
-    reflete reserva informal, evento ou uso fora da grade de disciplinas.
+    uma aula, no formato "HH:MM" (ex.: "14:00"). Com `fim`, a sala precisa estar livre em todas as aulas
+    que começam entre `horario` e `fim` (ex.: de "14:00" a "15:50"). "Vazia" é só "sem aula cadastrada
+    via RF01" — não reflete reserva informal, evento ou uso fora da grade de disciplinas.
 
     Args:
         dia (DiaSemana):
         horario (str): Início de uma aula, no formato HH:MM
-        fim (str): Fim do intervalo, no formato HH:MM. Sem ele, vale só a aula que começa em `horario`
+        fim (str | Unset): Fim do intervalo, no formato HH:MM. Sem ele, vale só a aula que começa
+            em `horario`
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -156,13 +160,15 @@ async def asyncio_detailed(
     """Listar salas vazias por dia e horário
 
      Lista as salas sem nenhuma turma cadastrada no dia e horário dados (RF17). `horario` é o início de
-    uma aula, no formato "HH:MM" (ex.: "14:00"). "Vazia" é só "sem aula cadastrada via RF01" — não
-    reflete reserva informal, evento ou uso fora da grade de disciplinas.
+    uma aula, no formato "HH:MM" (ex.: "14:00"). Com `fim`, a sala precisa estar livre em todas as aulas
+    que começam entre `horario` e `fim` (ex.: de "14:00" a "15:50"). "Vazia" é só "sem aula cadastrada
+    via RF01" — não reflete reserva informal, evento ou uso fora da grade de disciplinas.
 
     Args:
         dia (DiaSemana):
         horario (str): Início de uma aula, no formato HH:MM
-        fim (str): Fim do intervalo, no formato HH:MM. Sem ele, vale só a aula que começa em `horario`
+        fim (str | Unset): Fim do intervalo, no formato HH:MM. Sem ele, vale só a aula que começa
+            em `horario`
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -193,13 +199,15 @@ async def asyncio(
     """Listar salas vazias por dia e horário
 
      Lista as salas sem nenhuma turma cadastrada no dia e horário dados (RF17). `horario` é o início de
-    uma aula, no formato "HH:MM" (ex.: "14:00"). "Vazia" é só "sem aula cadastrada via RF01" — não
-    reflete reserva informal, evento ou uso fora da grade de disciplinas.
+    uma aula, no formato "HH:MM" (ex.: "14:00"). Com `fim`, a sala precisa estar livre em todas as aulas
+    que começam entre `horario` e `fim` (ex.: de "14:00" a "15:50"). "Vazia" é só "sem aula cadastrada
+    via RF01" — não reflete reserva informal, evento ou uso fora da grade de disciplinas.
 
     Args:
         dia (DiaSemana):
         horario (str): Início de uma aula, no formato HH:MM
-        fim (str): Fim do intervalo, no formato HH:MM. Sem ele, vale só a aula que começa em `horario`
+        fim (str | Unset): Fim do intervalo, no formato HH:MM. Sem ele, vale só a aula que começa
+            em `horario`
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.

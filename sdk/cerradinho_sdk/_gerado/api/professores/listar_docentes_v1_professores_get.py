@@ -13,7 +13,7 @@ from ...types import UNSET, Response, Unset
 def _get_kwargs(
     *,
     nome: None | str | Unset = UNSET,
-    limite: int | None | Unset = UNSET,
+    limite: int | Unset = UNSET,
     offset: int | Unset = 0,
 ) -> dict[str, Any]:
 
@@ -26,12 +26,7 @@ def _get_kwargs(
         json_nome = nome
     params["nome"] = json_nome
 
-    json_limite: int | None | Unset
-    if isinstance(limite, Unset):
-        json_limite = UNSET
-    else:
-        json_limite = limite
-    params["limite"] = json_limite
+    params["limite"] = limite
 
     params["offset"] = offset
 
@@ -85,7 +80,7 @@ def sync_detailed(
     *,
     client: AuthenticatedClient | Client,
     nome: None | str | Unset = UNSET,
-    limite: int | None | Unset = UNSET,
+    limite: int | Unset = UNSET,
     offset: int | Unset = 0,
 ) -> Response[HTTPValidationError | list[Docente]]:
     """Listar professores
@@ -98,7 +93,7 @@ def sync_detailed(
 
     Args:
         nome (None | str | Unset): Busca parcial por nome, normalizada
-        limite (int | None | Unset): Máximo de docentes a devolver
+        limite (int | Unset): Máximo de docentes a devolver
         offset (int | Unset): Quantos docentes pular, pra paginar Default: 0.
 
     Raises:
@@ -126,7 +121,7 @@ def sync(
     *,
     client: AuthenticatedClient | Client,
     nome: None | str | Unset = UNSET,
-    limite: int | None | Unset = UNSET,
+    limite: int | Unset = UNSET,
     offset: int | Unset = 0,
 ) -> HTTPValidationError | list[Docente] | None:
     """Listar professores
@@ -139,7 +134,7 @@ def sync(
 
     Args:
         nome (None | str | Unset): Busca parcial por nome, normalizada
-        limite (int | None | Unset): Máximo de docentes a devolver
+        limite (int | Unset): Máximo de docentes a devolver
         offset (int | Unset): Quantos docentes pular, pra paginar Default: 0.
 
     Raises:
@@ -162,7 +157,7 @@ async def asyncio_detailed(
     *,
     client: AuthenticatedClient | Client,
     nome: None | str | Unset = UNSET,
-    limite: int | None | Unset = UNSET,
+    limite: int | Unset = UNSET,
     offset: int | Unset = 0,
 ) -> Response[HTTPValidationError | list[Docente]]:
     """Listar professores
@@ -175,7 +170,7 @@ async def asyncio_detailed(
 
     Args:
         nome (None | str | Unset): Busca parcial por nome, normalizada
-        limite (int | None | Unset): Máximo de docentes a devolver
+        limite (int | Unset): Máximo de docentes a devolver
         offset (int | Unset): Quantos docentes pular, pra paginar Default: 0.
 
     Raises:
@@ -201,7 +196,7 @@ async def asyncio(
     *,
     client: AuthenticatedClient | Client,
     nome: None | str | Unset = UNSET,
-    limite: int | None | Unset = UNSET,
+    limite: int | Unset = UNSET,
     offset: int | Unset = 0,
 ) -> HTTPValidationError | list[Docente] | None:
     """Listar professores
@@ -214,7 +209,7 @@ async def asyncio(
 
     Args:
         nome (None | str | Unset): Busca parcial por nome, normalizada
-        limite (int | None | Unset): Máximo de docentes a devolver
+        limite (int | Unset): Máximo de docentes a devolver
         offset (int | Unset): Quantos docentes pular, pra paginar Default: 0.
 
     Raises:

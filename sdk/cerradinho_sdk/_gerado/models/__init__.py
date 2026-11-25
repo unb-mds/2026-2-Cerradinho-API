@@ -17,7 +17,6 @@ from .sala import Sala
 from .turma import Turma
 from .turma_agenda import TurmaAgenda
 from .validation_error import ValidationError
-from .validation_error_context import ValidationErrorContext
 
 __all__ = (
     "Agenda",
@@ -37,5 +36,4 @@ __all__ = (
     "Turma",
     "TurmaAgenda",
     "ValidationError",
-    "ValidationErrorContext",
 )
