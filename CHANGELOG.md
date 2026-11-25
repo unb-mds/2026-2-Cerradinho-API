@@ -13,7 +13,9 @@ Entrega da Release 2, com as Sprints 10 e 11 (19/11 a 25/11/2026). O resumo da r
 - Chamada `GET /v1/...` de cada tela visível no site, com Copiar, Ver JSON e Docs (#257).
 - Unidades do SIGAA que falharam aparecem na mensagem de `GET /v1/execucoes` (RF16, #255).
 - SDK ganha o `fim` de `GET /v1/salas/vazias`, que tinha ficado de fora quando a rota ganhou o parâmetro no #256 (RF13, #262).
-- `id` do professor em cada turma de `GET /v1/disciplinas`, o mesmo de `GET /v1/professores` — pedido do Daniel, que cruzava turma e professor pelo nome no front, sem dar pra linkar direto pra agenda (RF01).
+- `id` do professor em cada turma de `GET /v1/disciplinas`, o mesmo de `GET /v1/professores`. Antes o site cruzava turma e professor pelo nome e não dava para linkar direto para a agenda (RF01, #268).
+- Na tela de Disciplinas, cada professor da turma é um link para a agenda dele (RF18, #269).
+- Opção `--fim` no comando `salas-vazias` da CLI, para o intervalo inteiro (RF13, RF17, #267).
 - Respostas da API comprimidas com gzip para quem manda `Accept-Encoding: gzip`. `GET /v1/disciplinas` sem limite cai de cerca de 2,4 MB para 240 KB (RNF02, #260).
 - Aviso no cardápio e na home de que o RU do Gama não abre no fim de semana (#260).
 - Página de telas e navegação, release notes e tema do Cerradinho no site de documentação (#260).
@@ -24,6 +26,8 @@ Entrega da Release 2, com as Sprints 10 e 11 (19/11 a 25/11/2026). O resumo da r
 - Salas Vazias mostra a semana inteira em blocos de 2h, das 8h às 17h50, só com as salas I1 a I10 e S1 a S10 da FCTE (RF17, #256).
 - O site mostra só o campus Gama. A API continua servindo a UnB inteira (#257).
 - README, CONTRIBUTING e templates de PR e issue voltados para quem contribui de fora, com um template novo para dado errado. O material de processo foi para a seção Histórico do site de documentação.
+- Guia de contribuição dentro do site de documentação, e menus com subgrupos que abrem e fecham (#270, #271).
+- Cliente do SDK regerado do OpenAPI atual, e checklist da Release 2 comparando o board com a entrega (RF13, #267).
 
 ### Corrigido
 
