@@ -1,6 +1,6 @@
 # Processo — Cerradinho
 
-Como o time se organiza: papéis, ritos do Scrum, critérios de pronto e registro do trabalho. As regras de commit, pull request e código, que valem para qualquer pessoa, estão no [CONTRIBUTING.md](https://github.com/unb-mds/2026-2-Cerradinho-API/blob/dev/CONTRIBUTING.md). As regras só do time, como as branches, estão na seção 10.
+Como o time se organiza: papéis, ritos do Scrum, critérios de pronto e registro do trabalho. As regras de commit, pull request e código, que valem para qualquer pessoa, estão no [CONTRIBUTING.md](CONTRIBUIR.md). As regras só do time, como as branches, estão na seção 10.
 
 ## 1. Papéis
 

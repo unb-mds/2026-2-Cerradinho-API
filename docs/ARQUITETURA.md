@@ -223,4 +223,4 @@ Cada decisão relevante tem um ADR em [`docs/adr/`](adr/):
 | [0010](adr/0010-sala-por-horario-nao-por-turma.md) | Sala por horário, não por turma |
 | [0011](adr/0011-aws-lightsail-para-deploy.md) | AWS Lightsail para hospedagem |
 
-Os padrões de código (separação de camadas, nomenclatura, tratamento de erro) estão no [CONTRIBUTING.md](https://github.com/unb-mds/2026-2-Cerradinho-API/blob/dev/CONTRIBUTING.md).
+Os padrões de código (separação de camadas, nomenclatura, tratamento de erro) estão no [CONTRIBUTING.md](CONTRIBUIR.md).
