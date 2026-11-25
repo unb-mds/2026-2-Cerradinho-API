@@ -3,13 +3,19 @@
 import { disciplinaDoGama, salaDoGama } from "@/lib/campus";
 import { useApiResource } from "./useApiResource";
 
+// id é nulo enquanto a API não devolve o campo (ver backend/app/schemas/disciplina.py:Professor).
+export interface ProfessorDaTurma {
+  id: number | null;
+  nome: string;
+}
+
 // Formato que a tela de Disciplinas consome (tabela, filtros, badges).
 export interface Disciplina {
   codigo: string;
   nome: string;
   turma: string;
   departamento: string;
-  professor: string;
+  professores: ProfessorDaTurma[];
   dias: string;
   horario: string;
   // Início e fim (em minutos) de cada aula da semana, pro filtro de horário.
@@ -25,7 +31,7 @@ interface TurmaAPI {
   disciplina_nome: string;
   numero: string;
   ano_periodo: string;
-  professores: { nome: string }[];
+  professores: { id?: number | null; nome: string }[];
   horarios: { codigo: string; descricao: string }[];
   sala: { descricao: string };
   vagas_ofertadas: number;
@@ -86,7 +92,7 @@ export function mapTurmaToDisciplina(turma: TurmaAPI): Disciplina {
     nome: turma.disciplina_nome,
     turma: turma.numero,
     departamento: extrairDepartamento(turma.disciplina_codigo),
-    professor: turma.professores.map((p) => p.nome).join(", ") || "A definir",
+    professores: turma.professores.map((p) => ({ id: p.id ?? null, nome: p.nome })),
     dias: dias || "-",
     horario: descreverHorario(turma.horarios),
     aulas: turma.horarios.map((h) => extrairAula(h.descricao)).filter((a) => a !== null),

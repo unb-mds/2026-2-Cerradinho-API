@@ -10,6 +10,7 @@ import { FilterBar, FilterPills, FilterSelect, SearchInput } from "@/components/
 import Badge from "@/components/Badge";
 import SeatBar from "@/components/SeatBar";
 import DisciplinaCard from "@/components/DisciplinaCard";
+import ProfessoresDaTurma from "@/components/ProfessoresDaTurma";
 import { casaBusca } from "@/lib/busca";
 import { useMostrarMais } from "@/hooks/useMostrarMais";
 import MostrarMais from "@/components/MostrarMais";
@@ -53,7 +54,7 @@ function Disciplinas() {
     const matchDia = dia === "Todos" || d.dias.includes(dia);
     // Turma com aula nesse horário em algum dia da semana, não só no primeiro.
     const matchHorario = horario === "Todos" || d.aulas.some((a) => a.inicio <= emMinutos(horario) && emMinutos(horario) < a.fim);
-    const matchBusca = casaBusca(busca, d.nome, d.codigo, d.professor);
+    const matchBusca = casaBusca(busca, d.nome, d.codigo, ...d.professores.map((p) => p.nome));
     return matchDepartamento && matchDia && matchHorario && matchBusca;
   });
 
@@ -130,7 +131,9 @@ function Disciplinas() {
                       </td>
                       <td className="max-w-xs px-4 py-3.5">
                         <div className="font-semibold text-foreground">{d.nome}</div>
-                        <div className="mt-0.5 text-xs text-muted">{d.professor}</div>
+                        <div className="mt-0.5 text-xs text-muted">
+                          <ProfessoresDaTurma professores={d.professores} />
+                        </div>
                       </td>
                       <td className="px-4 py-3.5">
                         <Badge>

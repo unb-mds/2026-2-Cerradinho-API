@@ -1,6 +1,7 @@
 import type { Disciplina } from "@/hooks/useDisciplinas";
 import Badge from "@/components/Badge";
 import SeatBar from "@/components/SeatBar";
+import ProfessoresDaTurma from "@/components/ProfessoresDaTurma";
 
 // Versão em card de uma linha da tabela de disciplinas, para telas pequenas
 // (a tabela tem colunas demais pra caber em ~375px).
@@ -20,7 +21,9 @@ export default function DisciplinaCard({ disciplina: d, mostrarStatus = false }:
       </div>
       <div>
         <div className="font-semibold text-foreground">{d.nome}</div>
-        <div className="mt-0.5 text-xs text-muted">{d.professor}</div>
+        <div className="mt-0.5 text-xs text-muted">
+          <ProfessoresDaTurma professores={d.professores} />
+        </div>
       </div>
       <div className="flex flex-wrap gap-x-3 gap-y-1 font-mono text-xs">
         <span className="text-foreground">{d.dias}</span>
