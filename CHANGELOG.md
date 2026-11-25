@@ -2,9 +2,9 @@
 
 Mudanças relevantes do Cerradinho, por release. O formato segue o [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/). A descrição completa de cada release fica na [aba Releases do GitHub](https://github.com/unb-mds/2026-2-Cerradinho-API/releases).
 
-## [Não lançado]
+## [2.0] - 2026-11-25
 
-Sprint 11 da Release 2. Na entrega de 25/11, esta seção vira `[Release_2] - 2026-11-25`.
+Entrega da Release 2, com as Sprints 10 e 11 (19/11 a 25/11/2026). O resumo da release inteira fica em `docs/releases/v2.0.md`.
 
 ### Adicionado
 
@@ -12,20 +12,30 @@ Sprint 11 da Release 2. Na entrega de 25/11, esta seção vira `[Release_2] - 20
 - Home "Agora no Gama" no site, com as salas livres no bloco de agora, o RU de hoje e a busca de disciplinas (#257).
 - Chamada `GET /v1/...` de cada tela visível no site, com Copiar, Ver JSON e Docs (#257).
 - Unidades do SIGAA que falharam aparecem na mensagem de `GET /v1/execucoes` (RF16, #255).
-- SDK ganha o `fim` de `GET /v1/salas/vazias`, que tinha ficado de fora quando a rota ganhou o parâmetro no #256 (RF13).
+- SDK ganha o `fim` de `GET /v1/salas/vazias`, que tinha ficado de fora quando a rota ganhou o parâmetro no #256 (RF13, #262).
 - `id` do professor em cada turma de `GET /v1/disciplinas`, o mesmo de `GET /v1/professores` — pedido do Daniel, que cruzava turma e professor pelo nome no front, sem dar pra linkar direto pra agenda (RF01).
+- Respostas da API comprimidas com gzip para quem manda `Accept-Encoding: gzip`. `GET /v1/disciplinas` sem limite cai de cerca de 2,4 MB para 240 KB (RNF02, #260).
+- Aviso no cardápio e na home de que o RU do Gama não abre no fim de semana (#260).
+- Página de telas e navegação, release notes e tema do Cerradinho no site de documentação (#260).
+- Nome da disciplina ao lado do código na lista de Professores e na agenda do professor, que antes mostravam só o código.
 
 ### Alterado
 
 - Salas Vazias mostra a semana inteira em blocos de 2h, das 8h às 17h50, só com as salas I1 a I10 e S1 a S10 da FCTE (RF17, #256).
 - O site mostra só o campus Gama. A API continua servindo a UnB inteira (#257).
+- README, CONTRIBUTING e templates de PR e issue voltados para quem contribui de fora, com um template novo para dado errado. O material de processo foi para a seção Histórico do site de documentação.
 
 ### Corrigido
 
 - `GET /v1/disciplinas?limite=10` levando cerca de 9,5s, porque montava todas as turmas para devolver uma página. Agora pagina no banco e responde em cerca de 20ms (RF01, #256).
 - Turma em sala combinada (`I9/I10`) não ocupava as salas individuais em `GET /v1/salas/vazias` (RF17, #256).
+- Professores do Gama que dão disciplina de instituto, como Física 1 e Cálculo, não apareciam no site (#260).
+- Deploy do site de documentação falhando desde 18/11 por links relativos nas specs RNF03 e RNF09 (#260).
+- Erro de hidratação em Cardápio e Salas Vazias, que calculavam "hoje" com a data do build (#261).
+- Filtro de horário de Disciplinas olhava só o primeiro horário da turma (#261).
+- Portal do desenvolvedor sem o parâmetro `fim` de `GET /v1/salas/vazias` (RF14, #261).
 - Produção sem cardápio de 16 a 19/11, porque o servidor não tinha a correção do #252. Corrigido com o deploy de 20/11 e o hotfix na `main` (#258).
-- `sdk/scripts/gerar_cliente.sh` podia regerar o cliente importando `httpx2` em vez de `httpx` (o `sdk/pyproject.toml` só declara `httpx`), se o ambiente que roda o gerador tivesse o pacote `httpx2` instalado por qualquer outra dependência. O script agora falha alto em vez de deixar passar (RF13).
+- `sdk/scripts/gerar_cliente.sh` podia regerar o cliente importando `httpx2` em vez de `httpx` (o `sdk/pyproject.toml` só declara `httpx`), se o ambiente que roda o gerador tivesse o pacote `httpx2` instalado por qualquer outra dependência. O script agora falha alto em vez de deixar passar (RF13, #262).
 
 ## [1.4] - 2026-11-18
 
@@ -169,6 +179,9 @@ Sprints 0 a 3, encerradas em 27/09/2026.
 - Professores e salas aparecem duplicados nas respostas da API.
 - `/v1/professores` ainda não busca por nome normalizado (#38).
 
-[Não lançado]: https://github.com/unb-mds/2026-2-Cerradinho-API/compare/v1.1...dev
+[2.0]: https://github.com/unb-mds/2026-2-Cerradinho-API/compare/v1.4...v2.0
+[1.4]: https://github.com/unb-mds/2026-2-Cerradinho-API/compare/v1.3...v1.4
+[1.3]: https://github.com/unb-mds/2026-2-Cerradinho-API/compare/v1.2...v1.3
+[1.2]: https://github.com/unb-mds/2026-2-Cerradinho-API/compare/v1.1...v1.2
 [1.1]: https://github.com/unb-mds/2026-2-Cerradinho-API/compare/Release_1...v1.1
 [Release_1]: https://github.com/unb-mds/2026-2-Cerradinho-API/releases/tag/Release_1

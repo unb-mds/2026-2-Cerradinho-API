@@ -17,5 +17,5 @@
 
 ## Rastreabilidade
 
-- **PRs:** [#237](https://github.com/unb-mds/2026-2-Cerradinho-API/pull/237), [#238](https://github.com/unb-mds/2026-2-Cerradinho-API/pull/238) (tela da agenda)
+- **PRs:** [#237](https://github.com/unb-mds/2026-2-Cerradinho-API/pull/237), [#238](https://github.com/unb-mds/2026-2-Cerradinho-API/pull/238) (tela da agenda), [#251](https://github.com/unb-mds/2026-2-Cerradinho-API/pull/251) (turmas no mesmo horário agrupadas)
 - **Testes:** [`tests/routers/test_professores_router.py`](https://github.com/unb-mds/2026-2-Cerradinho-API/blob/dev/backend/tests/routers/test_professores_router.py), [`tests/domain/test_salas.py`](https://github.com/unb-mds/2026-2-Cerradinho-API/blob/dev/backend/tests/domain/test_salas.py), [`tests/contract/test_openapi_contract.py`](https://github.com/unb-mds/2026-2-Cerradinho-API/blob/dev/backend/tests/contract/test_openapi_contract.py)

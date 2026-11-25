@@ -1,5 +1,8 @@
 blank_issues_enabled: false
 contact_links:
-  - name: 💬 Dúvida geral
-    url: https://t.me/+63JjjPwXCyxhNDgx
-    about: Canal oficial da disciplina no Telegram — para dúvidas que não são bug, feature ou tarefa técnica
+  - name: 🔒 Falha de segurança
+    url: https://github.com/unb-mds/2026-2-Cerradinho-API/security/advisories/new
+    about: Reporte em privado, sem abrir issue pública
+  - name: 📖 Documentação da API
+    url: https://api.3-147-228-104.sslip.io/docs
+    about: Todas as rotas, parâmetros e respostas

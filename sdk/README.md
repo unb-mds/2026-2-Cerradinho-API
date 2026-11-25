@@ -67,7 +67,7 @@ cerradinho --help
 | `cerradinho professores [NOME]` | Docentes e o id de cada um, usado em `agenda` |
 | `cerradinho agenda PROFESSOR_ID` | Agenda semanal do professor, com a sala de cada aula |
 | `cerradinho salas` | Salas com aula no período |
-| `cerradinho salas-vazias DIA HH:MM` | Salas sem turma no dia e horário, ex. `salas-vazias segunda 14:00` |
+| `cerradinho salas-vazias DIA HH:MM [--fim HH:MM]` | Salas sem turma no dia e horário, ex. `salas-vazias segunda 14:00`. Com `--fim`, livres no intervalo todo, ex. `salas-vazias segunda 14:00 --fim 15:50` |
 | `cerradinho cardapio [--data-inicio AAAA-MM-DD]` | Cardápio do RU dos 7 dias a partir da data (padrão: hoje) |
 | `cerradinho execucoes [--limite N]` | Últimas execuções dos scrapers, com sucesso ou falha |
 | `cerradinho resumo` | Total de turmas, disciplinas, professores e salas |

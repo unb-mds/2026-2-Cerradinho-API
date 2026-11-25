@@ -12,6 +12,8 @@ interface ProfessorAPI {
 
 // Só o que este hook usa de /v1/disciplinas.
 interface TurmaAPI {
+  disciplina_codigo: string;
+  disciplina_nome: string;
   professores: { nome: string }[];
   sala: { descricao: string } | null;
 }
@@ -54,6 +56,12 @@ export function useProfessores() {
     [turmas],
   );
 
+  // nome de cada disciplina pelo codigo, para os chips da lista
+  const nomeDaDisciplina = useMemo(
+    () => Object.fromEntries(turmas.map((t) => [t.disciplina_codigo, t.disciplina_nome])) as Record<string, string>,
+    [turmas],
+  );
+
   const doGama = data.filter((p) => p.disciplinas.some(disciplinaDoGama) || comTurmaNoGama.has(chaveDoNome(p.nome)));
-  return { professores: doGama.map(mapProfessor), caminho: "/professores", loading, error };
+  return { professores: doGama.map(mapProfessor), nomeDaDisciplina, caminho: "/professores", loading, error };
 }

@@ -43,7 +43,7 @@ burying them in the description.
 - Every issue needs an acceptance criterion, a size label (S/M/L/XL), and a type label
   (feature, fix, docs, devops).
 - Use the templates in `.github/ISSUE_TEMPLATE/` — don't free-form a new issue body when
-  a template fits (bug report, feature request, tarefa técnica).
+  a template fits (bug, feature, documentação, dado errado).
 
 ## Pull requests
 

@@ -14,7 +14,7 @@ def _get_kwargs(
     *,
     busca: None | str | Unset = UNSET,
     departamento: None | str | Unset = UNSET,
-    limite: int | None | Unset = UNSET,
+    limite: int | Unset = UNSET,
     offset: int | Unset = 0,
 ) -> dict[str, Any]:
 
@@ -34,12 +34,7 @@ def _get_kwargs(
         json_departamento = departamento
     params["departamento"] = json_departamento
 
-    json_limite: int | None | Unset
-    if isinstance(limite, Unset):
-        json_limite = UNSET
-    else:
-        json_limite = limite
-    params["limite"] = json_limite
+    params["limite"] = limite
 
     params["offset"] = offset
 
@@ -94,7 +89,7 @@ def sync_detailed(
     client: AuthenticatedClient | Client,
     busca: None | str | Unset = UNSET,
     departamento: None | str | Unset = UNSET,
-    limite: int | None | Unset = UNSET,
+    limite: int | Unset = UNSET,
     offset: int | Unset = 0,
 ) -> Response[HTTPValidationError | list[Turma]]:
     """Listar disciplinas
@@ -109,7 +104,7 @@ def sync_detailed(
     Args:
         busca (None | str | Unset): Busca parcial por código, disciplina ou professor
         departamento (None | str | Unset): Prefixo do código da disciplina, ex. "FGA"
-        limite (int | None | Unset): Máximo de turmas a devolver
+        limite (int | Unset): Máximo de turmas a devolver
         offset (int | Unset): Quantas turmas pular, pra paginar Default: 0.
 
     Raises:
@@ -139,7 +134,7 @@ def sync(
     client: AuthenticatedClient | Client,
     busca: None | str | Unset = UNSET,
     departamento: None | str | Unset = UNSET,
-    limite: int | None | Unset = UNSET,
+    limite: int | Unset = UNSET,
     offset: int | Unset = 0,
 ) -> HTTPValidationError | list[Turma] | None:
     """Listar disciplinas
@@ -154,7 +149,7 @@ def sync(
     Args:
         busca (None | str | Unset): Busca parcial por código, disciplina ou professor
         departamento (None | str | Unset): Prefixo do código da disciplina, ex. "FGA"
-        limite (int | None | Unset): Máximo de turmas a devolver
+        limite (int | Unset): Máximo de turmas a devolver
         offset (int | Unset): Quantas turmas pular, pra paginar Default: 0.
 
     Raises:
@@ -179,7 +174,7 @@ async def asyncio_detailed(
     client: AuthenticatedClient | Client,
     busca: None | str | Unset = UNSET,
     departamento: None | str | Unset = UNSET,
-    limite: int | None | Unset = UNSET,
+    limite: int | Unset = UNSET,
     offset: int | Unset = 0,
 ) -> Response[HTTPValidationError | list[Turma]]:
     """Listar disciplinas
@@ -194,7 +189,7 @@ async def asyncio_detailed(
     Args:
         busca (None | str | Unset): Busca parcial por código, disciplina ou professor
         departamento (None | str | Unset): Prefixo do código da disciplina, ex. "FGA"
-        limite (int | None | Unset): Máximo de turmas a devolver
+        limite (int | Unset): Máximo de turmas a devolver
         offset (int | Unset): Quantas turmas pular, pra paginar Default: 0.
 
     Raises:
@@ -222,7 +217,7 @@ async def asyncio(
     client: AuthenticatedClient | Client,
     busca: None | str | Unset = UNSET,
     departamento: None | str | Unset = UNSET,
-    limite: int | None | Unset = UNSET,
+    limite: int | Unset = UNSET,
     offset: int | Unset = 0,
 ) -> HTTPValidationError | list[Turma] | None:
     """Listar disciplinas
@@ -237,7 +232,7 @@ async def asyncio(
     Args:
         busca (None | str | Unset): Busca parcial por código, disciplina ou professor
         departamento (None | str | Unset): Prefixo do código da disciplina, ex. "FGA"
-        limite (int | None | Unset): Máximo de turmas a devolver
+        limite (int | Unset): Máximo de turmas a devolver
         offset (int | Unset): Quantas turmas pular, pra paginar Default: 0.
 
     Raises:
