@@ -23,7 +23,7 @@ def test_listar_disciplinas(cerradinho):
         "disciplina_nome": "Métodos de Desenvolvimento de Software",
         "numero": "01",
         "ano_periodo": "2026.2",
-        "professores": [{"nome": "Ana Souza"}],
+        "professores": [{"id": 12, "nome": "Ana Souza"}],
         "horarios": [{"codigo": "6T2345", "descricao": "Sexta-feira 14:00 às 17:50"}],
         "sala": {"descricao": "FCTE - I9/I10"},
         "vagas_ofertadas": 40,
@@ -36,6 +36,7 @@ def test_listar_disciplinas(cerradinho):
     assert len(turmas) == 1
     assert turmas[0].disciplina_codigo == "FGA0242"
     assert turmas[0].professores[0].nome == "Ana Souza"
+    assert turmas[0].professores[0].id == 12
 
 
 @respx.mock

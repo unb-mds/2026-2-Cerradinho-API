@@ -443,7 +443,7 @@ def _turma_para_contrato(turma: Turma) -> TurmaCapturada:
         disciplina_nome=turma.disciplina.nome,
         numero=turma.numero,
         ano_periodo=turma.ano_periodo,
-        professores=[ProfessorCapturado(nome=p.nome) for p in turma.professores],
+        professores=[ProfessorCapturado(id=p.id, nome=p.nome) for p in turma.professores],
         horarios=_horarios_sem_repeticao(turma),
         sala=SalaCapturada(descricao=_descricao_salas(turma)),
         vagas_ofertadas=turma.vagas_ofertadas,

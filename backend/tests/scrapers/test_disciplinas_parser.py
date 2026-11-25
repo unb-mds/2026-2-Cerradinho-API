@@ -135,7 +135,7 @@ def test_parse_turmas_le_cada_coluna_no_campo_certo_e_sem_espacos():
         "disciplina_nome": "MÉTODOS DE DESENVOLVIMENTO DE SOFTWARE",
         "numero": "03",
         "ano_periodo": "2026.2",
-        "professores": [{"nome": "ANA SOUZA (60h)"}, {"nome": "BRUNO LIMA (30h)"}],
+        "professores": [{"id": None, "nome": "ANA SOUZA (60h)"}, {"id": None, "nome": "BRUNO LIMA (30h)"}],
         "horarios": [
             {"codigo": "24M12", "descricao": "Segunda-feira 08:00 às 09:50"},
             {"codigo": "6T23", "descricao": ""},
