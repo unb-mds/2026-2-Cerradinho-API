@@ -9,7 +9,7 @@ API aberta com os dados públicos da UnB. Disciplinas, turmas, professores, sala
 
 - **Quero usar os dados.** A [documentação interativa da API](https://api.3-147-228-104.sslip.io/docs) tem todas as rotas, e o [portal do desenvolvedor](https://3-147-228-104.sslip.io/desenvolvedores) tem exemplos em curl, Python e JavaScript. Para Python, há o [SDK e a CLI](https://github.com/unb-mds/2026-2-Cerradinho-API/blob/dev/sdk/README.md).
 - **Quero entender como funciona.** A [Arquitetura](ARQUITETURA.md) mostra os componentes e o fluxo da coleta, e as [decisões de arquitetura](adr/0001-base-tecnica-backend.md) explicam o porquê de cada escolha.
-- **Quero contribuir.** O [guia de contribuição](https://github.com/unb-mds/2026-2-Cerradinho-API/blob/dev/CONTRIBUTING.md) explica como preparar o ambiente, rodar os testes e abrir um pull request.
+- **Quero contribuir.** O [guia de contribuição](CONTRIBUIR.md) explica como preparar o ambiente, rodar os testes e abrir um pull request.
 
 ## A API é o produto, o site é um exemplo
 

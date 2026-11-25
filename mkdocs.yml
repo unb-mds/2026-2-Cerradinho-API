@@ -59,6 +59,9 @@ markdown_extensions:
           format: !!python/name:pymdownx.superfences.fence_code_format
   - pymdownx.tabbed:
       alternate_style: true
+  - pymdownx.snippets:
+      base_path: ["."]
+      check_paths: true
 
 nav:
   - Início:
@@ -88,7 +91,7 @@ nav:
           - Relatório de risco: fontes/relatorio-de-risco.md
           - Plano de monitoramento: fontes/plano-de-monitoramento.md
   - Contribuir:
-      - Como contribuir: https://github.com/unb-mds/2026-2-Cerradinho-API/blob/dev/CONTRIBUTING.md
+      - Como contribuir: CONTRIBUIR.md
       - Código de Conduta: https://github.com/unb-mds/2026-2-Cerradinho-API/blob/dev/CODE_OF_CONDUCT.md
       - Política de segurança: https://github.com/unb-mds/2026-2-Cerradinho-API/blob/dev/SECURITY.md
       - Changelog: https://github.com/unb-mds/2026-2-Cerradinho-API/blob/dev/CHANGELOG.md
@@ -99,31 +102,37 @@ nav:
           - Especificação (/specs): specs/README.md
       - Processo e gestão:
           - Processo: PROCESSO.md
-          - Planejamento de sprints: scrum/sprint-planning.md
-          - Retrospectivas de sprint: scrum/retrospectivas.md
-          - Atas de reunião: scrum/atas.md
-          - Checklist Release 1: scrum/checklist-release-1.md
-          - Checklist Release 2: scrum/checklist-release-2.md
+          - Planejamento e acompanhamento:
+              - Planejamento de sprints: scrum/sprint-planning.md
+              - Retrospectivas de sprint: scrum/retrospectivas.md
+              - Atas de reunião: scrum/atas.md
+          - Checklists:
+              - Checklist Release 1: scrum/checklist-release-1.md
+              - Checklist Release 2: scrum/checklist-release-2.md
       - Release notes:
           - v2.0 (Release 2): releases/v2.0.md
           - v1.4: releases/v1.4.md
           - v1.3: releases/v1.3.md
           - v1.2: releases/v1.2.md
       - Estudos:
-          - Git e GitHub: estudos/estudo-git-github.md
-          - Web scraping: estudos/estudo-web-scraping.md
-          - Playwright: estudos/estudo-playwright.md
-          - FastAPI: estudos/estudo-fastapi.md
-          - BeautifulSoup: estudos/estudo-beautifulsoup.md
-          - SQLAlchemy: estudos/estudo-sqlalchemy.md
-          - HTML: estudos/estudo-html.md
-          - JavaScript: estudos/estudo-javascript.md
-          - Celery e Redis: estudos/estudo-celery-e-redis.md
-          - Pytest e mocking: estudos/estudo-pytest-mocking.md
-          - Schemathesis: estudos/estudo-schemathesis.md
-          - Postman e testes de API: estudos/estudo-postman-api.md
-          - Teste de mutação: estudos/estudo-teste-de-mutacao.md
-          - UptimeRobot: estudos/estudo-uptimerobot.md
+          - Fundamentos:
+              - Git e GitHub: estudos/estudo-git-github.md
+              - HTML: estudos/estudo-html.md
+              - JavaScript: estudos/estudo-javascript.md
+          - Coleta de dados:
+              - Web scraping: estudos/estudo-web-scraping.md
+              - Playwright: estudos/estudo-playwright.md
+              - BeautifulSoup: estudos/estudo-beautifulsoup.md
+          - Backend:
+              - FastAPI: estudos/estudo-fastapi.md
+              - SQLAlchemy: estudos/estudo-sqlalchemy.md
+              - Celery e Redis: estudos/estudo-celery-e-redis.md
+          - Qualidade e testes:
+              - Pytest e mocking: estudos/estudo-pytest-mocking.md
+              - Schemathesis: estudos/estudo-schemathesis.md
+              - Postman e testes de API: estudos/estudo-postman-api.md
+              - Teste de mutação: estudos/estudo-teste-de-mutacao.md
+              - UptimeRobot: estudos/estudo-uptimerobot.md
       - Índice completo: indice-completo.md
 
 extra_css:
