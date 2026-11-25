@@ -13,7 +13,7 @@
 
 ## Rastreabilidade
 
-- **PRs:** [#89](https://github.com/unb-mds/2026-2-Cerradinho-API/pull/89), [#96](https://github.com/unb-mds/2026-2-Cerradinho-API/pull/96), [#121](https://github.com/unb-mds/2026-2-Cerradinho-API/pull/121), [#145](https://github.com/unb-mds/2026-2-Cerradinho-API/pull/145)
+- **PRs:** [#89](https://github.com/unb-mds/2026-2-Cerradinho-API/pull/89), [#96](https://github.com/unb-mds/2026-2-Cerradinho-API/pull/96), [#121](https://github.com/unb-mds/2026-2-Cerradinho-API/pull/121), [#145](https://github.com/unb-mds/2026-2-Cerradinho-API/pull/145), [#249](https://github.com/unb-mds/2026-2-Cerradinho-API/pull/249) (verificação em produção)
 - **Testes:** [`tests/tasks/test_celery_app.py`](https://github.com/unb-mds/2026-2-Cerradinho-API/blob/dev/backend/tests/tasks/test_celery_app.py), [`tests/tasks/test_scraping.py`](https://github.com/unb-mds/2026-2-Cerradinho-API/blob/dev/backend/tests/tasks/test_scraping.py)
 - **Decisões:** [ADR 0003](https://github.com/unb-mds/2026-2-Cerradinho-API/blob/dev/docs/adr/0003-celery-e-redis-para-agendamento.md), [ADR 0004](https://github.com/unb-mds/2026-2-Cerradinho-API/blob/dev/docs/adr/0004-coleta-desacoplada-da-api.md)
-- **Observação:** Disciplinas e cardápio estão agendados, mas a execução do cardápio falha enquanto o parser do RU não for corrigido (#103).
+- **Observação:** Verificado contra a produção em 16/11/2026 (`GET /v1/execucoes` em `api.3-147-228-104.sslip.io`): o agendamento de disciplinas está estável, rodando sozinho aos domingos (08/11 e 15/11, sucesso nas duas). A única falha registrada foi isolada, no primeiro boot em produção (04/11, 04:05 — `scrape_disciplinas_task() missing 3 required positional arguments`, provavelmente uma imagem antiga ainda sem o `kwargs` do agendamento), corrigida por disparo manual 17 minutos depois e não repetida nos agendamentos seguintes.

@@ -28,7 +28,7 @@ flowchart TB
     Cerradinho -->|raspa o cardápio semanal em PDF| RU
 ```
 
-As personas (Estudante, Dev de outra squad) estão detalhadas no [Documento de Visão](DOCUMENTO-VISAO.md). Eventos e editais entram como fontes externas adicionais na Release 2 (ver [REQUISITOS.md](REQUISITOS.md)).
+As personas (Estudante, Dev de outra squad) estão detalhadas no [Documento de Visão](DOCUMENTO-VISAO.md). Eventos e editais estavam previstos como fontes da Release 2 e saíram do escopo com a saída do Ítalo (ver [REQUISITOS.md](REQUISITOS.md)).
 
 ## Nível 2 — Container
 
@@ -203,7 +203,7 @@ Não são containers C4 (não são peças do sistema em si), mas sustentam a ope
 | Documentação da API | OpenAPI/Swagger (gerado pelo FastAPI) | Referência interativa das rotas, em `/docs` | R1 |
 | Rate limit | slowapi | Limitar requisições por cliente (middleware da API) | R2 |
 | Observabilidade | UptimeRobot | Monitorar uptime das fontes e da API, com alerta | R2 |
-| Hospedagem | Railway | Ambiente de produção da API, banco, Redis e worker | R2 |
+| Hospedagem | AWS Lightsail, Docker Compose e Caddy | Ambiente de produção do frontend, da API, do banco, do Redis e do worker numa máquina só | R2 |
 
 ## Decisões de arquitetura
 
@@ -219,6 +219,8 @@ Cada decisão relevante tem um ADR em [`docs/adr/`](adr/):
 | [0006](adr/0006-salas-derivadas-das-turmas.md) | Salas derivadas das turmas, sem scraper próprio |
 | [0007](adr/0007-cache-e-rate-limit-na-api.md) | Cache e rate limit na camada da API |
 | [0008](adr/0008-bandit-como-sast.md) | Bandit como análise estática de segurança |
-| [0009](adr/0009-railway-para-deploy.md) | Railway para hospedagem |
+| [0009](adr/0009-railway-para-deploy.md) | Railway para hospedagem (substituído pelo 0011) |
+| [0010](adr/0010-sala-por-horario-nao-por-turma.md) | Sala por horário, não por turma |
+| [0011](adr/0011-aws-lightsail-para-deploy.md) | AWS Lightsail para hospedagem |
 
-Os padrões de código (separação de camadas, nomenclatura, tratamento de erro) estão no [CONTRIBUTING.md](https://github.com/unb-mds/2026-2-Cerradinho-API/blob/dev/CONTRIBUTING.md).
+Os padrões de código (separação de camadas, nomenclatura, tratamento de erro) estão no [CONTRIBUTING.md](CONTRIBUIR.md).

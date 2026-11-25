@@ -13,7 +13,7 @@
 | Documento | Conteúdo |
 |---|---|
 | [ARQUITETURA.md](ARQUITETURA.md) | Componentes, fluxo de coleta, rotas, camadas, modelo de dados, estrutura de pastas |
-| [DEPLOY.md](DEPLOY.md) | Serviços, variáveis de ambiente e ordem do deploy no Railway |
+| [DEPLOY.md](DEPLOY.md) | Serviços, variáveis de ambiente e passo a passo do deploy na AWS Lightsail |
 | [adr/](adr/) | Registro das decisões de arquitetura, um arquivo por decisão ([template](adr/template.md)) |
 | [fontes/sigaa-disciplinas.md](fontes/sigaa-disciplinas.md) | Ficha da fonte: consulta pública de turmas do SIGAA |
 | [fontes/ru-cardapio.md](fontes/ru-cardapio.md) | Ficha da fonte: cardápio semanal do RU |
@@ -25,7 +25,7 @@
 | Documento | Conteúdo |
 |---|---|
 | [PROCESSO.md](PROCESSO.md) | Papéis, sprints e ritos, Definition of Done, board e releases |
-| [CONTRIBUTING.md](https://github.com/unb-mds/2026-2-Cerradinho-API/blob/dev/CONTRIBUTING.md) | Branches, commits, pull requests e padrões de código |
+| [CONTRIBUTING.md](CONTRIBUIR.md) | Branches, commits, pull requests e padrões de código |
 | [scrum/sprint-planning.md](scrum/sprint-planning.md) | Calendário e entregas de cada sprint |
 | [scrum/atas.md](scrum/atas.md) | Registro das reuniões, com presença |
 | [AI-USAGE.md](https://github.com/unb-mds/2026-2-Cerradinho-API/blob/dev/AI-USAGE.md) | Registro de uso de IA |

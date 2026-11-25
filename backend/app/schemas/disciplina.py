@@ -12,6 +12,13 @@ from pydantic import BaseModel, Field
 
 
 class Professor(BaseModel):
+    # id só existe depois de persistido - None no contrato cru do scraper,
+    # preenchido pelo domínio ao montar a resposta da API (RF01/RF04).
+    id: int | None = Field(
+        default=None,
+        description="Identificador interno do docente, o mesmo de GET /v1/professores. Nulo antes de persistir.",
+        examples=[12],
+    )
     nome: str = Field(description="Nome do docente como aparece no SIGAA.", examples=["Ana Souza"])
 
 

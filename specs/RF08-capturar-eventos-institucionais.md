@@ -4,6 +4,8 @@
 |---|---|---|
 | R2 | Ninguém | [#47](https://github.com/unb-mds/2026-2-Cerradinho-API/issues/47) |
 
+> **Fora do escopo.** Este requisito era do Ítalo, que saiu do projeto no início da Release 2, e não será implementado. A spec fica como registro.
+
 **Critérios de aceitação**
 - O scraper captura data, local e descrição de cada evento publicado na agenda institucional.
 - Evento sem data ou sem descrição reconhecível é descartado, não persistido incompleto.

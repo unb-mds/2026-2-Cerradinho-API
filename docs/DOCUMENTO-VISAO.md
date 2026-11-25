@@ -53,7 +53,7 @@ Síntese de conversas informais com estudantes de graduação da FCTE e integran
 | Saber sala/horário de disciplina rapidamente | Alta | SIGAA lento, interface antiga (JSF) | Endpoint de disciplinas com sala e horário |
 | Saber o que tem no RU sem abrir o site | Média | Site do RU pouco usado no celular | Endpoint de cardápio diário/semanal |
 | Saber qual sala está livre para estudar | Alta | Não existe hoje, decisão informal ("na sorte") | RF17, salas vazias |
-| Não perder prazo de edital | Média | Editais centralizados mas difíceis de acompanhar | Endpoint de editais |
+| Não perder prazo de edital | Média | Editais centralizados mas difíceis de acompanhar | Endpoint de editais, fora do escopo da R2 |
 | Reaproveitar dado de UnB sem scraping próprio | Alta (para squads) | Scraping feito do zero em projetos anteriores, descartado depois | SDK/CLI (RF13) |
 
 ## 4. Visão geral do produto
@@ -68,7 +68,6 @@ O Cerradinho é um sistema novo, autocontido (monorepo), que não substitui nenh
 |---|---|
 | Consulta de disciplinas, professores e salas | Elimina a necessidade de navegar o SIGAA público |
 | Consulta de cardápio do RU (diário e semanal) | Resposta rápida sem visitar o site do RU |
-| Consulta de eventos e editais institucionais | Centraliza informação hoje espalhada em notícias e portais de pós |
 | Busca de salas vazias por horário | Funcionalidade nova, que não existe em nenhum sistema da UnB hoje |
 | Agenda do professor | Visão consolidada que hoje exige cruzar múltiplas turmas manualmente |
 | SDK e CLI Python | Permite que outras squads integrem sem reimplementar scraping |
@@ -79,14 +78,14 @@ O Cerradinho é um sistema novo, autocontido (monorepo), que não substitui nenh
 
 - Assume-se que o SIGAA público, o site do RU e o portal de notícias permanecerão acessíveis sem login durante todo o projeto (nenhum é garantido contratualmente).
 - Assume-se throttling suficiente para não sobrecarregar os servidores da UnB nem disparar bloqueio de IP.
-- O projeto depende de hospedagem em nuvem (Railway) que precisa suportar Postgres, Redis e ao menos dois serviços (API e worker) dentro de um orçamento compatível com um projeto acadêmico sem patrocínio.
+- O projeto depende de hospedagem em nuvem (AWS Lightsail, ver ADR 0011) que precisa suportar Postgres, Redis e ao menos dois serviços (API e worker) dentro de um orçamento compatível com um projeto acadêmico sem patrocínio.
 
 ## 5. Restrições
 
 - **Prazo fixo**: entrega final em 25/11, sem possibilidade de extensão (calendário acadêmico da disciplina). O calendário das sprints está no [planejamento](scrum/sprint-planning.md).
 - **Equipe fixa de 6 pessoas**, com dedicação parcial (paralela a outras disciplinas do curso).
 - **Fontes de dado fora do controle do time**: qualquer mudança de layout no SIGAA, RU ou portal de notícias exige manutenção reativa, não planejada.
-- **Sem orçamento** para ferramentas pagas de infraestrutura, observabilidade ou segurança além de planos gratuitos/educacionais (ex: Railway free tier, UptimeRobot free).
+- **Sem orçamento** para ferramentas pagas de infraestrutura, observabilidade ou segurança além de planos gratuitos/educacionais (ex: créditos de conta nova da AWS, UptimeRobot free).
 - **Stack tecnológica fixada em ADR** (Python 3.12, SQLAlchemy síncrono, FastAPI, Next.js, Celery/Redis), mudanças de stack no meio do projeto teriam custo alto.
 - **Avaliação acadêmica**: o processo (ADRs, sprints documentadas, PRs revisados) é tão avaliado quanto o produto final, o que impõe overhead de documentação além do desenvolvimento em si.
 

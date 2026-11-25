@@ -1,3 +1,4 @@
+import json
 from datetime import datetime, timezone
  
 from celery.signals import task_failure, task_success
@@ -10,7 +11,8 @@ from app.models import ExecucaoLog
 @task_success.connect
 def log_success(sender=None, result=None, **kwargs):
     print(f"[{datetime.now(timezone.utc)}] SUCESSO - {sender.name}")
-    _gravar(task_name=sender.name, status="sucesso")
+    mensagem = json.dumps(result, ensure_ascii=False) if result is not None else None
+    _gravar(task_name=sender.name, status="sucesso", mensagem=mensagem)
  
  
 @task_failure.connect

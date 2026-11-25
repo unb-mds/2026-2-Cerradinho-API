@@ -14,45 +14,113 @@
 
 ## Situação atual
 
-Medição de 19/10/2026 ([#146](https://github.com/unb-mds/2026-2-Cerradinho-API/issues/146)), no commit `ea31fab` (`dev` com o parser novo do RU do #145).
+Medição de 15/11/2026, na `R2-joao`, com os testes de sabotagem e os testes escritos a partir dos mutantes sobreviventes. **As três metas foram atingidas.**
 
-| Medição | Cobertura | Meta |
+| Meta | Resultado | Antes (19/10) |
 |---|---|---|
-| Suíte completa (`pytest --cov=app`, com contrato e integração num Postgres) | **81%** (613 de 754 linhas) | ≥ 90% |
-| Passo de testes do CI (sem contrato e integração) | **81%** (610 de 754 linhas) | ≥ 90% |
-
-Faltam cerca de 66 linhas cobertas para chegar aos 90%.
+| Cobertura de linhas do backend ≥ 90% | **98%** (1.191 de 1.212 linhas no passo de testes do CI, sem contrato e integração) | 81% |
+| Mutação ≥ 50% nos módulos críticos | **87,3% a 100%** por módulo (tabela abaixo) | não medido |
+| Sabotagem em 100% dos módulos críticos | **8 de 8** (tabela em "Teste de sabotagem") | nenhum |
 
 ### Módulos críticos
 
-Critério: módulos que, se quebrarem em silêncio, gravam dado errado no banco ou param a coleta. São eles que entram nas metas de mutação (≥ 50%) e de sabotagem (100%).
+Critério: módulos que, se quebrarem em silêncio, gravam dado errado no banco ou param a coleta. São eles que entram nas metas de mutação e de sabotagem.
 
-| Módulo | Por que é crítico | Cobertura |
+| Módulo | Por que é crítico | Cobertura | Mutantes | Score de mutação |
+|---|---|---|---|---|
+| `app/scrapers/disciplinas/parser.py` | Transforma o HTML do SIGAA nas turmas que vão para o banco | 100% | 70 | **90,0%** |
+| `app/scrapers/cardapio/parser.py` | Transforma o PDF do RU nos itens de cardápio | 99% | 347 | **87,3%** |
+| `app/domain/disciplinas.py` | Grava turmas, disciplinas, professores, salas e horários (get-or-create e upsert) | 98% | 182 | **91,2%** |
+| `app/domain/cardapio.py` | Grava e consulta o cardápio por data | 100% | 50 | **96,0%** |
+| `app/tasks/scraping.py` | Task agendada que raspa e persiste as disciplinas | 100% | 5 | **100%** |
+| `app/tasks/cardapio.py` | Task agendada que baixa, lê e persiste o cardápio | 100% | 1 | **100%** |
+| `app/tasks/logging_signals.py` | Registra sucesso e falha de cada execução (RF16) | 100% | 3 | **100%** |
+| `app/domain/execucoes.py` | Grava e lista o histórico de execuções (RF16) | 100% | 3 | **100%** |
+
+Fora da lista: routers e schemas, cobertos pelos testes de contrato (RNF04), e models, cobertos pelos testes de domínio e de integração. As linhas sem cobertura que sobram estão em `app/core/cache.py` (ramos de erro do Redis), em `app/core/database.py` (`get_db`, sempre substituído nos testes) e em ramos defensivos de `app/domain/disciplinas.py`.
+
+### Teste de mutação
+
+Ferramenta: **cosmic-ray 8.7.0**, a escolhida no [estudo de teste de mutação](https://github.com/unb-mds/2026-2-Cerradinho-API/blob/dev/docs/estudos/estudo-teste-de-mutacao.md) por rodar no Windows e no Linux. O script `backend/scripts/mutacao.py` roda um módulo crítico por vez, cada um com os testes que o exercitam, e sai com erro se algum ficar abaixo de 50%:
+
+```bash
+cd backend
+python -m scripts.mutacao                          # os 8 módulos críticos
+python -m scripts.mutacao app/domain/cardapio.py   # só um módulo
+python -m scripts.mutacao --paralelo 4             # módulos em paralelo
+```
+
+- O cosmic-ray altera o arquivo no disco para criar cada mutante. Por isso o script copia o backend para uma pasta temporária antes de mutar: uma rodada interrompida não deixa mutante no código.
+- Mutantes dentro de anotação de tipo (`str | None` virando `str + None`) são pulados. A anotação nunca é avaliada, então esses mutantes são equivalentes. Foram 132 dos 793 gerados.
+- No CI, o workflow **Mutação** (`.github/workflows/mutacao.yml`) roda o mesmo script quando é acionado na aba Actions. Ele não roda em todo push: a rodada completa leva cerca de 30 minutos com os 8 módulos em paralelo.
+
+A primeira rodada, só com os testes que já existiam, deu 42,9% no parser de disciplinas, 57,8% no domínio de disciplinas e 0% em `domain/execucoes.py`. Os sobreviventes viraram testes. Os principais:
+
+| Mutante sobrevivente | Lacuna | Teste novo |
 |---|---|---|
-| `app/scrapers/disciplinas/parser.py` | Transforma o HTML do SIGAA nas turmas que vão para o banco | 70% |
-| `app/scrapers/cardapio/parser.py` | Transforma o PDF do RU nos itens de cardápio | 91% |
-| `app/domain/disciplinas.py` | Grava turmas, disciplinas, professores, salas e horários (get-or-create e upsert) | 99% |
-| `app/domain/cardapio.py` | Grava e consulta o cardápio por data | 100% |
-| `app/tasks/scraping.py` | Task agendada que raspa e persiste as disciplinas | 100% |
-| `app/tasks/cardapio.py` | Task agendada que baixa, lê e persiste o cardápio | 35% |
-| `app/tasks/logging_signals.py` | Registra sucesso e falha de cada execução (RF16) | 50% (testes em revisão no #143) |
-| `app/domain/execucoes.py` | Grava e lista o histórico de execuções (RF16) | 100% |
+| Índice de coluna e `strip` trocados no parser do SIGAA | Nenhum teste conferia cada campo da turma | `test_parse_turmas_le_cada_coluna_no_campo_certo_e_sem_espacos` |
+| `LIMITE_PADRAO = 50` trocado e fuso não aplicado | O teste da rota só conferia a ordem | `tests/domain/test_execucoes.py` |
+| `!= 2` trocado por `<` ao ler o intervalo do link do RU | Link com três datas quebraria a seleção do PDF | `test_link_que_nao_tem_exatamente_duas_datas_e_ignorado` |
+| Tolerância de altura do PDF do RU zerada | Célula um pouco acima da categoria perdia o prato | `test_le_categoria_por_altura_e_dia_por_posicao_ignorando_texto_sem_dia` |
+| `continue` trocado por `break` em texto sem dia no PDF | Um texto solto descartaria o resto da página | o mesmo teste acima |
+| `!=` trocado por `>` ao casar salas e dias | Com mais salas que dias, uma sala ficava de fora | `test_persistir_turma_com_mais_salas_que_dias_associa_tudo_a_todas` |
+| `==` trocado por `<=` na cobertura dos pares código(sala) | Um par a mais no campo de sala inventaria aula | `test_persistir_turma_com_par_codigo_sala_a_mais_nao_inventa_aula` |
+| `<=` trocado por `<` no fim da semana do cardápio | O domingo sumiria da semana | `test_listar_cardapio_semana_inclui_o_domingo_e_para_antes_da_segunda_seguinte` |
 
-Fora da lista: routers e schemas, cobertos pelos testes de contrato (RNF04), e models, cobertos pelos testes de domínio e de integração.
+Os 69 sobreviventes restantes são, na maior parte, equivalentes ou fronteiras sem significado: `<=` trocado por `<` em coordenadas do PDF (um caractere exatamente na borda da célula), `/` trocado por `//` em contas com coordenadas inteiras, `maxsplit` que não muda o resultado e `is not` dentro de filtro do SQLAlchemy.
 
-### Onde estão as lacunas
+### Teste de sabotagem
 
-| Módulo | Cobertura | Motivo |
+Os testes em `backend/tests/sabotagem/` quebram a fonte de propósito e rodam a task de verdade pelo Celery, com o scraper, o parser, o domínio e os signals de log reais. Só a borda com o mundo externo é trocada por um dublê: o Playwright no SIGAA e o `requests.get` no RU. Cada cenário confere três coisas:
+
+- o log registra a falha com o tipo certo (`fonte` ou `interna`, RF16), lido como a API lê (`listar_execucoes`);
+- o banco fica como estava;
+- o cache fica como estava.
+
+Um caso de controle sem sabotagem prova que o dublê funciona.
+
+| Fonte | Cenário | Tipo da falha no log |
 |---|---|---|
-| `app/scrapers/disciplinas/scraper.py` | 26% | Navegação no SIGAA com Playwright; os testes usam HTML salvo e não passam por aqui |
-| `app/scrapers/cardapio/scraper.py` | 38% | Download da página e do PDF do RU, sem teste com dublê de rede |
-| `app/scrapers/disciplinas/__init__.py` e `app/scrapers/cardapio/__init__.py` | 40% e 44% | Funções que juntam scraper e parser, sem teste |
-| `app/core/database.py` | 64% | `get_db`, sempre substituído nos testes |
+| SIGAA | Fora do ar (timeout do Playwright) | fonte |
+| SIGAA | Rede cai durante a busca das unidades | fonte |
+| SIGAA | Sessão expirada em todas as tentativas | fonte |
+| SIGAA | Formulário de busca sem a lista de unidades (layout mudado) | interna |
+| SIGAA | Tabela de resultado com outro id (layout mudado) | interna |
+| RU | Site fora do ar | fonte |
+| RU | Listagem com erro 503 | fonte |
+| RU | Listagem sem o PDF da semana | fonte |
+| RU | PDF fora do ar (timeout) | fonte |
+| RU | Link do PDF expirado (404) | fonte |
+| RU | Página de erro com status 200 no lugar do PDF | fonte |
+| RU | PDF corrompido | interna |
+| RU | PDF com layout novo (coluna de categoria renomeada) | interna |
 
-Os módulos de scraper fazem acesso de rede e de navegador, então entram na meta de sabotagem (fonte fora do ar, sessão expirada, layout mudado), simulada com dublês, e não na de mutação.
+Além do fluxo completo, há testes de sabotagem por camada:
+
+- no scraper do SIGAA, a nova tentativa com sessão expirada e com rede instável;
+- no download do PDF do RU, o backoff de 2 s e 4 s;
+- no parser do RU, o PDF real com datas por extenso, tabela sem bordas e categorias desconhecidas.
+
+| Módulo crítico | Sabotado em |
+|---|---|
+| `app/scrapers/disciplinas/parser.py` | `test_sabotagem_sigaa.py` (layout mudado, colunas trocadas) |
+| `app/scrapers/cardapio/parser.py` | `test_sabotagem_ru.py` (layout novo do PDF e da listagem) |
+| `app/domain/disciplinas.py` | `test_sabotagem_sigaa.py` (turmas já gravadas continuam iguais) |
+| `app/domain/cardapio.py` | `test_sabotagem_ru.py` (o cardápio já gravado continua sendo servido) |
+| `app/tasks/scraping.py` | `test_sabotagem_sigaa.py` (falha não engolida, cache preservado) |
+| `app/tasks/cardapio.py` | `test_sabotagem_ru.py` (falha não engolida, cache preservado) |
+| `app/tasks/logging_signals.py` | os dois arquivos (tipo `fonte` ou `interna` em cada cenário) |
+| `app/domain/execucoes.py` | os dois arquivos (a falha aparece na listagem da API) |
+
+A sabotagem achou três falhas silenciosas no SIGAA, corrigidas no commit `f5a8fe1`:
+
+- o timeout do Playwright ia para o log como falha interna;
+- a sessão expirada em todas as unidades era registrada como sucesso com zero turmas;
+- o layout novo também era registrado como sucesso com zero turmas, contra o RNF05.
 
 ## Rastreabilidade
 
-- **PRs:** nenhum ainda.
-- **Testes:** nenhum ainda.
-- **Observação:** A cobertura é medida no CI, sem mínimo exigido; a medição atual e os módulos críticos estão em "Situação atual". Mutação e sabotagem ainda não foram implementadas.
+- **PRs:** [#147](https://github.com/unb-mds/2026-2-Cerradinho-API/pull/147) (cobertura e módulos críticos), [#248](https://github.com/unb-mds/2026-2-Cerradinho-API/pull/248) (mutação e sabotagem)
+- **Issues:** [#206](https://github.com/unb-mds/2026-2-Cerradinho-API/issues/206) (mutação e sabotagem, Sprint 9) e [#214](https://github.com/unb-mds/2026-2-Cerradinho-API/issues/214) (metas do RNF09, Sprint 10).
+- **Testes:** [`tests/sabotagem/`](https://github.com/unb-mds/2026-2-Cerradinho-API/tree/dev/backend/tests/sabotagem), [`tests/scrapers/test_cardapio_parser_posicional.py`](https://github.com/unb-mds/2026-2-Cerradinho-API/blob/dev/backend/tests/scrapers/test_cardapio_parser_posicional.py), [`tests/domain/test_execucoes.py`](https://github.com/unb-mds/2026-2-Cerradinho-API/blob/dev/backend/tests/domain/test_execucoes.py) e os testes marcados como "escritos a partir dos mutantes sobreviventes" em `tests/domain/` e `tests/scrapers/`.
+- **Observação:** a cobertura é medida no passo de testes do CI, sem mínimo exigido. A mutação roda sob demanda, pelo workflow **Mutação** ou por `python -m scripts.mutacao`. Ao mudar um módulo crítico, rode o script para ele antes do merge.

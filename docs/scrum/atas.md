@@ -140,3 +140,101 @@ Registro das reuniões do time: presença, o que foi feito e o que ficou combina
 **Observação:** o Ítalo não participa mais das reuniões — saiu do projeto no início da Release 2. RF08 (eventos) e RF09 (editais), que eram dele, saíram do escopo; os demais itens que ele tocava (parser do RU, cardápio semanal, CLI) já têm novos responsáveis, registrados em `specs/README.md` e no planejamento de sprints.
 
 ---
+
+### Segunda-feira, 26/10 — Review da Sprint 6
+
+**Presentes:** Vitor, Arthur, Gabriel, Daniel, João Paulo
+
+**Progresso:**
+
+- **Vitor**: implementou o RF17 (salas vazias por dia e horário, `GET /v1/salas/vazias`), PR #149. Depois, rodando o scraper contra todas as unidades (Darcy incluso), corrigiu um lote de bugs achados em produção: código de horário com mais de um segmento colado (ex. `"35M5 35T1"`) que era ignorado por completo no cálculo de salas vazias; estouro de coluna (`StringDataRightTruncation`) com código de horário de 4+ segmentos; uma turma com dado fora do esperado derrubando a gravação da unidade inteira (agora cada turma tem sua própria savepoint, e o commit é por unidade); sala duplicada pelo ponto inconsistente do SIGAA depois de "LAB"; salas e professores gravados antes da normalização existir, fundidos numa migration de dados; turma com sala diferente por dia (ex. `"FCTE - S1 / MOCAP"`) que não marcava a ocupação certa — a sala passou a viver no horário, não na turma (ADR 0010); cache de salas vazias que ignorava `dia`/`horario`; e o prédio do Darcy sem separador (`"PAT AT 125"`, `"ICC ANF.16"`) e andar sendo gravado como prédio. Tudo no PR #230, mergeado na `dev`.
+
+- **Gabriel**: corrigiu o parser do RU pros PDFs em layout novo e o formato do `REDIS_URL` pro Railway (#145). Implementou o RF19 (cardápio da semana agrupado por dia e refeição, sempre com os 7 dias) e o scraper do RU consultando as duas páginas onde o cardápio é publicado (#227). Revisou a `dev` antes do merge pra `main`, corrigindo o formato do Redis no Railway, horários repetidos em `GET /v1/disciplinas` e atualizando o guia de deploy (#233). Escreveu a release note da v1.2 e o changelog (#235), e fez o merge da `dev` na `main` — a primeira release desde a `Release_1`.
+
+- **Daniel**: fez os protótipos das novas telas e o wireframe do portal do desenvolvedor (#144). Implementou a navegação por semana e o filtro por dia no cardápio, e a página de desenvolvedores com Swagger UI embutido, RF14 (#148). Implementou a tela de Salas Vazias no frontend, consumindo o RF17 (#228).
+
+- **Arthur**: implementou o cache em Redis nas rotas de leitura, RNF02 (#150), e o rate limit de 60 requisições por minuto por IP com slowapi, RNF01 (#229).
+
+- **João Paulo**: mediu a cobertura atual e definiu os módulos críticos do RNF09 (#147). Escreveu testes de contrato cobrindo salas vazias, cardápio semanal e log de execução, e corrigiu `criado_em` de `GET /v1/execucoes` sem fuso horário (#231).
+
+**Observação:** a `dev` foi mergeada na `main` nesta sprint (PR #236) — a primeira desde a `Release_1` — com a release note da v1.2 publicada no GitHub.
+
+---
+
+### Segunda-feira, 02/11 — Review da Sprint 7
+
+**Presentes:** Vitor, Arthur, Gabriel, Daniel, João Paulo
+
+**Progresso:**
+
+- **Vitor**: implementou o RF18 (agenda semanal do professor), `GET /v1/professores/{id}/agenda`, com o horário decomposto em dia/início/fim — reaproveitando a grade do RF17 em vez de duplicá-la no front — e a sala de cada bloco, já preparada pra turma com sala diferente por dia (ADR 0010). A rota usa `id` em vez de nome, combinado com o Daniel, pra não depender de slug sem acento e resolver homônimos. No meio do caminho, o Daniel achou um bug real na grade noturna (faltava a N4, e os horários de N1 a N3 estavam errados); corrigido e confirmado contra turma real de várias unidades, no mesmo PR #237.
+
+- **Daniel**: entregou a tela da agenda do professor, consumindo o RF18, e removeu do front o remendo que tinha feito pra contornar a grade noturna errada (`HORARIO_NO_BACKEND`), agora que o Vitor corrigiu isso no backend — PR #238.
+
+- **Arthur**: implementou o rate limit de 60 requisições por minuto por IP com slowapi (RNF01), PR #229.
+
+- **Gabriel**: trocou o destino do deploy — Railway (ADR 0009) pela AWS Lightsail (ADR 0011). O período de teste do Railway acaba antes da entrega (18/11), e contas novas da AWS dão crédito de 6 meses; uma instância Lightsail de 2 GB roda Postgres, Redis, API, worker e frontend em Docker Compose, com Caddy na frente fazendo HTTPS automático via sslip.io, sem precisar comprar domínio. Atualizou `docs/DEPLOY.md`, o Documento de Visão, a arquitetura e o planejamento de sprints de acordo — PR #240.
+
+- **João Paulo**: adicionou `GET /v1/saude` (checagem do banco, sem schema público) pro UptimeRobot monitorar, com os estudos de teste de mutação e de UptimeRobot documentados em `docs/estudos/`. Fechou o contrato da agenda do professor, confirmando a cobertura de `tests/contract/test_openapi_contract.py` pro RF18 — PR #239.
+
+---
+
+### Segunda-feira, 09/11 — Review da Sprint 8 e planning da Sprint 9
+
+**Presentes:** Vitor, Arthur, Gabriel, Daniel, João Paulo
+
+**Progresso:**
+
+- **Vitor**: estruturou o SDK Python (RF13) do zero — cliente gerado a partir do OpenAPI do backend via `openapi-python-client`, com `CerradinhoClient` por cima encapsulando um método por endpoint. No caminho, corrigiu a sala do Darcy com o código de horário embutido no próprio campo (ex. `"2N12(ICC ANF.15) 4N12(ICC ANF.16)"`), achada rodando o scraper contra produção, e os 9 achados da revisão do Gabriel no PR do SDK (URL padrão que não resolvia, CI sem cobrir `sdk/`, aula que desaparecia quando o campo de sala não cobria todos os horários, descrição/sala/prédio errados em sala por dia, alias `BSAS` só funcionando sem separador, erro de API virando lista vazia em silêncio, cliente fechado com erro cru, script de geração escondendo erro de lint). A partir de uma proposta do Daniel, desenhou do zero paginação (`limite`/`offset` com `X-Total-Count`) e busca/filtro (`busca`, `departamento`) em `/v1/disciplinas` e `/v1/professores`, e o `GET /v1/resumo` novo (RF20) com as contagens agregadas, pro dashboard parar de baixar as 6500+ turmas só pra mostrar um número. Tudo no PR #241, mergeado na `dev`. No dia seguinte ao merge o CI quebrou: o `limite` virou `anyOf` com `null` no schema OpenAPI, e o schemathesis mandava `?limite=null` como requisição válida, que o FastAPI rejeitava com 422 — corrigido tirando o `Optional` da tipagem do parâmetro (o default continua `None`, só não aparece mais como valor aceito no contrato). Revisou os PRs abertos do Arthur (#243) e do Daniel (#244) no GitHub. Falta: a issue própria do RF20 ainda não existe, criar antes de fechar o requisito.
+
+- **Daniel**: fechou a agenda do professor com os estados que faltavam (carregamento, erro, "Professor não encontrado", grade vazia) e os horários noturnos reais do SIGAA nos filtros de Salas Vazias e Disciplinas — PR #238. Entregou o portal do desenvolvedor (RF14) em `/desenvolvedores`: URL base, exemplos em curl/Python/JS, tabela de endpoints (com `/resumo`), Swagger UI embutido e cartões do SDK e da CLI; e o layout pra celular — sidebar virando barra de navegação fixa embaixo, tabelas virando cards — PR #244, ainda aberto. Depois da minha revisão (lista de Disciplinas/Professores/Salas Vazias montando tudo de uma vez no celular, e a barra de navegação cobrindo o fim da página no iPhone), corrigiu os dois ainda no mesmo dia: paginação com botão "Mostrar mais" e o espaço reservado pra barra incluindo a área de gestos do iPhone.
+
+- **Arthur**: escreveu um teste de carga real (`backend/scripts/teste_carga.py`) contra a API rodando com `docker compose`, confirmando sob concorrência o que já estava implementado — cache sempre `200` com hit isolado em 5-12ms, e rate limit bloqueando exatamente as requisições acima do limite de 60/min configurado (60 passaram, 10 vieram com `429`). Atualizou também a rastreabilidade do RNF01, que tinha ficado sem PR/teste registrado desde o #229 — PR #243, ainda aberto, já revisado e aprovado por mim.
+
+- **Gabriel**: fechou o deploy definitivo na AWS Lightsail (RNF06) — PR #240 — e documentou os endereços de produção no ar (site e API, com o Swagger em `/docs`) no README, no `DEPLOY.md` e na spec do RNF06 — PR #242.
+
+- **João Paulo**: fechou pendências da Sprint 7 — contrato da agenda cobrindo turma noturna sem sala, estudo de teste de mutação (cosmic-ray, 128 mutantes em `app/domain/salas.py`, 94,5% mortos, achando uma lacuna real de teste em sala ocupada no mesmo horário mas outro turno) e estudo de UptimeRobot, com a rota `/health` pro monitor da API — PR #239. Entregou a CLI (RF13) em Typer sobre o SDK, com um comando por método do `CerradinhoClient` (`disciplinas`, `professores`, `agenda`, `salas`, `salas-vazias`, `cardapio`, `execucoes`, `resumo`), saída em tabela ou JSON, e os monitores do UptimeRobot (RNF03) criados por script a partir da API deles, sem duplicar os que já existem — PR #245, aberto hoje. Testado contra a produção real; só o `resumo` não respondeu ainda porque a rota subiu no #241 e o deploy ainda não pegou essa versão.
+
+**Pendências / próximos passos (Sprint 9, 08/11 a 14/11):** Vitor fecha e documenta o SDK, e cria a issue do RF20 que ficou pendente. Daniel termina o portal e acompanha o frontend em produção com o Gabriel. Arthur confirma o worker e o agendamento estáveis em produção (RF15). Gabriel faz os ajustes pós-deploy e termina de atualizar a rastreabilidade das specs. João Paulo fecha a CLI e avança mutação e sabotagem (RNF09). PRs #243, #244 e #245 ainda precisam de merge.
+
+---
+
+### Segunda-feira, 16/11 — Review da Sprint 9 e planning da Sprint 10
+
+**Presentes:** Vitor, Arthur, Gabriel, Daniel, João Paulo
+
+**Progresso:**
+
+- **Vitor**: fechou o SDK (RF13, issue #199) — README com exemplos de busca/paginação/resumo, e a decisão de que "publicar" o SDK é uma tag no GitHub quando entrar na `main` (não PyPI, pra não reservar o nome do pacote num índice público antes da hora). Depois, já adiantando a Sprint 10 (issues #207/#208): achou e corrigiu o placeholder `"A DEFINIR DOCENTE"` aparecendo como professor de verdade em `GET /v1/professores` — acumulava mais de 150 disciplinas sem docente definido num só registro, deixando a agenda dele ilegível, exatamente o que o Daniel tinha reportado no PR #238; corrigiu o CORS não expondo o `X-Total-Count` (RF10), outro achado do Daniel (PR #244) — o header chegava na resposta mas o JS do front não conseguia ler, então a paginação não tinha como saber o total; e expandiu o exemplo do SDK no portal do desenvolvedor pra cobrir os 8 domínios da API, não só 2. Preencheu também a rastreabilidade do RF18, que estava com "nenhum PR ainda" apesar do #237/#238 já implementarem o requisito — PR #250.
+
+- **Daniel**: fechou o portal do desenvolvedor (RF14, issue #201) — o cartão da CLI deixou de ser "em breve", com comandos reais contra a API em produção, e o menu do topo ganhou o link "SDK e CLI" — PR #247.
+
+- **Arthur**: fechou o teste de carga (RNF01) contra a API real, confirmando cache e rate limit sob concorrência — PR #243, mergeado hoje.
+
+- **João Paulo**: fechou as metas do RNF09 adiantando trabalho da Sprint 10 — cobertura subiu de 81% pra 98%, mutação com cosmic-ray medida em todos os 8 módulos críticos (87,3% a 100% por módulo) e sabotagem nos 8 de 8, com 13 cenários de fonte quebrada (SIGAA fora do ar, sessão expirada, layout novo, PDF do RU corrompido). A sabotagem achou 3 falhas silenciosas reais no scraper do SIGAA — timeout e sessão expirada virando "sucesso" em vez de falha de fonte, e layout novo também virando "sucesso" com 0 turmas; corrigido no mesmo PR #248. Abriu também o #249, conferindo `GET /v1/execucoes` contra produção (disciplinas rodou certo nos dois domingos, 08/11 e 15/11) e atualizando a observação desatualizada da spec do RF15.
+
+- **Gabriel**: sem PR esta sprint. As duas issues da Sprint 9 (#203 ajustes pós-deploy, #204 rastreabilidade das specs da R2) continuam abertas, carregadas pra Sprint 10.
+
+**Pendências / próximos passos (Sprint 10, 15/11 a 21/11):** Vitor faz os ajustes finais de salas vazias e agenda e os exemplos do SDK (já em andamento, PR #250). Daniel fecha as telas finais e o GitPage com a visão de produto. Arthur faz os ajustes finais de cache, rate limit e log de execução. Gabriel deixa a produção estável e fecha o cardápio semanal — e ainda carrega as duas issues da Sprint 9. João Paulo fecha a cobertura/mutação/sabotagem do RNF09 (adiantado no #248) e os contratos completos do RNF04. RF20 continua sem issue própria — pendente de alguém com permissão criar.
+
+---
+
+### Segunda-feira, 23/11 — Review da Sprint 10 e planning da Sprint 11
+
+**Presentes:** Vitor, Arthur, Gabriel, Daniel, João Paulo
+
+**Progresso:**
+
+- **Vitor**: fechou os ajustes finais de salas vazias e agenda e os exemplos do SDK (issues #207/#208, PR #250) — removeu o `"A DEFINIR DOCENTE"` da listagem de professores, expôs o `X-Total-Count` no CORS e cobriu os 8 domínios da API no exemplo do SDK. Revisou e aprovou o PR #249 do Arthur (só documentação, sem achado) e o #251 do Daniel, que resolveu o caso das 12 turmas simultâneas na agenda que eu tinha reportado na revisão do próprio #250 — o Daniel agrupou turmas com o mesmo horário num bloco só, com lista expansível.
+
+- **Daniel**: entregou o recorte do frontend pro campus Gama (PR #257) — a home virou "Agora no Gama" (salas livres agora, cardápio do dia, busca de disciplinas), cada tela passou a mostrar a chamada `GET /v1/...` real por trás dela, e corrigiu o caso das 12 turmas simultâneas na agenda (#251). Continuou no PR #260: lista de professores do Gama cruzando `/professores` com `/disciplinas` (de 114 pra 128 docentes), avisos de RU fechado no fim de semana no Gama, e a página de telas/navegação do site de documentação com os prints de produção. Fechou com um pente fino pré-feature-freeze no PR #261: cardápio virou "RU UnB" (os campi são praticamente iguais), corrigiu um erro de hidratação real em Cardápio/Salas Vazias (React #418, calculando "hoje" na pré-renderização em vez de esperar a hora do navegador) e o filtro de horário de Disciplinas, que só olhava o primeiro horário da turma.
+
+- **Gabriel**: corrigiu o parser do cardápio do RU, que tinha quebrado em produção desde 16/11 porque o PDF passou a trazer a data entre parênteses — PR #252 (dev) e #258 (levado pra `main`). Reescreveu `GET /v1/disciplinas` pra paginar no banco em vez de em Python (`limite=10` caiu de ~9,5s pra ~20ms) e `GET /v1/salas/vazias` pra semana inteira em blocos de 2h com o parâmetro `fim` — PR #256, fechando parte das minhas issues #207/#216. Corrigiu o `/v1/resumo` que ainda contava o `"A DEFINIR DOCENTE"` depois que eu tirei ele da listagem de professores — PR #254. Preparou o repositório pra contribuição externa (badges no README, CONTRIBUTING com fluxo de fork, SECURITY.md) — PR #253. Publicou a release note da v1.4 — PR #259. Fechou as duas issues da Sprint 9 (#203, #204).
+
+- **Arthur**: o log de execução passa a informar quais unidades falharam na raspagem de disciplinas, não só o total persistido — PR #255.
+
+- **João Paulo**: sem PR desde o #248 (16/11). RF04 (contratos completos) não avançou esta sprint.
+
+**Pendências / próximos passos (Sprint 11, 22/11 a 25/11 — entrega da R2):** Vitor corrige os bugs que faltarem em disciplinas/features derivadas/SDK e confere CI verde (#216), e fecha a retrospectiva final com as métricas da R2 — velocity, issues e PRs por sprint (#217). Daniel fecha os slides da apresentação final. Arthur confere que a API e o frontend estão acessíveis em produção. Gabriel escreve a release note da R2, mergeia a `dev` na `main` e cria a tag da release. João Paulo confere o checklist final do board contra a entrega, com CI verde e SAST sem achado alto no commit da entrega. RF20 continua sem issue própria.
+
+---

@@ -1,12 +1,12 @@
 # Processo — Cerradinho
 
-Como o time se organiza: papéis, ritos do Scrum, critérios de pronto e registro do trabalho. As regras de git, pull request e código estão no [CONTRIBUTING.md](https://github.com/unb-mds/2026-2-Cerradinho-API/blob/dev/CONTRIBUTING.md).
+Como o time se organiza: papéis, ritos do Scrum, critérios de pronto e registro do trabalho. As regras de commit, pull request e código, que valem para qualquer pessoa, estão no [CONTRIBUTING.md](CONTRIBUIR.md). As regras só do time, como as branches, estão na seção 10.
 
 ## 1. Papéis
 
 | Pessoa | Papel | Área | Tecnologias |
 |---|---|---|---|
-| Gabriel | Product Owner | Banco, Docker, deploy, release notes e cardápio do RU; prioriza o backlog e define critérios de aceitação | PostgreSQL, SQLAlchemy, Alembic, Docker, Railway, pdfplumber |
+| Gabriel | Product Owner | Banco, Docker, deploy, release notes e cardápio do RU; prioriza o backlog e define critérios de aceitação | PostgreSQL, SQLAlchemy, Alembic, Docker, AWS Lightsail, pdfplumber |
 | Vitor | Scrum Master | Scraping de Disciplinas/Professores/Salas, salas vazias, agenda do professor e SDK; facilita os ritos e o board | Playwright, FastAPI, SQLAlchemy |
 | Daniel | Desenvolvedor | Frontend e portal do desenvolvedor | Next.js, Axios, Swagger UI |
 | Arthur | Desenvolvedor | Agendamento, cache e rate limit | Celery, Redis, slowapi |
@@ -69,3 +69,20 @@ Toda decisão técnica relevante (nova biblioteca, padrão estrutural, troca de 
 ## 9. Uso de IA
 
 O uso de IA é esperado e precisa ser registrado no [AI-USAGE.md](https://github.com/unb-mds/2026-2-Cerradinho-API/blob/dev/AI-USAGE.md), na mesma entrega em que o trabalho entra: data, pessoa, ferramenta, o que foi feito e o que foi aceito, ajustado ou rejeitado. IA não pode ser usada em avaliações individuais (arguições, quizzes, avaliação por pares, ensaio de reflexão crítica).
+
+## 10. Branches do time
+
+Quem é de fora contribui por fork, como explica o CONTRIBUTING. O time trabalha direto no repositório:
+
+```
+main     ← estável, recebe a dev no fechamento de cada release
+dev      ← integração, recebe os PRs
+R2-nome  ← uma branch por pessoa na release, criada a partir da dev (ex. R2-gabriel)
+```
+
+- Cada pessoa tem a sua branch `R2-nome`, com o primeiro nome em minúsculas e sem acento. Ela é criada uma vez, a partir da `dev` atualizada, com `git switch dev && git pull && git switch -c R2-nome && git push -u origin R2-nome`.
+- Todo o trabalho da release vai nessa branch. Cada entrega vira um PR da `R2-nome` para a `dev`, e a branch continua aberta depois do merge.
+- Ninguém faz commit direto na `dev` nem na `main`. Toda mudança entra por pull request, inclusive documentação e atas.
+- Antes de começar uma tarefa e antes de abrir cada PR, a branch é atualizada com `git pull origin dev`, e os conflitos são resolvidos nela.
+- A revisão precisa ficar registrada no PR, como aprovação ou comentário. Combinado por mensagem ou de forma verbal não conta.
+- O `Closes #N` só fecha a issue quando a mudança chega na `main`. Quando a issue não termina com o PR, usa-se `Refs #N`.

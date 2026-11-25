@@ -4,8 +4,7 @@ from celery.schedules import crontab
 from app.core.config import settings
 from app.tasks import logging_signals  # noqa: F401 (importa os signals de log (RF16) para registrar no Celery)
 
-# O endereço vem do REDIS_URL (ver app/core/config.py): no docker compose o
-# padrão aponta para o serviço "redis", e no Railway para o Redis do projeto
+# endereco vem do REDIS_URL
 celery_app = Celery(
     "cerradinho",
     broker=settings.redis_url,

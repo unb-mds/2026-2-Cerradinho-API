@@ -3,7 +3,7 @@ from datetime import date
 from sqlalchemy import create_engine
 from sqlalchemy.orm import Session
 
-from app.domain.cardapio import persistir_cardapio
+from app.domain.cardapio import listar_cardapio_semana, persistir_cardapio
 from app.models import Base, Cardapio
 from app.schemas.cardapio import ItemCardapio
 
@@ -76,3 +76,32 @@ def test_persistir_cardapio_mantem_dias_diferentes_separados():
     session.commit()
 
     assert session.query(Cardapio).count() == 2
+
+
+# Testes escritos a partir dos mutantes sobreviventes do teste de mutação
+# (RNF09, `python -m scripts.mutacao app/domain/cardapio.py`).
+
+
+def test_listar_cardapio_semana_preserva_item_com_dois_pontos_no_texto():
+    session = _in_memory_session()
+    persistir_cardapio(session, [_item(categoria="Bebidas", item="Suco: laranja ou caju")])
+    session.commit()
+
+    segunda = listar_cardapio_semana(session, date(2026, 9, 14)).dias[0]
+
+    assert [(i.categoria, i.item) for i in segunda.almoco] == [("Bebidas", "Suco: laranja ou caju")]
+
+
+def test_listar_cardapio_semana_inclui_o_domingo_e_para_antes_da_segunda_seguinte():
+    session = _in_memory_session()
+    persistir_cardapio(session, [
+        _item(data=date(2026, 9, 20), item="Domingo"),
+        _item(data=date(2026, 9, 21), item="Segunda seguinte"),
+    ])
+    session.commit()
+
+    semana = listar_cardapio_semana(session, date(2026, 9, 14))
+
+    assert semana.data_fim == date(2026, 9, 20)
+    assert [d.publicado for d in semana.dias] == [False] * 6 + [True]
+    assert [i.item for i in semana.dias[-1].almoco] == ["Domingo"]

@@ -92,5 +92,5 @@ Sprints de uma semana, de domingo a sábado. O plano é revisado na planning de 
 | Período letivo fixo no código | Virada de semestre | Atualizar `ano`/`periodo` em `celery_app.py` antes do semestre começar |
 | Dívida de cobertura de testes | Sprints 8 a 10 | Medir a cobertura desde a Sprint 5, não só no fechamento |
 | Cache ou rate limit causando regressão na API | Sprints 6 a 8 | Suíte de contrato antes de cada merge |
-| Limites do plano gratuito do Railway | Sprints 6 a 11 | Deploy de teste cedo (Sprint 6) para descobrir limites antes do fechamento |
+| Fim do período de teste do Railway antes da entrega | Sprints 8 a 11 | Troca para a AWS Lightsail com créditos de conta nova (ADR 0011), com alerta de orçamento na AWS |
 | Carga extra com a saída do Ítalo | Sprints 5 a 10 | Eventos e editais fora do escopo; o que é essencial foi redistribuído |

@@ -21,14 +21,16 @@ def scrape_disciplinas_task(
     ano: str,
     periodo: str,
     unidades: list[str] | None = None,
-) -> int:
+) -> dict:
     """Roda o scraper de Disciplinas (RF01) e persiste o resultado (RF15).
 
     unidades=None varre todas as unidades listadas no formulário do SIGAA
     (é o modo usado pelo agendamento — ver celery_app.py). Devolve o total
     de turmas persistidas, pra aparecer no log de sucesso (RF16).
     """
-    turmas_por_unidade = asyncio.run(raspar_disciplinas_varias_unidades(nivel, ano, periodo, unidades))
+    turmas_por_unidade, unidades_com_falha = asyncio.run(
+        raspar_disciplinas_varias_unidades(nivel, ano, periodo, unidades))
+    unidades_com_falha = list(unidades_com_falha)
 
     db = SessionLocal()
     try:
@@ -43,10 +45,12 @@ def scrape_disciplinas_task(
                 # junto na rolagem de volta - commit por unidade, não um só no fim.
                 db.rollback()
                 logger.exception("Falha ao persistir a unidade %s, pulando", unidade)
+                unidades_com_falha.append(unidade)
         invalidar("cache:v1:disciplinas")
         invalidar("cache:v1:professores")
+        invalidar("cache:v1:resumo")
         # prefixo, pra levar junto as chaves de salas vazias por dia e horário
         invalidar_prefixo("cache:v1:salas")
-        return total
+        return {"turmas_persistidas": total, "unidades_com_falha": unidades_com_falha}
     finally:
         db.close()

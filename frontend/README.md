@@ -1,7 +1,8 @@
 # Cerradinho — Frontend
 
-Interface Next.js para consulta pública dos dados do Cerradinho (disciplinas, cardápio do RU, professores e
-salas) e futura base do portal do desenvolvedor.
+Site de demonstração em Next.js. O produto do Cerradinho é a API, e este site existe só para mostrar uma aplicação
+real do que dá para fazer com ela: home do campus Gama, disciplinas, professores e agenda, salas vazias, cardápio do RU e
+o portal do desenvolvedor. Ele usa apenas as rotas públicas de `/v1`, como qualquer outro cliente.
 
 ## Rodando localmente
 
@@ -28,9 +29,8 @@ cp .env.example .env.local
 - `hooks/` — chamadas à API do Cerradinho (`/v1`), isoladas dos componentes visuais — ver `docs/ARQUITETURA.md`
 - `lib/` — configuração de infraestrutura compartilhada (cliente Axios)
 
-## Status
+## Comportamento
 
-As telas de consulta (Visão Geral, Disciplinas, Cardápio, Professores e Salas) consomem a API real em `/v1`,
-sem dados de exemplo. Enquanto a API carrega, as telas mostram "Carregando...". Se a API não responder, aparece um aviso de erro.
+Todas as telas consomem a API real em `/v1`, sem dados de exemplo. Enquanto a API carrega, as telas mostram "Carregando...". Se a API não responder, aparece um aviso de erro.
 
-Link do protótipo de UI (Figma/mockup): [Cerradinho no Figma](https://www.figma.com/design/6LIOBmUcLfMeyCCD4mKbKY/Cerradinho-API?node-id=0-1&t=AsgTNL9BLDTmmhxe-1)
+Protótipo de UI: [Cerradinho no Figma](https://www.figma.com/design/6LIOBmUcLfMeyCCD4mKbKY/Cerradinho-API?node-id=0-1&t=AsgTNL9BLDTmmhxe-1)

@@ -1,26 +1,74 @@
 # Como contribuir
 
-Regras para levar uma mudança até a `dev`. Como o time se organiza (sprints, ritos, Definition of Done) está no [PROCESSO.md](docs/PROCESSO.md); como rodar o projeto, no [README](README.md).
+Obrigado pelo interesse no Cerradinho. Toda contribuição ajuda, seja código, documentação, um bug reportado ou um dado errado que você encontrou. Quem participa segue o [Código de Conduta](https://github.com/unb-mds/2026-2-Cerradinho-API/blob/dev/CODE_OF_CONDUCT.md).
 
-## 1. Branches
+## Antes de começar
+
+- **Bug ou dado errado:** abra uma [issue](https://github.com/unb-mds/2026-2-Cerradinho-API/issues/new/choose) contando o que aconteceu e como reproduzir.
+- **Falha de segurança:** não abra issue pública. Siga a [política de segurança](https://github.com/unb-mds/2026-2-Cerradinho-API/blob/dev/SECURITY.md).
+- **Ideia nova:** abra uma issue de feature e espere uma resposta antes de escrever o código, assim ninguém faz trabalho repetido ou fora do escopo.
+- **Quer só programar?** Procure as issues com [`good first issue`](https://github.com/unb-mds/2026-2-Cerradinho-API/labels/good%20first%20issue) e comente que vai pegar.
+
+## Passo a passo
+
+1. Faça um fork do repositório e clone o seu fork.
+2. Crie uma branch a partir da `dev`, com um nome que diga o que ela faz:
+
+   ```bash
+   git switch dev
+   git switch -c fix-sala-sem-predio
+   ```
+
+3. Prepare o ambiente da parte que você vai mexer (veja abaixo) e rode os testes antes de mudar qualquer coisa.
+4. Faça a mudança, com testes, e rode os testes de novo.
+5. Abra o pull request do seu fork para a `dev` e preencha o template.
+
+A `main` recebe a `dev` a cada versão. Pull requests vão sempre para a `dev`.
+
+## Preparando o ambiente
+
+### Backend (API, scrapers, Celery)
+
+```bash
+cd backend
+python3 -m venv .venv && source .venv/bin/activate
+pip install -r requirements-dev.txt
+playwright install chromium
+pytest
+ruff check .
+bandit -r app -lll
+```
+
+Os testes de integração precisam do Postgres do `docker compose up` e são pulados sem ele. Os detalhes estão no [README do backend](https://github.com/unb-mds/2026-2-Cerradinho-API/blob/dev/backend/README.md).
+
+### Frontend (site)
+
+```bash
+cd frontend
+cp .env.example .env.local
+npm install
+npm run dev
+npm run lint
+```
+
+### SDK e CLI
+
+```bash
+cd sdk
+python3 -m venv .venv && source .venv/bin/activate
+pip install -e ".[dev]"
+pytest
+ruff check .
+```
+
+Se o contrato da API mudar, regenere o cliente com `sdk/scripts/gerar_cliente.sh`. O [README do SDK](https://github.com/unb-mds/2026-2-Cerradinho-API/blob/dev/sdk/README.md) explica como.
+
+## Commits
+
+Mensagens em [Conventional Commits](https://www.conventionalcommits.org/pt-br/), em português e no imperativo:
 
 ```
-main  ← estável, recebe a dev no fechamento de cada release
-dev   ← integração, recebe os PRs
-R2-nome  ← uma branch por pessoa na release, criada a partir da dev (ex.: R2-gabriel)
-```
-
-- Cada pessoa tem a sua branch `R2-nome`, com o primeiro nome em minúsculas, sem acento. Ela é criada uma vez, a partir da `dev` atualizada: `git switch dev && git pull && git switch -c R2-nome && git push -u origin R2-nome`.
-- Todo o seu trabalho da release vai nessa branch. Cada entrega (issue) vira um PR da `R2-nome` para a `dev`, e a branch continua aberta depois do merge.
-- **Não faça commit direto na `dev` nem na `main`.** Toda mudança entra por pull request, inclusive documentação e atas.
-- Mantenha a branch em dia com a `dev`: antes de começar uma tarefa e antes de abrir cada PR, rode `git switch R2-nome && git pull origin dev` e resolva os conflitos na sua branch.
-
-## 2. Commits
-
-Mensagens em [Conventional Commits](https://www.conventionalcommits.org/pt-br/), em português:
-
-```
-tipo: descrição curta no imperativo
+tipo: descrição curta
 ```
 
 | Tipo | Quando usar |
@@ -34,41 +82,45 @@ tipo: descrição curta no imperativo
 | `ci` | Pipeline de CI |
 | `chore` | Manutenção que não afeta o código (configuração, templates) |
 
-Exemplos do histórico: `feat: adiciona endpoints /v1/professores e /v1/salas`, `fix: limita concurrency do celery_worker a 1`, `docs: registra no AI-USAGE.md o ajuste de lista vazia em Professores e Salas`.
+Exemplos: `feat: adiciona endpoints /v1/professores e /v1/salas`, `fix: aceita a data entre parenteses no pdf do cardapio do RU`.
 
-Mudança que quebra compatibilidade leva `!` depois do tipo (`feat!: ...`) e é discutida antes, por causa do versionamento da API ([ADR 0005](docs/adr/0005-api-versionada-desde-o-inicio.md)).
+Mudança que quebra quem já usa a API leva `!` depois do tipo (`feat!: ...`) e precisa ser discutida numa issue antes, porque a API é versionada ([ADR 0005](https://github.com/unb-mds/2026-2-Cerradinho-API/blob/dev/docs/adr/0005-api-versionada-desde-o-inicio.md)).
 
-## 3. Pull requests
+## Pull requests
 
-1. Abra o PR da sua branch para a **`dev`** e preencha o [template](.github/PULL_REQUEST_TEMPLATE.md).
-2. Ligue a issue. Como o `Closes #N` só fecha a issue quando a mudança chega na `main`, use `Refs #N` quando a issue não termina com esse PR.
-3. Peça revisão a pelo menos uma pessoa do time. **A revisão precisa estar registrada no PR**, como aprovação ou comentário. Combinado por mensagem ou de forma verbal não conta.
-4. O merge só acontece com o CI verde. O pipeline roda ruff, bandit, testes unitários, testes de contrato e testes de integração com Postgres.
-5. Se usou IA, registre no [AI-USAGE.md](AI-USAGE.md) no mesmo PR.
+- Um assunto por PR. Mudanças grandes ficam mais fáceis de revisar em PRs menores.
+- Ligue a issue com `Closes #N`, ou `Refs #N` quando o PR resolve só uma parte.
+- O CI precisa ficar verde. Ele roda ruff, bandit, testes unitários, testes de contrato e testes de integração com Postgres.
+- Pelo menos uma pessoa que mantém o projeto revisa antes do merge. A revisão fica registrada no próprio PR.
+- Mudança visual vem com print do antes e do depois.
 
-## 4. Padrões de código
+## Padrões de código
 
-### Separação de responsabilidades
+### Onde cada coisa fica
 
-- **Scrapers** só acessam a fonte; **parsers** só transformam o conteúdo no contrato Pydantic; **routers** só recebem a requisição e chamam o domínio. A tabela completa está nos [componentes do backend](docs/ARQUITETURA.md#nivel-3-componente).
-- Regra de negócio (normalizar nome de professor, calcular salas vazias) fica em `app/domain/`, em um único lugar.
+- **Scrapers** só acessam a fonte. **Parsers** só transformam o conteúdo no contrato Pydantic. **Routers** só recebem a requisição e chamam o domínio. A tabela completa está nos [componentes do backend](https://github.com/unb-mds/2026-2-Cerradinho-API/blob/dev/docs/ARQUITETURA.md#nivel-3-componente).
+- Regra de negócio, como normalizar o nome de um professor ou calcular salas vazias, fica em `app/domain/`, num lugar só.
 - Consulta ao banco passa pelo domínio e pelos models SQLAlchemy, nunca direto no router.
 - No frontend, chamada à API fica nos hooks de `frontend/hooks/`, fora dos componentes visuais.
 
 ### Estilo
 
-- Prefira retorno antecipado a condicionais aninhadas; se passar de 3 níveis de aninhamento, extraia uma função.
-- Funções com mais de ~50 linhas ou arquivos com mais de ~200 linhas devem ser quebrados.
-- Trate erros de forma explícita: capture a exceção esperada, não `Exception` genérica sem necessidade.
+- Prefira retorno antecipado a condicionais aninhadas. Passou de 3 níveis, extraia uma função.
+- Funções com mais de 50 linhas ou arquivos com mais de 200 linhas devem ser quebrados.
+- Trate erros de forma explícita. Capture a exceção esperada, não `Exception` genérica.
 - Evite módulos genéricos como `utils.py` ou `helpers.py`. Use nomes do domínio.
 
-### Bibliotecas
+### Dependências
 
-Antes de escrever algo do zero, veja se existe um pacote que resolve (por exemplo, `slowapi` para rate limit, `schemathesis` para contrato, `Typer` para a CLI). Código próprio se justifica para regra de negócio do domínio ou quando nenhuma biblioteca atende. Dependência nova precisa ser conferida antes de entrar: se o pacote existe, é mantido e é confiável. Troca de tecnologia relevante ganha um [ADR](docs/adr/template.md).
+Antes de escrever algo do zero, veja se existe um pacote mantido que resolve, como `slowapi` para rate limit ou `Typer` para a CLI. Dependência nova precisa ser conferida: se o pacote existe, é mantido e é confiável. Troca de tecnologia relevante ganha um [ADR](https://github.com/unb-mds/2026-2-Cerradinho-API/blob/dev/docs/adr/template.md).
 
 ### Testes
 
-- Todo código novo no backend vem com teste em `backend/tests/`, na pasta da camada correspondente.
+- Código novo no backend vem com teste em `backend/tests/`, na pasta da camada correspondente.
 - Teste precisa verificar o resultado. Teste que só confere que "não lançou exceção" não é aceito.
 - Rota nova ou alterada precisa passar nos testes de contrato (`tests/contract/`).
 - Mudança no banco ou em tamanho de coluna precisa passar nos testes de integração com Postgres (`tests/integration/`).
+
+## Uso de IA
+
+Pode usar ferramentas de IA. Você continua responsável pelo código: revise, rode os testes e conte no PR o que a IA fez.

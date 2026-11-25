@@ -23,7 +23,7 @@ Os dados públicos da UnB estão espalhados em vários sistemas, como o SIGAA, o
 - Features derivadas: salas vazias, agenda do professor e cardápio semanal.
 - Cache e rate limit na API.
 - SDK e CLI em Python e portal do desenvolvedor.
-- Deploy público no Railway, monitoramento e cobertura de testes de 90%.
+- Deploy público na AWS Lightsail, monitoramento e cobertura de testes de 90%.
 
 ## Como (tecnologias)
 
@@ -35,7 +35,7 @@ Os dados públicos da UnB estão espalhados em vários sistemas, como o SIGAA, o
 | API | FastAPI, Pydantic |
 | Frontend | Next.js, Axios, Tailwind |
 | Qualidade | pytest, schemathesis, ruff, bandit, GitHub Actions |
-| Infra | Docker Compose; Railway (R2) |
+| Infra | Docker Compose; AWS Lightsail e Caddy (R2) |
 | R2 | slowapi (rate limit), Typer (CLI), UptimeRobot (monitoramento) |
 
 Processo: Scrum com sprints de 1 semana, story map no Figma e decisões registradas em [ADRs](adr/).

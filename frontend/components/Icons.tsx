@@ -39,16 +39,6 @@ export function UserIcon(props: IconProps) {
   );
 }
 
-export function BuildingIcon(props: IconProps) {
-  return (
-    <svg {...base} {...props}>
-      <rect x="5" y="3" width="14" height="18" rx="1" />
-      <path d="M9 7h1M14 7h1M9 11h1M14 11h1M9 15h1M14 15h1" />
-      <path d="M10 21v-3h4v3" />
-    </svg>
-  );
-}
-
 export function FilterIcon(props: IconProps) {
   return (
     <svg {...base} {...props}>
@@ -83,6 +73,14 @@ export function DoorOpenIcon(props: IconProps) {
   );
 }
 
+export function CodeIcon(props: IconProps) {
+  return (
+    <svg {...base} {...props}>
+      <path d="m8 7-5 5 5 5M16 7l5 5-5 5M13.5 4l-3 16" />
+    </svg>
+  );
+}
+
 export function GridIcon(props: IconProps) {
   return (
     <svg {...base} {...props}>
@@ -101,7 +99,7 @@ export function CerradinhoFlower(props: IconProps) {
       <ellipse cx="14.4" cy="16.4" rx="2.6" ry="2.1" fill="#4FAF5C" transform="rotate(25 14.4 16.4)" />
       <rect x="11.2" y="13" width="1.6" height="7" rx="0.8" fill="#3D8A48" />
       <ellipse cx="12" cy="12.6" rx="1.9" ry="1.3" fill="#D6394C" />
-      <g stroke="#E14C5A" strokeWidth="0.6" strokeLinecap="round">
+      <g className="estames" stroke="#E14C5A" strokeWidth="0.6" strokeLinecap="round">
         <line x1="10.87" y1="12.79" x2="3.92" y2="10.26" />
         <line x1="10.96" y1="12.6" x2="4.55" y2="8.9" />
         <line x1="11.08" y1="12.43" x2="5.41" y2="7.67" />
@@ -118,7 +116,7 @@ export function CerradinhoFlower(props: IconProps) {
         <line x1="13.04" y1="12.6" x2="19.45" y2="8.9" />
         <line x1="13.13" y1="12.79" x2="20.08" y2="10.26" />
       </g>
-      <g fill="#F5A3AA">
+      <g className="estames" fill="#F5A3AA">
         <circle cx="3.92" cy="10.26" r="0.55" />
         <circle cx="4.55" cy="8.9" r="0.55" />
         <circle cx="5.41" cy="7.67" r="0.55" />
